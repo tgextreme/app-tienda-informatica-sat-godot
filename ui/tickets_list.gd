@@ -25,7 +25,8 @@ func configurar_interfaz():
 	# Configurar permisos
 	new_ticket_button.visible = AppState.tiene_permiso("crear_ticket")
 	
-	# Configurar columnas del tree
+	# Configurar columnas del tree (7 columnas en total: 0-6)
+	tickets_tree.columns = 7
 	tickets_tree.set_column_title(0, "Código")
 	tickets_tree.set_column_title(1, "Cliente")
 	tickets_tree.set_column_title(2, "Equipo")
@@ -157,6 +158,9 @@ func actualizar_tree():
 		# Guardar ID del ticket como metadatos - validar nil
 		var ticket_id = ticket_data.get("id", 0)
 		item.set_metadata(0, int(ticket_id) if ticket_id != null else 0)
+		
+		# Inicializar columna de acciones
+		item.set_text(6, "")  # Inicializar la columna 6 primero
 		
 		# Agregar botón de eliminar en la columna de acciones
 		if AppState.tiene_permiso("eliminar_ticket"):

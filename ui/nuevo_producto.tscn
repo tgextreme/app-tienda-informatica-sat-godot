@@ -1,0 +1,209 @@
+[gd_scene load_steps=2 format=3 uid="uid://bja7bof0t26mx"]
+
+[ext_resource type="Script" path="res://ui/nuevo_producto.gd" id="1_0kqkr"]
+
+[node name="NuevoProducto" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_0kqkr")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HeaderContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="ScrollContainer/VBoxContainer/HeaderContainer/TitleContainer"]
+layout_mode = 2
+text = "Nuevo Producto"
+theme_type_variation = &"HeaderLarge"
+
+[node name="VSeparator" type="VSeparator" parent="ScrollContainer/VBoxContainer/HeaderContainer/TitleContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/HeaderContainer/TitleContainer"]
+layout_mode = 2
+
+[node name="SaveButton" type="Button" parent="ScrollContainer/VBoxContainer/HeaderContainer/TitleContainer/ButtonsContainer"]
+layout_mode = 2
+text = "Guardar"
+
+[node name="CancelButton" type="Button" parent="ScrollContainer/VBoxContainer/HeaderContainer/TitleContainer/ButtonsContainer"]
+layout_mode = 2
+text = "Cancelar"
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+
+[node name="FormContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BasicInfoContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/FormContainer"]
+layout_mode = 2
+
+[node name="BasicInfoLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/BasicInfoContainer"]
+layout_mode = 2
+text = "Información Básica"
+theme_type_variation = &"HeaderMedium"
+
+[node name="BasicInfoGrid" type="GridContainer" parent="ScrollContainer/VBoxContainer/FormContainer/BasicInfoContainer"]
+layout_mode = 2
+columns = 4
+
+[node name="SkuLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/BasicInfoContainer/BasicInfoGrid"]
+layout_mode = 2
+text = "Código SKU:"
+
+[node name="SkuInput" type="LineEdit" parent="ScrollContainer/VBoxContainer/FormContainer/BasicInfoContainer/BasicInfoGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Ej: REP-RAM-8GB"
+
+[node name="NombreLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/BasicInfoContainer/BasicInfoGrid"]
+layout_mode = 2
+text = "Nombre:"
+
+[node name="NombreInput" type="LineEdit" parent="ScrollContainer/VBoxContainer/FormContainer/BasicInfoContainer/BasicInfoGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Nombre del producto"
+
+[node name="CategoriaLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/BasicInfoContainer/BasicInfoGrid"]
+layout_mode = 2
+text = "Categoría:"
+
+[node name="CategoriaInput" type="LineEdit" parent="ScrollContainer/VBoxContainer/FormContainer/BasicInfoContainer/BasicInfoGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Ej: Memoria, Almacenamiento"
+
+[node name="TipoLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/BasicInfoContainer/BasicInfoGrid"]
+layout_mode = 2
+text = "Tipo:"
+
+[node name="TipoOption" type="OptionButton" parent="ScrollContainer/VBoxContainer/FormContainer/BasicInfoContainer/BasicInfoGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator2" type="HSeparator" parent="ScrollContainer/VBoxContainer/FormContainer"]
+layout_mode = 2
+
+[node name="PreciosContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/FormContainer"]
+layout_mode = 2
+
+[node name="PreciosLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/PreciosContainer"]
+layout_mode = 2
+text = "Precios y Costes"
+theme_type_variation = &"HeaderMedium"
+
+[node name="PreciosGrid" type="GridContainer" parent="ScrollContainer/VBoxContainer/FormContainer/PreciosContainer"]
+layout_mode = 2
+columns = 4
+
+[node name="CosteLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/PreciosContainer/PreciosGrid"]
+layout_mode = 2
+text = "Coste (€):"
+
+[node name="CosteSpinBox" type="SpinBox" parent="ScrollContainer/VBoxContainer/FormContainer/PreciosContainer/PreciosGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 9999.99
+step = 0.01
+value = 0.0
+
+[node name="PvpLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/PreciosContainer/PreciosGrid"]
+layout_mode = 2
+text = "PVP (€):"
+
+[node name="PvpSpinBox" type="SpinBox" parent="ScrollContainer/VBoxContainer/FormContainer/PreciosContainer/PreciosGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 9999.99
+step = 0.01
+value = 0.0
+
+[node name="IvaLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/PreciosContainer/PreciosGrid"]
+layout_mode = 2
+text = "IVA (%):"
+
+[node name="IvaSpinBox" type="SpinBox" parent="ScrollContainer/VBoxContainer/FormContainer/PreciosContainer/PreciosGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 0.1
+value = 21.0
+
+[node name="MargenLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/PreciosContainer/PreciosGrid"]
+layout_mode = 2
+text = "Margen:"
+
+[node name="MargenInfo" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/PreciosContainer/PreciosGrid"]
+layout_mode = 2
+text = "0.00% (0.00€)"
+
+[node name="HSeparator3" type="HSeparator" parent="ScrollContainer/VBoxContainer/FormContainer"]
+layout_mode = 2
+
+[node name="StockContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/FormContainer"]
+layout_mode = 2
+
+[node name="StockLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/StockContainer"]
+layout_mode = 2
+text = "Inventario"
+theme_type_variation = &"HeaderMedium"
+
+[node name="StockGrid" type="GridContainer" parent="ScrollContainer/VBoxContainer/FormContainer/StockContainer"]
+layout_mode = 2
+columns = 4
+
+[node name="StockActualLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/StockContainer/StockGrid"]
+layout_mode = 2
+text = "Stock Actual:"
+
+[node name="StockSpinBox" type="SpinBox" parent="ScrollContainer/VBoxContainer/FormContainer/StockContainer/StockGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 99999.0
+step = 1.0
+value = 0.0
+
+[node name="StockMinLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/StockContainer/StockGrid"]
+layout_mode = 2
+text = "Stock Mínimo:"
+
+[node name="StockMinSpinBox" type="SpinBox" parent="ScrollContainer/VBoxContainer/FormContainer/StockContainer/StockGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 99999.0
+step = 1.0
+value = 0.0
+
+[node name="HSeparator4" type="HSeparator" parent="ScrollContainer/VBoxContainer/FormContainer"]
+layout_mode = 2
+
+[node name="ProveedorContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/FormContainer"]
+layout_mode = 2
+
+[node name="ProveedorLabel" type="Label" parent="ScrollContainer/VBoxContainer/FormContainer/ProveedorContainer"]
+layout_mode = 2
+text = "Proveedor"
+theme_type_variation = &"HeaderMedium"
+
+[node name="ProveedorInput" type="LineEdit" parent="ScrollContainer/VBoxContainer/FormContainer/ProveedorContainer"]
+layout_mode = 2
+placeholder_text = "Nombre del proveedor"

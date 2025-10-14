@@ -304,14 +304,17 @@ func mostrar_popup_clientes():
 			
 			# Nombre
 			var nombre_label = Label.new()
-			nombre_label.text = "👤 " + cliente.get("nombre", "Sin nombre")
+			var cliente_nombre = str(cliente.get("nombre", "Sin nombre")) if cliente.get("nombre") != null else "Sin nombre"
+			nombre_label.text = "👤 " + cliente_nombre
 			nombre_label.add_theme_font_size_override("font_size", 16)
 			nombre_label.add_theme_color_override("font_color", Color(0.4, 0.8, 1, 1))
 			info_vbox.add_child(nombre_label)
 			
 			# Teléfono y Email
 			var contacto_label = Label.new()
-			contacto_label.text = "📞 " + cliente.get("telefono", "-") + "  ✉️ " + cliente.get("email", "-")
+			var cliente_telefono = str(cliente.get("telefono", "-")) if cliente.get("telefono") != null else "-"
+			var cliente_email = str(cliente.get("email", "-")) if cliente.get("email") != null else "-"
+			contacto_label.text = "📞 " + cliente_telefono + "  ✉️ " + cliente_email
 			contacto_label.add_theme_font_size_override("font_size", 14)
 			info_vbox.add_child(contacto_label)
 			
@@ -343,13 +346,19 @@ func mostrar_popup_clientes():
 func seleccionar_cliente(cliente: Dictionary):
 	cliente_seleccionado = cliente
 	
-	cliente_label.text = "Nombre: " + cliente.get("nombre", "Sin nombre")
-	cliente_telefono.text = "Teléfono: " + cliente.get("telefono", "-")
-	cliente_email.text = "Email: " + cliente.get("email", "-")
-	cliente_nif.text = "NIF: " + cliente.get("nif", "-")
-	cliente_direccion.text = "Dirección: " + cliente.get("direccion", "-")
+	var nombre = str(cliente.get("nombre", "Sin nombre")) if cliente.get("nombre") != null else "Sin nombre"
+	var telefono = str(cliente.get("telefono", "-")) if cliente.get("telefono") != null else "-"
+	var email = str(cliente.get("email", "-")) if cliente.get("email") != null else "-"
+	var nif = str(cliente.get("nif", "-")) if cliente.get("nif") != null else "-"
+	var direccion = str(cliente.get("direccion", "-")) if cliente.get("direccion") != null else "-"
 	
-	buscar_cliente_input.text = cliente.get("nombre", "")
+	cliente_label.text = "Nombre: " + nombre
+	cliente_telefono.text = "Teléfono: " + telefono
+	cliente_email.text = "Email: " + email
+	cliente_nif.text = "NIF: " + nif
+	cliente_direccion.text = "Dirección: " + direccion
+	
+	buscar_cliente_input.text = nombre
 	
 	print("✅ [NUEVO_TICKET] Cliente seleccionado: ", cliente.get("nombre", "Sin nombre"))
 
@@ -363,12 +372,18 @@ func actualizar_interfaz_cliente():
 		cliente_direccion.text = "Dirección: -"
 		buscar_cliente_input.text = ""
 	else:
-		cliente_label.text = "Nombre: " + cliente_seleccionado.get("nombre", "Sin nombre")
-		cliente_telefono.text = "Teléfono: " + cliente_seleccionado.get("telefono", "-")
-		cliente_email.text = "Email: " + cliente_seleccionado.get("email", "-")
-		cliente_nif.text = "NIF: " + cliente_seleccionado.get("nif", "-")
-		cliente_direccion.text = "Dirección: " + cliente_seleccionado.get("direccion", "-")
-		buscar_cliente_input.text = cliente_seleccionado.get("nombre", "")
+		var nombre = str(cliente_seleccionado.get("nombre", "Sin nombre")) if cliente_seleccionado.get("nombre") != null else "Sin nombre"
+		var telefono = str(cliente_seleccionado.get("telefono", "-")) if cliente_seleccionado.get("telefono") != null else "-"
+		var email = str(cliente_seleccionado.get("email", "-")) if cliente_seleccionado.get("email") != null else "-"
+		var nif = str(cliente_seleccionado.get("nif", "-")) if cliente_seleccionado.get("nif") != null else "-"
+		var direccion = str(cliente_seleccionado.get("direccion", "-")) if cliente_seleccionado.get("direccion") != null else "-"
+		
+		cliente_label.text = "Nombre: " + nombre
+		cliente_telefono.text = "Teléfono: " + telefono
+		cliente_email.text = "Email: " + email
+		cliente_nif.text = "NIF: " + nif
+		cliente_direccion.text = "Dirección: " + direccion
+		buscar_cliente_input.text = nombre
 
 func limpiar_formulario():
 	# Limpiar cliente

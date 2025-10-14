@@ -17,6 +17,9 @@ func _ready():
 	await get_tree().process_frame
 	
 	inicializar_aplicacion()
+	
+	# Ejecutar test temporal
+	call_deferred("test_productos_directo")
 
 func inicializar_aplicacion():
 	print("🔧 [MAIN] Iniciando inicialización...")
@@ -104,3 +107,36 @@ func mostrar_error(mensaje: String):
 		add_child(error_label)
 	
 	error_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+# TEST TEMPORAL PARA PRODUCTOS
+func _on_tree_ready():
+	await get_tree().create_timer(3.0).timeout
+	test_productos_directo()
+
+func test_productos_directo():
+	print("🧪 [MAIN_TEST] Iniciando test directo de productos...")
+	
+	# Buscar productos existentes
+	var productos = DataService.buscar_productos({})
+	print("🧪 [MAIN_TEST] Productos encontrados: ", productos.size())
+	
+	if productos.size() > 0:
+		print("🧪 [MAIN_TEST] Primer producto: ", productos[0])
+		print("🧪 [MAIN_TEST] Campos disponibles: ", productos[0].keys())
+	else:
+		print("🧪 [MAIN_TEST] No hay productos - creando uno de prueba...")
+		var producto_test = {
+			"sku": "TEST-MAIN-001",
+			"nombre": "Producto Test Main", 
+			"categoria": "Test",
+			"tipo": "REPUESTO",
+			"coste": 20.0,
+			"pvp": 30.0,
+			"iva": 21.0,
+			"stock": 10,
+			"stock_min": 3,
+			"proveedor": "Test Provider"
+		}
+		
+		var resultado = DataService.guardar_producto(producto_test)
+		print("🧪 [MAIN_TEST] Resultado creación: ", resultado)

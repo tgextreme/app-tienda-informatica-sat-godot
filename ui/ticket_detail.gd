@@ -311,7 +311,7 @@ func generar_html_ticket() -> String:
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
+	<meta charset="UTF-8">
     <title>Ticket SAT #{codigo}</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
@@ -331,49 +331,49 @@ func generar_html_ticket() -> String:
     </style>
 </head>
 <body>
-    <div class="header">
+	<div class="header">
         <h1>TICKET SAT #{codigo}</h1>
         <p>Sistema de Atención Técnica - Tienda de Informática</p>
     </div>
     
-    <div class="info-section">
+	<div class="info-section">
         <h3>Información del Ticket</h3>
-        <div class="info-row"><span class="label">Código:</span> {codigo}</div>
-        <div class="info-row"><span class="label">Estado:</span> <span class="status status-{estado_class}">{estado}</span></div>
-        <div class="info-row"><span class="label">Prioridad:</span> <span class="priority priority-{prioridad_class}">{prioridad}</span></div>
-        <div class="info-row"><span class="label">Fecha Creación:</span> {fecha_creacion}</div>
-        <div class="info-row"><span class="label">Fecha Actualización:</span> {fecha_actualizacion}</div>
+		<div class="info-row"><span class="label">Código:</span> {codigo}</div>
+		<div class="info-row"><span class="label">Estado:</span> <span class="status status-{estado_class}">{estado}</span></div>
+		<div class="info-row"><span class="label">Prioridad:</span> <span class="priority priority-{prioridad_class}">{prioridad}</span></div>
+		<div class="info-row"><span class="label">Fecha Creación:</span> {fecha_creacion}</div>
+		<div class="info-row"><span class="label">Fecha Actualización:</span> {fecha_actualizacion}</div>
     </div>
     
-    <div class="info-section">
+	<div class="info-section">
         <h3>Información del Cliente</h3>
-        <div class="info-row"><span class="label">Nombre:</span> {cliente_nombre}</div>
-        <div class="info-row"><span class="label">Email:</span> {cliente_email}</div>
-        <div class="info-row"><span class="label">Teléfono:</span> {cliente_telefono}</div>
-        <div class="info-row"><span class="label">Dirección:</span> {cliente_direccion}</div>
+		<div class="info-row"><span class="label">Nombre:</span> {cliente_nombre}</div>
+		<div class="info-row"><span class="label">Email:</span> {cliente_email}</div>
+		<div class="info-row"><span class="label">Teléfono:</span> {cliente_telefono}</div>
+		<div class="info-row"><span class="label">Dirección:</span> {cliente_direccion}</div>
     </div>
     
-    <div class="info-section">
+	<div class="info-section">
         <h3>Información del Equipo</h3>
-        <div class="info-row"><span class="label">Tipo:</span> {equipo_tipo}</div>
-        <div class="info-row"><span class="label">Marca:</span> {equipo_marca}</div>
-        <div class="info-row"><span class="label">Modelo:</span> {equipo_modelo}</div>
-        <div class="info-row"><span class="label">Serie:</span> {equipo_serie}</div>
+		<div class="info-row"><span class="label">Tipo:</span> {equipo_tipo}</div>
+		<div class="info-row"><span class="label">Marca:</span> {equipo_marca}</div>
+		<div class="info-row"><span class="label">Modelo:</span> {equipo_modelo}</div>
+		<div class="info-row"><span class="label">Serie:</span> {equipo_serie}</div>
     </div>
     
-    <div class="info-section">
+	<div class="info-section">
         <h3>Descripción de la Avería</h3>
         <p>{averia_descripcion}</p>
     </div>
     
-    <div class="info-section">
+	<div class="info-section">
         <h3>Observaciones del Cliente</h3>
         <p>{observaciones_cliente}</p>
     </div>
     
     {tecnico_section}
     
-    <div class="footer">
+	<div class="footer">
         <p>Generado el {fecha_generacion}</p>
         <p>Sistema SAT - Tienda de Informática</p>
     </div>
@@ -389,10 +389,10 @@ func generar_html_ticket() -> String:
 	var tecnico_section = ""
 	if ticket_data.has("tecnico_nombre") and ticket_data.tecnico_nombre != "":
 		tecnico_section = """
-    <div class="info-section">
+	<div class="info-section">
         <h3>Técnico Asignado</h3>
-        <div class="info-row"><span class="label">Nombre:</span> {tecnico_nombre}</div>
-        <div class="info-row"><span class="label">Email:</span> {tecnico_email}</div>
+		<div class="info-row"><span class="label">Nombre:</span> {tecnico_nombre}</div>
+		<div class="info-row"><span class="label">Email:</span> {tecnico_email}</div>
     </div>
 		""".format({
 			"tecnico_nombre": ticket_data.get("tecnico_nombre", ""),

@@ -5,6 +5,7 @@ extends Node
 signal pantalla_cambiada(nueva_pantalla: String, parametros: Dictionary)
 
 var pantalla_actual: String = ""
+var parametros_actuales: Dictionary = {}
 var historial_navegacion: Array[String] = []
 var root_control: Control
 var pantallas_cargadas: Dictionary = {}
@@ -21,6 +22,7 @@ var rutas_pantallas = {
 	"empleados_lista": "res://ui/gestionar_empleados_new.tscn",
 	"empleado_detalle": "res://ui/empleado_detail.tscn",
 	"inventario_lista": "res://ui/inventario_list.tscn",
+	"nuevo_producto": "res://ui/nuevo_producto.tscn",
 	"producto_detalle": "res://ui/producto_detail.tscn",
 	"reportes": "res://ui/reportes.tscn",
 	"ajustes": "res://ui/ajustes.tscn"
@@ -113,6 +115,11 @@ func ir_a(pantalla: String, parametros: Dictionary = {}):
 		for child in root_control.get_children():
 			child.queue_free()
 	
+	# IMPORTANTE: Guardar parámetros ANTES de añadir la pantalla al árbol
+	pantalla_actual = pantalla
+	parametros_actuales = parametros.duplicate()  # Guardar copia de los parámetros
+	print("🧭 [ROUTER] Parámetros guardados ANTES: ", parametros_actuales)
+	
 	# Añadir nueva pantalla
 	root_control.add_child(nueva_scene)
 	
@@ -120,7 +127,6 @@ func ir_a(pantalla: String, parametros: Dictionary = {}):
 	if nueva_scene.has_method("configurar"):
 		nueva_scene.configurar(parametros)
 	
-	pantalla_actual = pantalla
 	pantalla_cambiada.emit(pantalla, parametros)
 	
 	print("🎯 Navegación completada a: ", pantalla)
@@ -218,13 +224,24 @@ func ir_a_nuevo_cliente():
 	ir_a("cliente_detalle", {"nuevo": true})
 
 func ir_a_inventario():
+	"""Navegar a la lista de productos/inventario"""
+	print("📦 [ROUTER] Navegando al inventario...")
 	ir_a("inventario_lista")
 
-func ir_a_producto_detalle(producto_id: int):
+func ir_a_detalle_producto(producto_id: int):
+	"""Navegar al detalle de un producto específico"""
+	print("📦 [ROUTER] Navegando al detalle del producto ID: ", producto_id)
 	ir_a("producto_detalle", {"producto_id": producto_id})
 
 func ir_a_nuevo_producto():
-	ir_a("producto_detalle", {"nuevo": true})
+	"""Navegar a crear un nuevo producto"""
+	print("📦 [ROUTER] Navegando a crear nuevo producto...")
+	ir_a("nuevo_producto")
+
+func ir_a_editar_producto(producto_id: int):
+	"""Navegar a editar un producto específico"""
+	print("📦 [ROUTER] Navegando a editar producto ID: ", producto_id)
+	ir_a("nuevo_producto", {"modo": "editar", "producto_id": producto_id})
 
 func ir_a_reportes():
 	ir_a("reportes")
@@ -349,3 +366,8 @@ func _intentar_reinicializar_inmediato():
 			intentar_crear_content_container(main_node)
 	else:
 		print("⚡ [ROUTER] Reinicialización inmediata falló - Main no encontrado")
+
+func obtener_parametros_actuales() -> Dictionary:
+	"""Obtiene los parámetros de la navegación actual"""
+	print("🧭 [ROUTER] Solicitando parámetros actuales: ", parametros_actuales)
+	return parametros_actuales.duplicate()

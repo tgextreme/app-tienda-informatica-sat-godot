@@ -311,6 +311,25 @@ func handle_insert(query: String, params: Array):
 				new_record["fecha_entrada"] = Time.get_datetime_string_from_system()
 			else:
 				print("❌ [DATABASE] Parámetros insuficientes para insertar ticket: ", params.size(), " (esperados: 16)")
+		elif table_name == "productos":
+			if params.size() >= 10:
+				new_record["sku"] = params[0] if params.size() > 0 else ""
+				new_record["nombre"] = params[1] if params.size() > 1 else ""
+				new_record["categoria"] = params[2] if params.size() > 2 else ""
+				new_record["tipo"] = params[3] if params.size() > 3 else "REPUESTO"
+				new_record["coste"] = params[4] if params.size() > 4 else 0.0
+				new_record["pvp"] = params[5] if params.size() > 5 else 0.0
+				new_record["iva"] = params[6] if params.size() > 6 else 21.0
+				new_record["stock"] = params[7] if params.size() > 7 else 0
+				new_record["stock_min"] = params[8] if params.size() > 8 else 0
+				new_record["proveedor"] = params[9] if params.size() > 9 else ""
+				print("✅ [DATABASE] Creando producto completo: ", new_record)
+			else:
+				print("❌ [DATABASE] Parámetros insuficientes para insertar producto: ", params.size(), " (esperados: 10)")
+		else:
+			print("⚠️ [DATABASE] Tabla no reconocida para INSERT: ", table_name, " - Solo creando con ID")
+	else:
+		print("⚠️ [DATABASE] INSERT sin parámetros para tabla: ", table_name)
 	
 	data[table_name].append(new_record)
 	save_database()
@@ -320,16 +339,21 @@ func handle_update(query: String, params: Array):
 	print("🔄 [DATABASE] UPDATE ejecutado: ", query)
 	print("🔄 [DATABASE] Parámetros: ", params)
 	
-	# Extraer tabla
-	var set_pos = query.to_upper().find("SET")
-	var where_pos = query.to_upper().find("WHERE")
+	# Extraer tabla de forma más robusta
+	var query_clean = query.strip_edges().replace("\n", " ").replace("\t", " ")
+	var query_upper = query_clean.to_upper()
+	var set_pos = query_upper.find("SET")
+	var where_pos = query_upper.find("WHERE")
 	
 	if set_pos == -1 or where_pos == -1:
 		print("❌ [DATABASE] UPDATE mal formado")
 		return
 	
-	var table_part = query.substr(6, set_pos - 6).strip_edges()  # Después de "UPDATE"
-	var table_name = table_part.strip_edges()
+	# Extraer nombre de tabla entre UPDATE y SET
+	var update_to_set = query_clean.substr(6, set_pos - 6).strip_edges()  # Después de "UPDATE"
+	var table_name = update_to_set.split(" ")[0].strip_edges()
+	
+	print("🔍 [DATABASE] Tabla extraída: '", table_name, "'")
 	
 	if not data.has(table_name):
 		print("❌ [DATABASE] Tabla no existe: ", table_name)
@@ -358,6 +382,27 @@ func handle_update(query: String, params: Array):
 				record["rgpd_consent"] = params[7]
 				# ID es params[8]
 				print("✅ [DATABASE] Cliente actualizado: ", record.get("nombre"))
+			elif table_name == "productos" and params.size() >= 11:
+				print("🔧 [DATABASE] Actualizando producto ID ", record.get("id"), ":")
+				print("🔧 [DATABASE] - Stock ANTES: ", record.get("stock"))
+				print("🔧 [DATABASE] - Stock NUEVO: ", params[7])
+				
+				record["sku"] = params[0]
+				record["nombre"] = params[1]
+				record["categoria"] = params[2]
+				record["tipo"] = params[3]
+				record["coste"] = params[4]
+				record["pvp"] = params[5]
+				record["iva"] = params[6]
+				record["stock"] = params[7]
+				record["stock_min"] = params[8]
+				record["proveedor"] = params[9]
+				# ID es params[10]
+				
+				print("🔧 [DATABASE] - Stock DESPUÉS: ", record.get("stock"))
+				print("✅ [DATABASE] Producto actualizado: ", record.get("nombre"), " (ID: ", record.get("id"), ")")
+			else:
+				print("⚠️ [DATABASE] UPDATE no implementado para tabla: ", table_name, " con ", params.size(), " parámetros")
 			break
 	
 	save_database()

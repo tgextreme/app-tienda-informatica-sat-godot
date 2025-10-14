@@ -1,0 +1,215 @@
+[gd_scene load_steps=2 format=3 uid="uid://cqfd8x5p1qxwr"]
+
+[ext_resource type="Script" path="res://ui/producto_detail.gd" id="1_0kqkr"]
+
+[node name="ProductoDetail" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_0kqkr")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HeaderContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="ScrollContainer/VBoxContainer/HeaderContainer/TitleContainer"]
+layout_mode = 2
+text = "Detalle del Producto"
+theme_type_variation = &"HeaderLarge"
+
+[node name="VSeparator" type="VSeparator" parent="ScrollContainer/VBoxContainer/HeaderContainer/TitleContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/HeaderContainer/TitleContainer"]
+layout_mode = 2
+
+[node name="EditButton" type="Button" parent="ScrollContainer/VBoxContainer/HeaderContainer/TitleContainer/ButtonsContainer"]
+layout_mode = 2
+text = "Editar"
+
+[node name="DeleteButton" type="Button" parent="ScrollContainer/VBoxContainer/HeaderContainer/TitleContainer/ButtonsContainer"]
+layout_mode = 2
+text = "Eliminar"
+
+[node name="BackButton" type="Button" parent="ScrollContainer/VBoxContainer/HeaderContainer/TitleContainer/ButtonsContainer"]
+layout_mode = 2
+text = "Volver"
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+
+[node name="ContentContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BasicInfoContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/ContentContainer"]
+layout_mode = 2
+
+[node name="BasicInfoLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/BasicInfoContainer"]
+layout_mode = 2
+text = "Información Básica"
+theme_type_variation = &"HeaderMedium"
+
+[node name="BasicInfoCard" type="PanelContainer" parent="ScrollContainer/VBoxContainer/ContentContainer/BasicInfoContainer"]
+layout_mode = 2
+
+[node name="BasicInfoGrid" type="GridContainer" parent="ScrollContainer/VBoxContainer/ContentContainer/BasicInfoContainer/BasicInfoCard"]
+layout_mode = 2
+columns = 2
+
+[node name="SkuLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/BasicInfoContainer/BasicInfoCard/BasicInfoGrid"]
+layout_mode = 2
+text = "Código SKU:"
+
+[node name="SkuValue" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/BasicInfoContainer/BasicInfoCard/BasicInfoGrid"]
+layout_mode = 2
+text = "-"
+
+[node name="NombreLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/BasicInfoContainer/BasicInfoCard/BasicInfoGrid"]
+layout_mode = 2
+text = "Nombre:"
+
+[node name="NombreValue" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/BasicInfoContainer/BasicInfoCard/BasicInfoGrid"]
+layout_mode = 2
+text = "-"
+
+[node name="CategoriaLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/BasicInfoContainer/BasicInfoCard/BasicInfoGrid"]
+layout_mode = 2
+text = "Categoría:"
+
+[node name="CategoriaValue" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/BasicInfoContainer/BasicInfoCard/BasicInfoGrid"]
+layout_mode = 2
+text = "-"
+
+[node name="TipoLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/BasicInfoContainer/BasicInfoCard/BasicInfoGrid"]
+layout_mode = 2
+text = "Tipo:"
+
+[node name="TipoValue" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/BasicInfoContainer/BasicInfoCard/BasicInfoGrid"]
+layout_mode = 2
+text = "-"
+
+[node name="HSeparator2" type="HSeparator" parent="ScrollContainer/VBoxContainer/ContentContainer"]
+layout_mode = 2
+
+[node name="PreciosContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/ContentContainer"]
+layout_mode = 2
+
+[node name="PreciosLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/PreciosContainer"]
+layout_mode = 2
+text = "Precios y Costes"
+theme_type_variation = &"HeaderMedium"
+
+[node name="PreciosCard" type="PanelContainer" parent="ScrollContainer/VBoxContainer/ContentContainer/PreciosContainer"]
+layout_mode = 2
+
+[node name="PreciosGrid" type="GridContainer" parent="ScrollContainer/VBoxContainer/ContentContainer/PreciosContainer/PreciosCard"]
+layout_mode = 2
+columns = 2
+
+[node name="CosteLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/PreciosContainer/PreciosCard/PreciosGrid"]
+layout_mode = 2
+text = "Coste:"
+
+[node name="CosteValue" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/PreciosContainer/PreciosCard/PreciosGrid"]
+layout_mode = 2
+text = "-"
+
+[node name="PvpLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/PreciosContainer/PreciosCard/PreciosGrid"]
+layout_mode = 2
+text = "PVP:"
+
+[node name="PvpValue" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/PreciosContainer/PreciosCard/PreciosGrid"]
+layout_mode = 2
+text = "-"
+
+[node name="IvaLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/PreciosContainer/PreciosCard/PreciosGrid"]
+layout_mode = 2
+text = "IVA:"
+
+[node name="IvaValue" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/PreciosContainer/PreciosCard/PreciosGrid"]
+layout_mode = 2
+text = "-"
+
+[node name="MargenLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/PreciosContainer/PreciosCard/PreciosGrid"]
+layout_mode = 2
+text = "Margen:"
+
+[node name="MargenValue" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/PreciosContainer/PreciosCard/PreciosGrid"]
+layout_mode = 2
+text = "-"
+
+[node name="HSeparator3" type="HSeparator" parent="ScrollContainer/VBoxContainer/ContentContainer"]
+layout_mode = 2
+
+[node name="StockContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/ContentContainer"]
+layout_mode = 2
+
+[node name="StockLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/StockContainer"]
+layout_mode = 2
+text = "Inventario"
+theme_type_variation = &"HeaderMedium"
+
+[node name="StockCard" type="PanelContainer" parent="ScrollContainer/VBoxContainer/ContentContainer/StockContainer"]
+layout_mode = 2
+
+[node name="StockGrid" type="GridContainer" parent="ScrollContainer/VBoxContainer/ContentContainer/StockContainer/StockCard"]
+layout_mode = 2
+columns = 2
+
+[node name="StockActualLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/StockContainer/StockCard/StockGrid"]
+layout_mode = 2
+text = "Stock Actual:"
+
+[node name="StockActualValue" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/StockContainer/StockCard/StockGrid"]
+layout_mode = 2
+text = "-"
+
+[node name="StockMinLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/StockContainer/StockCard/StockGrid"]
+layout_mode = 2
+text = "Stock Mínimo:"
+
+[node name="StockMinValue" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/StockContainer/StockCard/StockGrid"]
+layout_mode = 2
+text = "-"
+
+[node name="EstadoStockLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/StockContainer/StockCard/StockGrid"]
+layout_mode = 2
+text = "Estado:"
+
+[node name="EstadoStockValue" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/StockContainer/StockCard/StockGrid"]
+layout_mode = 2
+text = "-"
+
+[node name="HSeparator4" type="HSeparator" parent="ScrollContainer/VBoxContainer/ContentContainer"]
+layout_mode = 2
+
+[node name="ProveedorContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/ContentContainer"]
+layout_mode = 2
+
+[node name="ProveedorLabel" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/ProveedorContainer"]
+layout_mode = 2
+text = "Proveedor"
+theme_type_variation = &"HeaderMedium"
+
+[node name="ProveedorCard" type="PanelContainer" parent="ScrollContainer/VBoxContainer/ContentContainer/ProveedorContainer"]
+layout_mode = 2
+
+[node name="ProveedorValue" type="Label" parent="ScrollContainer/VBoxContainer/ContentContainer/ProveedorContainer/ProveedorCard"]
+layout_mode = 2
+text = "-"

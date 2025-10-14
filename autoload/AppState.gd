@@ -150,6 +150,14 @@ func tiene_permiso(accion: String) -> bool:
 			return es_admin or es_recepcion
 		"facturar":
 			return es_admin or es_recepcion
+		"crear_producto":
+			return es_admin or es_recepcion
+		"editar_producto":
+			return es_admin or es_recepcion
+		"eliminar_producto":
+			return es_admin
+		"ver_inventario":
+			return es_admin or es_recepcion or es_tecnico
 		_:
 			return false
 

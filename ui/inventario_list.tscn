@@ -1,0 +1,91 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6dt7fq76yukj"]
+
+[ext_resource type="Script" path="res://ui/inventario_list.gd" id="1_0kqkr"]
+
+[node name="InventarioList" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_0kqkr")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="HeaderContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+text = "Inventario de Productos"
+theme_type_variation = &"HeaderLarge"
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+
+[node name="NewProductButton" type="Button" parent="VBoxContainer/HeaderContainer/ButtonsContainer"]
+layout_mode = 2
+text = "Nuevo Producto"
+
+[node name="RefreshButton" type="Button" parent="VBoxContainer/HeaderContainer/ButtonsContainer"]
+layout_mode = 2
+text = "Actualizar"
+
+[node name="BackButton" type="Button" parent="VBoxContainer/HeaderContainer/ButtonsContainer"]
+layout_mode = 2
+text = "Volver"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="FiltersContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="SearchLabel" type="Label" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+text = "Buscar:"
+
+[node name="SearchInput" type="LineEdit" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Buscar productos..."
+
+[node name="TypeLabel" type="Label" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+text = "Tipo:"
+
+[node name="TypeFilter" type="OptionButton" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+
+[node name="SearchButton" type="Button" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+text = "Buscar"
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ContentContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ProductsTree" type="Tree" parent="VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HSeparator3" type="HSeparator" parent="VBoxContainer/ContentContainer"]
+layout_mode = 2
+
+[node name="CountLabel" type="Label" parent="VBoxContainer/ContentContainer"]
+layout_mode = 2
+text = "0 producto(s) encontrado(s)"
