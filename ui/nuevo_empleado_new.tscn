@@ -1,0 +1,262 @@
+[gd_scene load_steps=3 format=3 uid="uid://nuevo_empleado_new"]
+
+[ext_resource type="Script" path="res://ui/nuevo_empleado_new.gd" id="1_empleado"]
+
+[sub_resource type="StyleBoxFlat" id="panel_style"]
+bg_color = Color(0.25, 0.25, 0.25, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.6, 0.9, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="NuevoEmpleado" type="AcceptDialog"]
+title = "👨‍💼 NUEVO EMPLEADO"
+initial_position = 1
+size = Vector2i(800, 650)
+script = ExtResource("1_empleado")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.12, 0.12, 0.12, 1)
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 20.0
+offset_right = -30.0
+offset_bottom = -60.0
+
+[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 60)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="HeaderContent" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+text = "👨‍💼 REGISTRAR NUEVO EMPLEADO"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="HSeparator1" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FormContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DatosPanel" type="Panel" parent="MainContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 200)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="DatosContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TituloDatos" type="Label" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent"]
+layout_mode = 2
+text = "📝 DATOS PERSONALES"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent"]
+layout_mode = 2
+columns = 2
+theme_override_constants/h_separation = 15
+theme_override_constants/v_separation = 10
+
+[node name="NombreLabel" type="Label" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+text = "Nombre Completo: *"
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="NombreInput" type="LineEdit" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 35)
+placeholder_text = "Ej: Ana García López"
+theme_override_font_sizes/font_size = 14
+
+[node name="EmailLabel" type="Label" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+text = "Email Corporativo: *"
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="EmailInput" type="LineEdit" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 35)
+placeholder_text = "Ej: ana.garcia@empresa.com"
+theme_override_font_sizes/font_size = 14
+
+[node name="RolPanel" type="Panel" parent="MainContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 150)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="RolContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/FormContainer/RolPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TituloRol" type="Label" parent="MainContainer/ScrollContainer/FormContainer/RolPanel/RolContent"]
+layout_mode = 2
+text = "🎭 ROL Y PERMISOS"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="RolContainer" type="HBoxContainer" parent="MainContainer/ScrollContainer/FormContainer/RolPanel/RolContent"]
+layout_mode = 2
+
+[node name="RolLabel" type="Label" parent="MainContainer/ScrollContainer/FormContainer/RolPanel/RolContent/RolContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+text = "Rol: *"
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="RolOption" type="OptionButton" parent="MainContainer/ScrollContainer/FormContainer/RolPanel/RolContent/RolContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 35)
+
+[node name="PasswordPanel" type="Panel" parent="MainContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 120)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="PasswordContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/FormContainer/PasswordPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TituloPassword" type="Label" parent="MainContainer/ScrollContainer/FormContainer/PasswordPanel/PasswordContent"]
+layout_mode = 2
+text = "🔐 ACCESO AL SISTEMA"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="PasswordContainer" type="HBoxContainer" parent="MainContainer/ScrollContainer/FormContainer/PasswordPanel/PasswordContent"]
+layout_mode = 2
+
+[node name="PasswordLabel" type="Label" parent="MainContainer/ScrollContainer/FormContainer/PasswordPanel/PasswordContent/PasswordContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+text = "Contraseña: *"
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="PasswordInput" type="LineEdit" parent="MainContainer/ScrollContainer/FormContainer/PasswordPanel/PasswordContent/PasswordContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 35)
+placeholder_text = "Ingrese contraseña segura..."
+secret = true
+theme_override_font_sizes/font_size = 14
+
+[node name="ConfigPanel" type="Panel" parent="MainContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 100)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="ConfigContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/FormContainer/ConfigPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TituloConfig" type="Label" parent="MainContainer/ScrollContainer/FormContainer/ConfigPanel/ConfigContent"]
+layout_mode = 2
+text = "⚙️ CONFIGURACIÓN"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="ActivoCheck" type="CheckBox" parent="MainContainer/ScrollContainer/FormContainer/ConfigPanel/ConfigContent"]
+layout_mode = 2
+button_pressed = true
+text = "✅ Empleado activo (puede acceder al sistema)"
+
+[node name="HSeparator2" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="ButtonsPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="ButtonsContent" type="HBoxContainer" parent="MainContainer/ButtonsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 10.0
+offset_right = -15.0
+offset_bottom = -10.0
+
+[node name="ErrorLabel" type="Label" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = ""
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+
+[node name="GuardarButton" type="Button" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 30)
+text = "💾 GUARDAR"
+theme_override_font_sizes/font_size = 14
+
+[node name="CancelarButton" type="Button" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 30)
+text = "❌ CANCELAR"
+theme_override_font_sizes/font_size = 14
+
+[connection signal="pressed" from="MainContainer/ButtonsPanel/ButtonsContent/GuardarButton" to="." method="_on_guardar_pressed"]
+[connection signal="pressed" from="MainContainer/ButtonsPanel/ButtonsContent/CancelarButton" to="." method="_on_cancelar_pressed"]

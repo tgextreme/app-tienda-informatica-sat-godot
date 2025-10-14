@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrega y Garantía - {{ticket.codigo}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .empresa-info h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .documento-info h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #666;
+        }
+        
+        .info-box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .garantia-box {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .trabajo-realizado {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .firma-section {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .firma-box {
+            width: 200px;
+            text-align: center;
+        }
+        
+        .firma-linea {
+            border-bottom: 1px solid #333;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f5f5f5;
+        }
+        
+        .totales {
+            text-align: right;
+            margin-top: 20px;
+        }
+        
+        .totales table {
+            margin-left: auto;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="empresa-info">
+            <h1>{{empresa.nombre}}</h1>
+            <p><strong>NIF:</strong> {{empresa.nif}}</p>
+            <p><strong>Dirección:</strong> {{empresa.direccion}}</p>
+            <p><strong>Teléfono:</strong> {{empresa.telefono}}</p>
+        </div>
+        <div class="documento-info">
+            <h2>ENTREGA Y GARANTÍA</h2>
+            <p><strong>Ticket:</strong> {{ticket.codigo}}</p>
+            <p><strong>Fecha:</strong> {{fecha_actual}}</p>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <h3>DATOS DEL CLIENTE</h3>
+        <p><strong>Nombre:</strong> {{cliente.nombre}}</p>
+        <p><strong>Teléfono:</strong> {{cliente.telefono}}</p>
+        <p><strong>Email:</strong> {{cliente.email}}</p>
+    </div>
+
+    <div class="info-box">
+        <h3>EQUIPO REPARADO</h3>
+        <p><strong>Tipo:</strong> {{equipo.tipo}}</p>
+        <p><strong>Marca/Modelo:</strong> {{equipo.marca}} {{equipo.modelo}}</p>
+        <p><strong>Nº Serie:</strong> {{equipo.serie}}</p>
+        <p><strong>Fecha Entrada:</strong> {{ticket.fecha_entrada}}</p>
+        <p><strong>Fecha Entrega:</strong> {{fecha_actual}}</p>
+    </div>
+
+    <div class="trabajo-realizado">
+        <h3>TRABAJO REALIZADO</h3>
+        <p><strong>Problema Inicial:</strong> {{ticket.averia_cliente}}</p>
+        <p><strong>Diagnóstico:</strong> {{ticket.diagnostico}}</p>
+        
+        <h4>Detalle de Reparación:</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{lineas}}
+            </tbody>
+        </table>
+        
+        <div class="totales">
+            <table>
+                <tr>
+                    <td>Subtotal:</td>
+                    <td>{{totales.subtotal}}</td>
+                </tr>
+                <tr>
+                    <td>IVA:</td>
+                    <td>{{totales.iva}}</td>
+                </tr>
+                <tr style="font-weight: bold;">
+                    <td>TOTAL PAGADO:</td>
+                    <td>{{totales.total}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="garantia-box">
+        <h3>🛡️ CONDICIONES DE GARANTÍA</h3>
+        <ul>
+            <li><strong>Duración:</strong> 90 días desde la fecha de entrega</li>
+            <li><strong>Cobertura:</strong> Defectos en el trabajo de reparación realizado</li>
+            <li><strong>Incluye:</strong> Reposición gratuita de piezas defectuosas instaladas</li>
+            <li><strong>No incluye:</strong> Nuevas averías, daños por mal uso, líquidos o golpes</li>
+            <li><strong>Requisitos:</strong> Presentar este documento para hacer efectiva la garantía</li>
+        </ul>
+        
+        <div style="margin-top: 15px; padding: 10px; background-color: #fff; border-radius: 4px;">
+            <p><strong>⚠️ IMPORTANTE:</strong> La garantía queda anulada si el equipo es manipulado por personal no autorizado o si se detectan daños posteriores no relacionados con la reparación realizada.</p>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <h3>📞 SOPORTE POST-VENTA</h3>
+        <p>Para cualquier consulta relacionada con la reparación realizada:</p>
+        <p><strong>Teléfono:</strong> {{empresa.telefono}}</p>
+        <p><strong>Email:</strong> {{empresa.email}}</p>
+        <p><strong>Horario:</strong> Lunes a Viernes, 9:00 - 18:00</p>
+    </div>
+
+    <div class="firma-section">
+        <div class="firma-box">
+            <div class="firma-linea"></div>
+            <p><strong>CONFORMIDAD DEL CLIENTE</strong></p>
+            <p>{{cliente.nombre}}</p>
+            <p><small>Acepto el equipo y las condiciones de garantía</small></p>
+        </div>
+        <div class="firma-box">
+            <div class="firma-linea"></div>
+            <p><strong>ENTREGA REALIZADA POR</strong></p>
+            <p>{{empresa.nombre}}</p>
+            <p><small>Fecha: {{fecha_actual}}</small></p>
+        </div>
+    </div>
+
+    <div style="margin-top: 30px; font-size: 10px; text-align: center; color: #666; border-top: 1px solid #ccc; padding-top: 10px;">
+        {{pie_legal}} - Documento de entrega generado el {{fecha_actual}}<br>
+        <strong>CONSERVE ESTE DOCUMENTO PARA HACER EFECTIVA LA GARANTÍA</strong>
+    </div>
+</body>
+</html>

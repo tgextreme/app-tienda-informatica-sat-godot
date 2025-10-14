@@ -1,0 +1,205 @@
+[gd_scene load_steps=2 format=3 uid="uid://bq1sn11qlb3m8"]
+
+[ext_resource type="Script" path="res://ui/gestionar_clientes.gd" id="1_4k7n5"]
+
+[node name="GestionarClientes" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_4k7n5")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="ToolsPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+
+[node name="ToolsContent" type="HBoxContainer" parent="MainContainer/ToolsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 15.0
+offset_right = -20.0
+offset_bottom = -15.0
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ToolsPanel/ToolsContent"]
+layout_mode = 2
+text = "👥 GESTIONAR CLIENTES"
+vertical_alignment = 1
+add_theme_font_size_override("font_size", 24)
+
+[node name="HSeparator" type="Control" parent="MainContainer/ToolsPanel/ToolsContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SearchContainer" type="HBoxContainer" parent="MainContainer/ToolsPanel/ToolsContent"]
+layout_mode = 2
+
+[node name="SearchLabel" type="Label" parent="MainContainer/ToolsPanel/ToolsContent/SearchContainer"]
+layout_mode = 2
+text = "🔍 Buscar:"
+vertical_alignment = 1
+
+[node name="SearchInput" type="LineEdit" parent="MainContainer/ToolsPanel/ToolsContent/SearchContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(250, 35)
+placeholder_text = "Escriba para buscar clientes..."
+
+[node name="ActionContainer" type="HBoxContainer" parent="MainContainer/ToolsPanel/ToolsContent"]
+layout_mode = 2
+add_theme_constant_override("separation", 10)
+
+[node name="NuevoBtn" type="Button" parent="MainContainer/ToolsPanel/ToolsContent/ActionContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(140, 40)
+text = "➕ NUEVO"
+
+[node name="VolverBtn" type="Button" parent="MainContainer/ToolsPanel/ToolsContent/ActionContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 40)
+text = "🔙 VOLVER"
+
+[node name="ClientsPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ClientsContent" type="VBoxContainer" parent="MainContainer/ClientsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="InfoLabel" type="Label" parent="MainContainer/ClientsPanel/ClientsContent"]
+layout_mode = 2
+text = "📊 Total de clientes: 0"
+vertical_alignment = 1
+
+[node name="ClientsScroll" type="ScrollContainer" parent="MainContainer/ClientsPanel/ClientsContent"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ClientsList" type="VBoxContainer" parent="MainContainer/ClientsPanel/ClientsContent/ClientsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeaderContent" type="HBoxContainer" parent="MainContainer/Header"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 10.0
+offset_right = -20.0
+offset_bottom = -10.0
+
+[node name="Icon" type="Label" parent="MainContainer/Header/HeaderContent"]
+layout_mode = 2
+text = "👥"
+label_settings = SubResource("LabelSettings_id_1")
+
+[node name="Title" type="Label" parent="MainContainer/Header/HeaderContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "GESTIÓN DE CLIENTES"
+label_settings = SubResource("LabelSettings_id_2")
+
+[node name="BackButton" type="Button" parent="MainContainer/Header/HeaderContent"]
+layout_mode = 2
+text = "🏠 VOLVER AL MENÚ"
+
+[node name="ToolsPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 60)
+
+[node name="ToolsContent" type="HBoxContainer" parent="MainContainer/ToolsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 10.0
+offset_right = -15.0
+offset_bottom = -10.0
+
+[node name="NewClientButton" type="Button" parent="MainContainer/ToolsPanel/ToolsContent"]
+layout_mode = 2
+text = "➕ NUEVO CLIENTE"
+
+[node name="SearchContainer" type="HBoxContainer" parent="MainContainer/ToolsPanel/ToolsContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SearchLabel" type="Label" parent="MainContainer/ToolsPanel/ToolsContent/SearchContainer"]
+layout_mode = 2
+text = "🔍 Buscar:"
+
+[node name="SearchInput" type="LineEdit" parent="MainContainer/ToolsPanel/ToolsContent/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Escriba nombre, teléfono o email..."
+
+[node name="RefreshButton" type="Button" parent="MainContainer/ToolsPanel/ToolsContent"]
+layout_mode = 2
+text = "🔄 ACTUALIZAR"
+
+[node name="ClientsPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ClientsContent" type="VBoxContainer" parent="MainContainer/ClientsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+
+[node name="InfoLabel" type="Label" parent="MainContainer/ClientsPanel/ClientsContent"]
+layout_mode = 2
+text = "📊 Total de clientes: 0"
+
+[node name="Separator" type="HSeparator" parent="MainContainer/ClientsPanel/ClientsContent"]
+layout_mode = 2
+
+[node name="ClientsScroll" type="ScrollContainer" parent="MainContainer/ClientsPanel/ClientsContent"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ClientsList" type="VBoxContainer" parent="MainContainer/ClientsPanel/ClientsContent/ClientsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[connection signal="pressed" from="MainContainer/Header/HeaderContent/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MainContainer/ToolsPanel/ToolsContent/NewClientButton" to="." method="_on_new_client_button_pressed"]
+[connection signal="text_changed" from="MainContainer/ToolsPanel/ToolsContent/SearchContainer/SearchInput" to="." method="_on_search_input_text_changed"]
+[connection signal="pressed" from="MainContainer/ToolsPanel/ToolsContent/RefreshButton" to="." method="_on_refresh_button_pressed"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_id_1"]
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_id_2"]
+font_size = 24
+font_color = Color(0.4, 0.8, 1, 1)

@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://dx7k5m3oap2q1"]
+
+[ext_resource type="Script" path="res://diagnostico_router.gd" id="1"]
+
+[node name="DiagnosticoRouter" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")

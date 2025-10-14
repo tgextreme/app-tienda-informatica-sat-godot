@@ -1,0 +1,86 @@
+[gd_scene load_steps=2 format=3 uid="uid://dtbfr6fovpyds"]
+
+[ext_resource type="Script" path="res://ui/login.gd" id="1_0ykjr"]
+
+[node name="Login" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_0ykjr")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.15, 0.15, 0.15, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="LoginPanel" type="Panel" parent="CenterContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(400, 300)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/LoginPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="Title" type="Label" parent="CenterContainer/LoginPanel/VBoxContainer"]
+layout_mode = 2
+text = "TIENDA SAT"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="CenterContainer/LoginPanel/VBoxContainer"]
+layout_mode = 2
+text = "Sistema de Gestión de Reparaciones"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/LoginPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="EmailLabel" type="Label" parent="CenterContainer/LoginPanel/VBoxContainer"]
+layout_mode = 2
+text = "Email:"
+
+[node name="EmailInput" type="LineEdit" parent="CenterContainer/LoginPanel/VBoxContainer"]
+layout_mode = 2
+text = "admin@tienda-sat.com"
+placeholder_text = "Ingrese su email"
+
+[node name="PasswordLabel" type="Label" parent="CenterContainer/LoginPanel/VBoxContainer"]
+layout_mode = 2
+text = "Contraseña:"
+
+[node name="PasswordInput" type="LineEdit" parent="CenterContainer/LoginPanel/VBoxContainer"]
+layout_mode = 2
+text = "admin123"
+placeholder_text = "Ingrese su contraseña"
+secret = true
+
+[node name="RememberCheck" type="CheckBox" parent="CenterContainer/LoginPanel/VBoxContainer"]
+layout_mode = 2
+text = "Recordar sesión"
+
+[node name="LoginButton" type="Button" parent="CenterContainer/LoginPanel/VBoxContainer"]
+layout_mode = 2
+text = "INICIAR SESIÓN"
+
+[node name="ErrorLabel" type="Label" parent="CenterContainer/LoginPanel/VBoxContainer"]
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+modulate = Color(1, 0.4, 0.4, 1)
+
+[connection signal="pressed" from="CenterContainer/LoginPanel/VBoxContainer/LoginButton" to="." method="_on_login_button_pressed"]

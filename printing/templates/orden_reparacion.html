@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orden de Reparación - {{ticket.codigo}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .empresa-info h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .documento-info h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #666;
+        }
+        
+        .info-section {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .info-col {
+            flex: 1;
+            margin-right: 20px;
+        }
+        
+        .averia-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .importante {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .checklist {
+            background-color: #d1ecf1;
+            border: 1px solid #b8daff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .checklist ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .firma-section {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .firma-box {
+            width: 200px;
+            text-align: center;
+        }
+        
+        .firma-linea {
+            border-bottom: 1px solid #333;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="empresa-info">
+            <h1>{{empresa.nombre}}</h1>
+            <p><strong>NIF:</strong> {{empresa.nif}}</p>
+            <p><strong>Teléfono:</strong> {{empresa.telefono}}</p>
+        </div>
+        <div class="documento-info">
+            <h2>ORDEN DE REPARACIÓN</h2>
+            <p><strong>Ticket:</strong> {{ticket.codigo}}</p>
+            <p><strong>Fecha:</strong> {{fecha_actual}}</p>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <h3>DATOS DEL CLIENTE</h3>
+        <div class="info-row">
+            <div class="info-col">
+                <p><strong>Nombre:</strong> {{cliente.nombre}}</p>
+                <p><strong>Teléfono:</strong> {{cliente.telefono}}</p>
+            </div>
+            <div class="info-col">
+                <p><strong>Email:</strong> {{cliente.email}}</p>
+                <p><strong>Fecha Entrada:</strong> {{ticket.fecha_entrada}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <h3>EQUIPO A REPARAR</h3>
+        <p><strong>Tipo:</strong> {{equipo.tipo}}</p>
+        <p><strong>Marca/Modelo:</strong> {{equipo.marca}} {{equipo.modelo}}</p>
+        <p><strong>Nº Serie:</strong> {{equipo.serie}}</p>
+    </div>
+
+    <div class="averia-box">
+        <h3>AVERÍA REPORTADA</h3>
+        <p>{{ticket.averia_cliente}}</p>
+    </div>
+
+    <div class="averia-box">
+        <h3>DIAGNÓSTICO TÉCNICO</h3>
+        <p>{{ticket.diagnostico}}</p>
+    </div>
+
+    <div class="importante">
+        <h3>⚠️ INFORMACIÓN IMPORTANTE</h3>
+        <ul>
+            <li><strong>NO NOS HACEMOS RESPONSABLES DE LA PÉRDIDA DE DATOS</strong></li>
+            <li>Se recomienda hacer copia de seguridad antes de la reparación</li>
+            <li>El cliente declara que el equipo es de su propiedad legítima</li>
+            <li>Cualquier contraseña o bloqueo debe ser comunicado al técnico</li>
+        </ul>
+    </div>
+
+    <div class="checklist">
+        <h3>📋 CHECKLIST DE ENTREGA</h3>
+        <ul>
+            <li>☐ Equipo principal entregado</li>
+            <li>☐ Cargador/Fuente de alimentación</li>
+            <li>☐ Cables adicionales</li>
+            <li>☐ Accesorios: _________________________________</li>
+            <li>☐ Contraseñas/Códigos proporcionados</li>
+            <li>☐ Estado físico del equipo documentado</li>
+        </ul>
+    </div>
+
+    <div class="info-section">
+        <h3>OBSERVACIONES ADICIONALES</h3>
+        <div style="border: 1px solid #ddd; height: 100px; margin: 10px 0;"></div>
+    </div>
+
+    <div class="firma-section">
+        <div class="firma-box">
+            <div class="firma-linea"></div>
+            <p><strong>FIRMA DEL CLIENTE</strong></p>
+            <p>{{cliente.nombre}}</p>
+        </div>
+        <div class="firma-box">
+            <div class="firma-linea"></div>
+            <p><strong>TÉCNICO RESPONSABLE</strong></p>
+            <p>Fecha: {{fecha_actual}}</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 30px; font-size: 10px; text-align: center; color: #666;">
+        {{pie_legal}} - Orden generada el {{fecha_actual}}
+    </div>
+</body>
+</html>

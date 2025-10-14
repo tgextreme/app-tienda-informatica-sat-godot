@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presupuesto SAT - {{ticket.codigo}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .empresa-info {
+            flex: 1;
+        }
+        
+        .empresa-info h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .documento-info {
+            text-align: right;
+            flex: 1;
+        }
+        
+        .documento-info h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #666;
+        }
+        
+        .info-section {
+            margin-bottom: 20px;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .info-col {
+            flex: 1;
+            margin-right: 20px;
+        }
+        
+        .info-col:last-child {
+            margin-right: 0;
+        }
+        
+        .info-col h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #333;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+        
+        .info-col p {
+            margin: 5px 0;
+        }
+        
+        .table-container {
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        
+        .totales {
+            margin-top: 20px;
+            text-align: right;
+        }
+        
+        .totales table {
+            margin-left: auto;
+            width: 300px;
+        }
+        
+        .total-final {
+            font-weight: bold;
+            font-size: 16px;
+            background-color: #f0f0f0;
+        }
+        
+        .condiciones {
+            margin-top: 30px;
+            font-size: 10px;
+            color: #666;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+        
+        .averia-box {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="empresa-info">
+            <h1>{{empresa.nombre}}</h1>
+            <p><strong>NIF:</strong> {{empresa.nif}}</p>
+            <p><strong>Dirección:</strong> {{empresa.direccion}}</p>
+            <p><strong>Teléfono:</strong> {{empresa.telefono}}</p>
+            <p><strong>Email:</strong> {{empresa.email}}</p>
+        </div>
+        <div class="documento-info">
+            <h2>PRESUPUESTO</h2>
+            <p><strong>Número:</strong> {{ticket.codigo}}</p>
+            <p><strong>Fecha:</strong> {{fecha_actual}}</p>
+            <p><strong>Estado:</strong> {{ticket.estado}}</p>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <div class="info-row">
+            <div class="info-col">
+                <h3>DATOS DEL CLIENTE</h3>
+                <p><strong>Nombre:</strong> {{cliente.nombre}}</p>
+                <p><strong>Teléfono:</strong> {{cliente.telefono}}</p>
+                <p><strong>Email:</strong> {{cliente.email}}</p>
+            </div>
+            <div class="info-col">
+                <h3>DATOS DEL EQUIPO</h3>
+                <p><strong>Tipo:</strong> {{equipo.tipo}}</p>
+                <p><strong>Marca/Modelo:</strong> {{equipo.marca}} {{equipo.modelo}}</p>
+                <p><strong>Nº Serie:</strong> {{equipo.serie}}</p>
+                <p><strong>Fecha Entrada:</strong> {{ticket.fecha_entrada}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <h3>AVERÍA REPORTADA POR EL CLIENTE</h3>
+        <div class="averia-box">
+            {{ticket.averia_cliente}}
+        </div>
+    </div>
+
+    <div class="info-section">
+        <h3>DIAGNÓSTICO TÉCNICO</h3>
+        <div class="averia-box">
+            {{ticket.diagnostico}}
+        </div>
+    </div>
+
+    <div class="table-container">
+        <h3>DETALLE DEL PRESUPUESTO</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th style="width: 80px;">Cant.</th>
+                    <th style="width: 80px;">Precio Unit.</th>
+                    <th style="width: 60px;">IVA</th>
+                    <th style="width: 100px;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{lineas}}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="totales">
+        <table>
+            <tr>
+                <td>Subtotal:</td>
+                <td style="text-align: right;">{{totales.subtotal}}</td>
+            </tr>
+            <tr>
+                <td>IVA:</td>
+                <td style="text-align: right;">{{totales.iva}}</td>
+            </tr>
+            <tr class="total-final">
+                <td><strong>TOTAL:</strong></td>
+                <td style="text-align: right;"><strong>{{totales.total}}</strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="condiciones">
+        <h4>CONDICIONES GENERALES</h4>
+        <ul>
+            <li>Presupuesto válido durante 15 días desde la fecha de emisión.</li>
+            <li>Los precios incluyen IVA cuando se especifica.</li>
+            <li>Para proceder con la reparación es necesaria la aprobación expresa del cliente.</li>
+            <li>Los equipos no retirados en 3 meses podrán ser desechados sin previo aviso.</li>
+            <li>La garantía de reparación es de 90 días por defectos en el trabajo realizado.</li>
+            <li>No nos hacemos responsables de la pérdida de datos.</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        {{pie_legal}} - Presupuesto generado el {{fecha_actual}}
+    </div>
+</body>
+</html>

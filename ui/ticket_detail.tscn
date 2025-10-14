@@ -1,0 +1,326 @@
+[gd_scene load_steps=2 format=3 uid="uid://dd6wj8c8qmhnu"]
+
+[ext_resource type="Script" path="res://ui/ticket_detail.gd" id="1_v2qxp"]
+
+[node name="TicketDetail" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_v2qxp")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+
+[node name="HeaderContent" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CodigoLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+text = "Código del Ticket"
+theme_override_font_sizes/font_size = 20
+
+[node name="VSeparator" type="VSeparator" parent="MainContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+
+[node name="EstadoLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+text = "Estado"
+theme_override_font_sizes/font_size = 16
+
+[node name="HSeparator" type="HSeparator" parent="MainContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FechaEntradaLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+text = "Fecha de entrada"
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+
+[node name="HSeparator1" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="ContentContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftColumn" type="VBoxContainer" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ClientePanel" type="Panel" parent="MainContainer/ContentContainer/LeftColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ClienteTitle" type="Label" parent="MainContainer/ContentContainer/LeftColumn/ClientePanel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 15.0
+offset_top = 10.0
+offset_right = -15.0
+offset_bottom = 35.0
+grow_horizontal = 2
+text = "👤 CLIENTE"
+theme_override_font_sizes/font_size = 16
+
+[node name="ClienteContent" type="VBoxContainer" parent="MainContainer/ContentContainer/LeftColumn/ClientePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 40.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NombreLabel" type="Label" parent="MainContainer/ContentContainer/LeftColumn/ClientePanel/ClienteContent"]
+layout_mode = 2
+text = "Nombre del cliente"
+theme_override_font_sizes/font_size = 14
+
+[node name="TelefonoLabel" type="Label" parent="MainContainer/ContentContainer/LeftColumn/ClientePanel/ClienteContent"]
+layout_mode = 2
+text = "Teléfono del cliente"
+theme_override_font_sizes/font_size = 12
+
+[node name="EmailLabel" type="Label" parent="MainContainer/ContentContainer/LeftColumn/ClientePanel/ClienteContent"]
+layout_mode = 2
+text = "Email del cliente"
+theme_override_font_sizes/font_size = 12
+
+[node name="HSeparator2" type="HSeparator" parent="MainContainer/ContentContainer/LeftColumn"]
+layout_mode = 2
+
+[node name="EquipoPanel" type="Panel" parent="MainContainer/ContentContainer/LeftColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EquipoTitle" type="Label" parent="MainContainer/ContentContainer/LeftColumn/EquipoPanel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 15.0
+offset_top = 10.0
+offset_right = -15.0
+offset_bottom = 35.0
+grow_horizontal = 2
+text = "💻 EQUIPO"
+theme_override_font_sizes/font_size = 16
+
+[node name="EquipoContent" type="VBoxContainer" parent="MainContainer/ContentContainer/LeftColumn/EquipoPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 40.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TipoLabel" type="Label" parent="MainContainer/ContentContainer/LeftColumn/EquipoPanel/EquipoContent"]
+layout_mode = 2
+text = "Tipo de equipo"
+theme_override_font_sizes/font_size = 14
+
+[node name="MarcaLabel" type="Label" parent="MainContainer/ContentContainer/LeftColumn/EquipoPanel/EquipoContent"]
+layout_mode = 2
+text = "Marca del equipo"
+theme_override_font_sizes/font_size = 12
+
+[node name="ModeloLabel" type="Label" parent="MainContainer/ContentContainer/LeftColumn/EquipoPanel/EquipoContent"]
+layout_mode = 2
+text = "Modelo del equipo"
+theme_override_font_sizes/font_size = 12
+
+[node name="SerieLabel" type="Label" parent="MainContainer/ContentContainer/LeftColumn/EquipoPanel/EquipoContent"]
+layout_mode = 2
+text = "Serie del equipo"
+theme_override_font_sizes/font_size = 12
+
+[node name="VSeparator2" type="VSeparator" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+
+[node name="RightColumn" type="VBoxContainer" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AveriaPanel" type="Panel" parent="MainContainer/ContentContainer/RightColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="AveriaTitle" type="Label" parent="MainContainer/ContentContainer/RightColumn/AveriaPanel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 15.0
+offset_top = 10.0
+offset_right = -15.0
+offset_bottom = 35.0
+grow_horizontal = 2
+text = "🔧 AVERÍA"
+theme_override_font_sizes/font_size = 16
+
+[node name="AveriaContent" type="VBoxContainer" parent="MainContainer/ContentContainer/RightColumn/AveriaPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 40.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ClienteTitle2" type="Label" parent="MainContainer/ContentContainer/RightColumn/AveriaPanel/AveriaContent"]
+layout_mode = 2
+text = "Descripción del cliente:"
+theme_override_font_sizes/font_size = 12
+
+[node name="ClienteText" type="TextEdit" parent="MainContainer/ContentContainer/RightColumn/AveriaPanel/AveriaContent"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Descripción de la avería reportada por el cliente"
+editable = false
+
+[node name="TecnicoTitle" type="Label" parent="MainContainer/ContentContainer/RightColumn/AveriaPanel/AveriaContent"]
+layout_mode = 2
+text = "Diagnóstico técnico:"
+theme_override_font_sizes/font_size = 12
+
+[node name="TecnicoText" type="TextEdit" parent="MainContainer/ContentContainer/RightColumn/AveriaPanel/AveriaContent"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Diagnóstico y observaciones del técnico"
+editable = false
+
+[node name="HSeparator3" type="HSeparator" parent="MainContainer/ContentContainer/RightColumn"]
+layout_mode = 2
+
+[node name="TecnicoPanel" type="Panel" parent="MainContainer/ContentContainer/RightColumn"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 120)
+
+[node name="TecnicoTitle" type="Label" parent="MainContainer/ContentContainer/RightColumn/TecnicoPanel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 15.0
+offset_top = 10.0
+offset_right = -15.0
+offset_bottom = 35.0
+grow_horizontal = 2
+text = "👨‍🔧 ASIGNACIÓN"
+theme_override_font_sizes/font_size = 16
+
+[node name="TecnicoContent" type="VBoxContainer" parent="MainContainer/ContentContainer/RightColumn/TecnicoPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 40.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TecnicoLabel" type="Label" parent="MainContainer/ContentContainer/RightColumn/TecnicoPanel/TecnicoContent"]
+layout_mode = 2
+text = "Técnico asignado"
+theme_override_font_sizes/font_size = 14
+
+[node name="PrioridadLabel" type="Label" parent="MainContainer/ContentContainer/RightColumn/TecnicoPanel/TecnicoContent"]
+layout_mode = 2
+text = "Prioridad"
+theme_override_font_sizes/font_size = 12
+
+[node name="HSeparator4" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="ButtonsPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 60)
+
+[node name="ButtonsContent" type="HBoxContainer" parent="MainContainer/ButtonsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="EditarButton" type="Button" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+text = "✏️ Editar"
+theme_override_font_sizes/font_size = 14
+
+[node name="ExportarHTMLButton" type="Button" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+text = "🌐 HTML"
+theme_override_font_sizes/font_size = 14
+
+[node name="ExportarPDFButton" type="Button" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+text = "📄 PDF"
+theme_override_font_sizes/font_size = 14
+
+[node name="CambiarEstadoButton" type="Button" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+text = "🔄 Estado"
+theme_override_font_sizes/font_size = 14
+
+[node name="AsignarTecnicoButton" type="Button" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+text = "👨‍💻 Técnico"
+theme_override_font_sizes/font_size = 14
+
+[node name="HSeparator" type="HSeparator" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VolverButton" type="Button" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+text = "🔙 Volver"
+theme_override_font_sizes/font_size = 14
+
+[connection signal="pressed" from="MainContainer/ButtonsPanel/ButtonsContent/EditarButton" to="." method="_on_editar_button_pressed"]
+[connection signal="pressed" from="MainContainer/ButtonsPanel/ButtonsContent/ExportarHTMLButton" to="." method="_on_exportar_html_button_pressed"]
+[connection signal="pressed" from="MainContainer/ButtonsPanel/ButtonsContent/ExportarPDFButton" to="." method="_on_exportar_pdf_button_pressed"]
+[connection signal="pressed" from="MainContainer/ButtonsPanel/ButtonsContent/CambiarEstadoButton" to="." method="_on_cambiar_estado_button_pressed"]
+[connection signal="pressed" from="MainContainer/ButtonsPanel/ButtonsContent/AsignarTecnicoButton" to="." method="_on_asignar_tecnico_button_pressed"]
+[connection signal="pressed" from="MainContainer/ButtonsPanel/ButtonsContent/VolverButton" to="." method="_on_volver_button_pressed"]

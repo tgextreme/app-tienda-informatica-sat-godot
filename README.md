@@ -1,6 +1,10 @@
-# 🔧 Tienda SAT - Sistema de Gestión de Reparaciones
+# 🔧 Sistema SAT - Gestión de Servicio de Atención Técnica
 
-Una aplicación completa desarrollada en **Godot 4.x** para la gestión integral de un servicio técnico de reparación de equipos informáticos.
+![Godot Engine](https://img.shields.io/badge/Godot-v4.5-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Platform](https://img.shields.io/badge/Platform-Windows%20|%20Linux%20|%20macOS-lightgrey)
+
+Sistema completo de gestión para servicios de atención técnica de tiendas de informática, desarrollado en **Godot Engine 4.5** por **Tomás González**.
 
 ## ✨ Características Principales
 
@@ -239,9 +243,24 @@ Las plantillas HTML están en `/printing/templates/`:
 - [ ] Facturación completa con series
 - [ ] Contabilidad básica
 
+## 🏆 Créditos
+
+**Desarrollado por**: Tomás González  
+**Año**: 2025  
+**Motor**: Godot Engine 4.5  
+**Versión**: 1.0.0
+
+### Agradecimientos
+
+- Comunidad de Godot Engine por la documentación y recursos
+- Usuarios beta que ayudaron a probar el sistema
+- Tiendas de informática que proporcionaron feedback valioso
+
 ## 📄 Licencia
 
-Este proyecto ha sido desarrollado como una solución completa para tiendas de reparación. 
+Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
+
+**Copyright (c) 2025 Tomás González**
 
 ## 🤝 Soporte
 
@@ -250,7 +269,16 @@ Para soporte técnico, personalización o nuevas funcionalidades:
 - Comprobar los logs de Godot en caso de errores
 - El código está completamente documentado para facilitar modificaciones
 
+## 🌟 ¿Te gusta el proyecto?
+
+Si este sistema te ha sido útil, considera:
+- ⭐ Dar una estrella al repositorio
+- 🍴 Hacer un fork para contribuir
+- 📢 Compartir con otros técnicos
+- 🐛 Reportar bugs o sugerir mejoras
+
 ---
 
-**¡Desarrollado con ❤️ en Godot Engine!**#   a p p - t i e n d a - i n f o r m a t i c a - s a t - g o d o t  
+**¡Desarrollado con ❤️ en Godot Engine por Tomás González!**#   a p p - t i e n d a - i n f o r m a t i c a - s a t - g o d o t 
+ 
  

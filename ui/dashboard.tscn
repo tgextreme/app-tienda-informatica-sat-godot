@@ -1,0 +1,155 @@
+[gd_scene load_steps=2 format=3 uid="uid://bx7bmh7uqxlah"]
+
+[ext_resource type="Script" path="res://ui/dashboard.gd" id="1_fsc1g"]
+
+[node name="Dashboard" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_fsc1g")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopBar" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Dashboard SAT"
+
+[node name="UserLabel" type="Label" parent="VBoxContainer/TopBar"]
+layout_mode = 2
+text = "Usuario: "
+
+[node name="LogoutButton" type="Button" parent="VBoxContainer/TopBar"]
+layout_mode = 2
+text = "Cerrar Sesión"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="MainContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="VBoxContainer" parent="VBoxContainer/MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+
+[node name="KPIContainer" type="VBoxContainer" parent="VBoxContainer/MainContainer/LeftPanel"]
+layout_mode = 2
+
+[node name="KPITitle" type="Label" parent="VBoxContainer/MainContainer/LeftPanel/KPIContainer"]
+layout_mode = 2
+text = "Resumen General"
+
+[node name="TicketsHoyPanel" type="Panel" parent="VBoxContainer/MainContainer/LeftPanel/KPIContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 60)
+
+[node name="VBox" type="VBoxContainer" parent="VBoxContainer/MainContainer/LeftPanel/KPIContainer/TicketsHoyPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = -10.0
+offset_bottom = -5.0
+
+[node name="Title" type="Label" parent="VBoxContainer/MainContainer/LeftPanel/KPIContainer/TicketsHoyPanel/VBox"]
+layout_mode = 2
+text = "Tickets Hoy"
+
+[node name="Value" type="Label" parent="VBoxContainer/MainContainer/LeftPanel/KPIContainer/TicketsHoyPanel/VBox"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+
+[node name="StockBajoPanel" type="Panel" parent="VBoxContainer/MainContainer/LeftPanel/KPIContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 60)
+
+[node name="VBox2" type="VBoxContainer" parent="VBoxContainer/MainContainer/LeftPanel/KPIContainer/StockBajoPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = -10.0
+offset_bottom = -5.0
+
+[node name="Title" type="Label" parent="VBoxContainer/MainContainer/LeftPanel/KPIContainer/StockBajoPanel/VBox2"]
+layout_mode = 2
+text = "Stock Bajo"
+
+[node name="Value" type="Label" parent="VBoxContainer/MainContainer/LeftPanel/KPIContainer/StockBajoPanel/VBox2"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+
+[node name="AccesosRapidos" type="VBoxContainer" parent="VBoxContainer/MainContainer/LeftPanel"]
+layout_mode = 2
+
+[node name="AccesosTitle" type="Label" parent="VBoxContainer/MainContainer/LeftPanel/AccesosRapidos"]
+layout_mode = 2
+text = "Accesos Rápidos"
+
+[node name="NuevoTicketBtn" type="Button" parent="VBoxContainer/MainContainer/LeftPanel/AccesosRapidos"]
+layout_mode = 2
+text = "➕ Nuevo Ticket"
+
+[node name="VerTicketsBtn" type="Button" parent="VBoxContainer/MainContainer/LeftPanel/AccesosRapidos"]
+layout_mode = 2
+text = "📋 Ver Tickets"
+
+[node name="InventarioBtn" type="Button" parent="VBoxContainer/MainContainer/LeftPanel/AccesosRapidos"]
+layout_mode = 2
+text = "📦 Inventario"
+
+[node name="ClientesBtn" type="Button" parent="VBoxContainer/MainContainer/LeftPanel/AccesosRapidos"]
+layout_mode = 2
+text = "👥 Clientes"
+
+[node name="EmpleadosBtn" type="Button" parent="VBoxContainer/MainContainer/LeftPanel/AccesosRapidos"]
+layout_mode = 2
+text = "👨‍💼 Empleados"
+
+[node name="CenterPanel" type="VBoxContainer" parent="VBoxContainer/MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.7
+
+[node name="EstadosTitle" type="Label" parent="VBoxContainer/MainContainer/CenterPanel"]
+layout_mode = 2
+text = "Tickets por Estado"
+
+[node name="EstadosContainer" type="GridContainer" parent="VBoxContainer/MainContainer/CenterPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 3
+
+[node name="UltimosTitle" type="Label" parent="VBoxContainer/MainContainer/CenterPanel"]
+layout_mode = 2
+text = "Últimos Tickets"
+
+[node name="UltimosTickets" type="Tree" parent="VBoxContainer/MainContainer/CenterPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 4
+
+[connection signal="pressed" from="VBoxContainer/TopBar/LogoutButton" to="." method="_on_logout_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/MainContainer/LeftPanel/AccesosRapidos/NuevoTicketBtn" to="." method="_on_nuevo_ticket_pressed"]
+[connection signal="pressed" from="VBoxContainer/MainContainer/LeftPanel/AccesosRapidos/VerTicketsBtn" to="." method="_on_ver_tickets_pressed"]
+[connection signal="pressed" from="VBoxContainer/MainContainer/LeftPanel/AccesosRapidos/InventarioBtn" to="." method="_on_inventario_pressed"]
+[connection signal="pressed" from="VBoxContainer/MainContainer/LeftPanel/AccesosRapidos/ClientesBtn" to="." method="_on_clientes_pressed"]
+[connection signal="pressed" from="VBoxContainer/MainContainer/LeftPanel/AccesosRapidos/EmpleadosBtn" to="." method="_on_empleados_pressed"]
+[connection signal="item_activated" from="VBoxContainer/MainContainer/CenterPanel/UltimosTickets" to="." method="_on_ultimos_tickets_item_activated"]

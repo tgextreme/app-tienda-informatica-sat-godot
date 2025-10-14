@@ -1,0 +1,468 @@
+[gd_scene load_steps=4 format=3 uid="uid://bvghta8tl1r0k"]
+
+[ext_resource type="Script" path="res://ui/nuevo_ticket.gd" id="1_nuevo"]
+
+[sub_resource type="StyleBoxFlat" id="panel_style"]
+bg_color = Color(0.25, 0.25, 0.25, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.6, 0.9, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="button_primary"]
+bg_color = Color(0.2, 0.7, 0.3, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.1, 0.5, 0.2, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="NuevoTicket" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_nuevo")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.12, 0.12, 0.12, 1)
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+
+[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="HeaderContent" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+
+[node name="LeftHeader" type="VBoxContainer" parent="MainContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContent/LeftHeader"]
+layout_mode = 2
+text = "📋 CREAR NUEVO TICKET SAT"
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+
+[node name="SubtitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContent/LeftHeader"]
+layout_mode = 2
+text = "Complete todos los campos necesarios para registrar el equipo"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+alignment = 2
+
+[node name="GuardarButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContent/ButtonsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 40)
+theme_override_styles/normal = SubResource("button_primary")
+theme_override_font_sizes/font_size = 14
+text = "💾 GUARDAR"
+
+[node name="CancelarButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContent/ButtonsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 40)
+theme_override_font_sizes/font_size = 14
+text = "❌ CANCELAR"
+
+[node name="HSeparator1" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="TabContainer" type="TabContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 14
+
+[node name="👤 CLIENTE" type="ScrollContainer" parent="MainContainer/TabContainer"]
+layout_mode = 2
+
+[node name="ClienteVBox" type="VBoxContainer" parent="MainContainer/TabContainer/👤 CLIENTE"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BuscarClientePanel" type="Panel" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 120)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="BuscarClienteContent" type="VBoxContainer" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/BuscarClientePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TituloBuscar" type="Label" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/BuscarClientePanel/BuscarClienteContent"]
+layout_mode = 2
+text = "🔍 BUSCAR CLIENTE EXISTENTE"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="BuscarContainer" type="HBoxContainer" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/BuscarClientePanel/BuscarClienteContent"]
+layout_mode = 2
+
+[node name="BuscarClienteInput" type="LineEdit" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/BuscarClientePanel/BuscarClienteContent/BuscarContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Escriba nombre, teléfono o email del cliente..."
+theme_override_font_sizes/font_size = 14
+
+[node name="BuscarClienteButton" type="Button" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/BuscarClientePanel/BuscarClienteContent/BuscarContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(100, 0)
+text = "🔍 BUSCAR"
+
+[node name="NuevoClienteButton" type="Button" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/BuscarClientePanel/BuscarClienteContent/BuscarContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+text = "➕ NUEVO"
+
+[node name="HSeparator2" type="HSeparator" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox"]
+layout_mode = 2
+
+[node name="ClienteSeleccionadoPanel" type="Panel" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 200)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="ClienteContent" type="VBoxContainer" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/ClienteSeleccionadoPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TituloCliente" type="Label" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/ClienteSeleccionadoPanel/ClienteContent"]
+layout_mode = 2
+text = "👤 CLIENTE SELECCIONADO"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="ClienteLabel" type="Label" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/ClienteSeleccionadoPanel/ClienteContent"]
+layout_mode = 2
+text = "Nombre: Ningún cliente seleccionado"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(1, 1, 0.7, 1)
+
+[node name="ClienteTelefono" type="Label" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/ClienteSeleccionadoPanel/ClienteContent"]
+layout_mode = 2
+text = "Teléfono: -"
+theme_override_font_sizes/font_size = 14
+
+[node name="ClienteEmail" type="Label" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/ClienteSeleccionadoPanel/ClienteContent"]
+layout_mode = 2
+text = "Email: -"
+theme_override_font_sizes/font_size = 14
+
+[node name="ClienteNIF" type="Label" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/ClienteSeleccionadoPanel/ClienteContent"]
+layout_mode = 2
+text = "NIF: -"
+theme_override_font_sizes/font_size = 14
+
+[node name="ClienteDireccion" type="Label" parent="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/ClienteSeleccionadoPanel/ClienteContent"]
+layout_mode = 2
+text = "Dirección: -"
+theme_override_font_sizes/font_size = 14
+
+[node name="💻 EQUIPO" type="ScrollContainer" parent="MainContainer/TabContainer"]
+layout_mode = 2
+
+[node name="EquipoVBox" type="VBoxContainer" parent="MainContainer/TabContainer/💻 EQUIPO"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DatosEquipoPanel" type="Panel" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 400)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="EquipoContent" type="VBoxContainer" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TituloEquipo" type="Label" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent"]
+layout_mode = 2
+text = "💻 INFORMACIÓN DEL EQUIPO"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="EquipoGrid" type="GridContainer" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent"]
+layout_mode = 2
+columns = 2
+
+[node name="TipoLabel" type="Label" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent/EquipoGrid"]
+layout_mode = 2
+text = "Tipo de Equipo: *"
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+
+[node name="TipoOption" type="OptionButton" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent/EquipoGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarcaLabel" type="Label" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent/EquipoGrid"]
+layout_mode = 2
+text = "Marca:"
+
+[node name="MarcaInput" type="LineEdit" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent/EquipoGrid"]
+layout_mode = 2
+placeholder_text = "Ej: HP, Dell, Samsung, Apple..."
+
+[node name="ModeloLabel" type="Label" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent/EquipoGrid"]
+layout_mode = 2
+text = "Modelo:"
+
+[node name="ModeloInput" type="LineEdit" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent/EquipoGrid"]
+layout_mode = 2
+placeholder_text = "Ej: Pavilion DV6, Galaxy S21, MacBook Pro..."
+
+[node name="SerieLabel" type="Label" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent/EquipoGrid"]
+layout_mode = 2
+text = "Nº Serie / IMEI:"
+
+[node name="SerieInput" type="LineEdit" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent/EquipoGrid"]
+layout_mode = 2
+placeholder_text = "Número de serie del equipo o IMEI del móvil"
+
+[node name="PasswordLabel" type="Label" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent/EquipoGrid"]
+layout_mode = 2
+text = "Password/PIN:"
+
+[node name="PasswordInput" type="LineEdit" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent/EquipoGrid"]
+layout_mode = 2
+placeholder_text = "Contraseña de bloqueo del equipo"
+secret = true
+
+[node name="AccesoriosLabel" type="Label" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent"]
+layout_mode = 2
+text = "Accesorios incluidos:"
+
+[node name="AccesoriosInput" type="TextEdit" parent="MainContainer/TabContainer/💻 EQUIPO/EquipoVBox/DatosEquipoPanel/EquipoContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+placeholder_text = "Cargador, funda, cables, ratón, etc..."
+
+[node name="🎫 TICKET" type="ScrollContainer" parent="MainContainer/TabContainer"]
+layout_mode = 2
+
+[node name="TicketVBox" type="VBoxContainer" parent="MainContainer/TabContainer/🎫 TICKET"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DatosTicketPanel" type="Panel" parent="MainContainer/TabContainer/🎫 TICKET/TicketVBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 300)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="TicketContent" type="VBoxContainer" parent="MainContainer/TabContainer/🎫 TICKET/TicketVBox/DatosTicketPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TituloTicket" type="Label" parent="MainContainer/TabContainer/🎫 TICKET/TicketVBox/DatosTicketPanel/TicketContent"]
+layout_mode = 2
+text = "🎫 DATOS DEL TICKET"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="TicketGrid" type="GridContainer" parent="MainContainer/TabContainer/🎫 TICKET/TicketVBox/DatosTicketPanel/TicketContent"]
+layout_mode = 2
+columns = 2
+
+[node name="CodigoLabel" type="Label" parent="MainContainer/TabContainer/🎫 TICKET/TicketVBox/DatosTicketPanel/TicketContent/TicketGrid"]
+layout_mode = 2
+text = "Código del Ticket:"
+
+[node name="CodigoValue" type="Label" parent="MainContainer/TabContainer/🎫 TICKET/TicketVBox/DatosTicketPanel/TicketContent/TicketGrid"]
+layout_mode = 2
+text = "Se generará automáticamente"
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+
+[node name="PrioridadLabel" type="Label" parent="MainContainer/TabContainer/🎫 TICKET/TicketVBox/DatosTicketPanel/TicketContent/TicketGrid"]
+layout_mode = 2
+text = "Prioridad:"
+
+[node name="PrioridadOption" type="OptionButton" parent="MainContainer/TabContainer/🎫 TICKET/TicketVBox/DatosTicketPanel/TicketContent/TicketGrid"]
+layout_mode = 2
+
+[node name="TecnicoLabel" type="Label" parent="MainContainer/TabContainer/🎫 TICKET/TicketVBox/DatosTicketPanel/TicketContent/TicketGrid"]
+layout_mode = 2
+text = "Técnico Asignado:"
+
+[node name="TecnicoOption" type="OptionButton" parent="MainContainer/TabContainer/🎫 TICKET/TicketVBox/DatosTicketPanel/TicketContent/TicketGrid"]
+layout_mode = 2
+
+[node name="EstadoLabel" type="Label" parent="MainContainer/TabContainer/🎫 TICKET/TicketVBox/DatosTicketPanel/TicketContent/TicketGrid"]
+layout_mode = 2
+text = "Estado Inicial:"
+
+[node name="EstadoValue" type="Label" parent="MainContainer/TabContainer/🎫 TICKET/TicketVBox/DatosTicketPanel/TicketContent/TicketGrid"]
+layout_mode = 2
+text = "NUEVO"
+theme_override_colors/font_color = Color(0.4, 1, 0.4, 1)
+
+[node name="🔧 AVERÍA" type="ScrollContainer" parent="MainContainer/TabContainer"]
+layout_mode = 2
+
+[node name="AveriaVBox" type="VBoxContainer" parent="MainContainer/TabContainer/🔧 AVERÍA"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DescripcionPanel" type="Panel" parent="MainContainer/TabContainer/🔧 AVERÍA/AveriaVBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 300)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="DescripcionContent" type="VBoxContainer" parent="MainContainer/TabContainer/🔧 AVERÍA/AveriaVBox/DescripcionPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TituloAveria" type="Label" parent="MainContainer/TabContainer/🔧 AVERÍA/AveriaVBox/DescripcionPanel/DescripcionContent"]
+layout_mode = 2
+text = "🔧 DESCRIPCIÓN DEL PROBLEMA"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="AveriaLabel" type="Label" parent="MainContainer/TabContainer/🔧 AVERÍA/AveriaVBox/DescripcionPanel/DescripcionContent"]
+layout_mode = 2
+text = "Problema reportado por el cliente: *"
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+
+[node name="AveriaInput" type="TextEdit" parent="MainContainer/TabContainer/🔧 AVERÍA/AveriaVBox/DescripcionPanel/DescripcionContent"]
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 150)
+placeholder_text = "Describa detalladamente el problema que reporta el cliente:
+- ¿Qué síntomas presenta?
+- ¿Cuándo comenzó el problema?
+- ¿Qué estaba haciendo cuando ocurrió?
+- ¿Ha intentado solucionarlo?"
+
+[node name="HSeparator3" type="HSeparator" parent="MainContainer/TabContainer/🔧 AVERÍA/AveriaVBox"]
+layout_mode = 2
+
+[node name="NotasPanel" type="Panel" parent="MainContainer/TabContainer/🔧 AVERÍA/AveriaVBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 200)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="NotasContent" type="VBoxContainer" parent="MainContainer/TabContainer/🔧 AVERÍA/AveriaVBox/NotasPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TituloNotas" type="Label" parent="MainContainer/TabContainer/🔧 AVERÍA/AveriaVBox/NotasPanel/NotasContent"]
+layout_mode = 2
+text = "📝 NOTAS ADICIONALES"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="NotasLabel" type="Label" parent="MainContainer/TabContainer/🔧 AVERÍA/AveriaVBox/NotasPanel/NotasContent"]
+layout_mode = 2
+text = "Información adicional para el cliente:"
+
+[node name="NotasInput" type="TextEdit" parent="MainContainer/TabContainer/🔧 AVERÍA/AveriaVBox/NotasPanel/NotasContent"]
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 100)
+placeholder_text = "Información que verá el cliente en el ticket:
+- Condiciones del servicio
+- Tiempo estimado de reparación
+- Recomendaciones..."
+
+[node name="HSeparator4" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="StatusPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="StatusContent" type="HBoxContainer" parent="MainContainer/StatusPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 10.0
+offset_right = -15.0
+offset_bottom = -10.0
+
+[node name="StatusLabel" type="Label" parent="MainContainer/StatusPanel/StatusContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Campos obligatorios marcados con (*) • Use TAB para navegar entre campos"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+
+[node name="ErrorLabel" type="Label" parent="MainContainer/StatusPanel/StatusContent"]
+layout_mode = 2
+text = ""
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContent/ButtonsContainer/GuardarButton" to="." method="_on_guardar_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContent/ButtonsContainer/CancelarButton" to="." method="_on_cancelar_pressed"]
+[connection signal="text_changed" from="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/BuscarClientePanel/BuscarClienteContent/BuscarContainer/BuscarClienteInput" to="." method="_on_buscar_cliente_changed"]
+[connection signal="pressed" from="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/BuscarClientePanel/BuscarClienteContent/BuscarContainer/BuscarClienteButton" to="." method="_on_buscar_cliente_pressed"]
+[connection signal="pressed" from="MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/BuscarClientePanel/BuscarClienteContent/BuscarContainer/NuevoClienteButton" to="." method="_on_nuevo_cliente_pressed"]

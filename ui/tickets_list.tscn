@@ -1,0 +1,92 @@
+[gd_scene load_steps=2 format=3 uid="uid://djcaw5uhm5x4h"]
+
+[ext_resource type="Script" path="res://ui/tickets_list.gd" id="1_x4yge"]
+
+[node name="TicketsList" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_x4yge")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopBar" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="VBoxContainer/TopBar"]
+layout_mode = 2
+text = "← Volver"
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Lista de Tickets SAT"
+
+[node name="NewTicketButton" type="Button" parent="VBoxContainer/TopBar"]
+layout_mode = 2
+text = "➕ Nuevo Ticket"
+
+[node name="FiltersContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="SearchInput" type="LineEdit" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Buscar por código, cliente, teléfono, serie, IMEI..."
+
+[node name="SearchButton" type="Button" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+text = "🔍"
+
+[node name="EstadoLabel" type="Label" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+text = "Estado:"
+
+[node name="EstadoFilter" type="OptionButton" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+
+[node name="TecnicoLabel" type="Label" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+text = "Técnico:"
+
+[node name="TecnicoFilter" type="OptionButton" parent="VBoxContainer/FiltersContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="TicketsTree" type="Tree" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 6
+allow_reselect = true
+
+[node name="StatusBar" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="CountLabel" type="Label" parent="VBoxContainer/StatusBar"]
+layout_mode = 2
+text = "0 tickets encontrados"
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/StatusBar"]
+layout_mode = 2
+
+[node name="RefreshButton" type="Button" parent="VBoxContainer/StatusBar"]
+layout_mode = 2
+text = "🔄 Actualizar"
+
+[connection signal="pressed" from="VBoxContainer/TopBar/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/TopBar/NewTicketButton" to="." method="_on_new_ticket_button_pressed"]
+[connection signal="text_submitted" from="VBoxContainer/FiltersContainer/SearchInput" to="." method="_on_search_input_text_submitted"]
+[connection signal="pressed" from="VBoxContainer/FiltersContainer/SearchButton" to="." method="_on_search_button_pressed"]
+[connection signal="item_selected" from="VBoxContainer/FiltersContainer/EstadoFilter" to="." method="_on_estado_filter_item_selected"]
+[connection signal="item_selected" from="VBoxContainer/FiltersContainer/TecnicoFilter" to="." method="_on_tecnico_filter_item_selected"]
+[connection signal="item_activated" from="VBoxContainer/TicketsTree" to="." method="_on_tickets_tree_item_activated"]
+[connection signal="pressed" from="VBoxContainer/StatusBar/RefreshButton" to="." method="_on_refresh_button_pressed"]

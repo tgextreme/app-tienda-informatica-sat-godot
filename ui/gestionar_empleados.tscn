@@ -1,0 +1,131 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8mran2xlb4k5"]
+
+[ext_resource type="Script" path="res://ui/gestionar_empleados.gd" id="1_8h6k2"]
+
+[node name="GestionarEmpleados" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_8h6k2")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="Header" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+
+[node name="HeaderContent" type="HBoxContainer" parent="MainContainer/Header"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 10.0
+offset_right = -20.0
+offset_bottom = -10.0
+
+[node name="Icon" type="Label" parent="MainContainer/Header/HeaderContent"]
+layout_mode = 2
+text = "👨‍💼"
+label_settings = SubResource("LabelSettings_id_1")
+
+[node name="Title" type="Label" parent="MainContainer/Header/HeaderContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "GESTIÓN DE EMPLEADOS"
+label_settings = SubResource("LabelSettings_id_2")
+
+[node name="BackButton" type="Button" parent="MainContainer/Header/HeaderContent"]
+layout_mode = 2
+text = "🏠 VOLVER AL MENÚ"
+
+[node name="ToolsPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 60)
+
+[node name="ToolsContent" type="HBoxContainer" parent="MainContainer/ToolsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 10.0
+offset_right = -15.0
+offset_bottom = -10.0
+
+[node name="NewEmployeeButton" type="Button" parent="MainContainer/ToolsPanel/ToolsContent"]
+layout_mode = 2
+text = "➕ NUEVO EMPLEADO"
+
+[node name="SearchContainer" type="HBoxContainer" parent="MainContainer/ToolsPanel/ToolsContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SearchLabel" type="Label" parent="MainContainer/ToolsPanel/ToolsContent/SearchContainer"]
+layout_mode = 2
+text = "🔍 Buscar:"
+
+[node name="SearchInput" type="LineEdit" parent="MainContainer/ToolsPanel/ToolsContent/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Escriba nombre, email o rol..."
+
+[node name="RefreshButton" type="Button" parent="MainContainer/ToolsPanel/ToolsContent"]
+layout_mode = 2
+text = "🔄 ACTUALIZAR"
+
+[node name="EmployeesPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EmployeesContent" type="VBoxContainer" parent="MainContainer/EmployeesPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+
+[node name="InfoLabel" type="Label" parent="MainContainer/EmployeesPanel/EmployeesContent"]
+layout_mode = 2
+text = "👨‍💼 Total de empleados: 0"
+
+[node name="Separator" type="HSeparator" parent="MainContainer/EmployeesPanel/EmployeesContent"]
+layout_mode = 2
+
+[node name="EmployeesScroll" type="ScrollContainer" parent="MainContainer/EmployeesPanel/EmployeesContent"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EmployeesList" type="VBoxContainer" parent="MainContainer/EmployeesPanel/EmployeesContent/EmployeesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[connection signal="pressed" from="MainContainer/Header/HeaderContent/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MainContainer/ToolsPanel/ToolsContent/NewEmployeeButton" to="." method="_on_new_employee_button_pressed"]
+[connection signal="text_changed" from="MainContainer/ToolsPanel/ToolsContent/SearchContainer/SearchInput" to="." method="_on_search_input_text_changed"]
+[connection signal="pressed" from="MainContainer/ToolsPanel/ToolsContent/RefreshButton" to="." method="_on_refresh_button_pressed"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_id_1"]
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_id_2"]
+font_size = 24
+font_color = Color(0.9, 0.7, 0.3, 1)

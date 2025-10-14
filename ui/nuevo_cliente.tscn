@@ -1,0 +1,198 @@
+[gd_scene load_steps=3 format=3 uid="uid://cqj2ka6tbxfu5"]
+
+[ext_resource type="Script" path="res://ui/nuevo_cliente.gd" id="1_cliente"]
+
+[sub_resource type="StyleBoxFlat" id="panel_style"]
+bg_color = Color(0.25, 0.25, 0.25, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.6, 0.9, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="NuevoCliente" type="AcceptDialog"]
+title = "👤 NUEVO CLIENTE"
+initial_position = 1
+size = Vector2i(800, 550)
+script = ExtResource("1_cliente")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.12, 0.12, 0.12, 1)
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 20.0
+offset_right = -30.0
+offset_bottom = -60.0
+
+[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 60)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="HeaderContent" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+text = "👤 REGISTRAR NUEVO CLIENTE"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="HSeparator1" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FormContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DatosPanel" type="Panel" parent="MainContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 380)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="DatosContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TituloDatos" type="Label" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent"]
+layout_mode = 2
+text = "📝 INFORMACIÓN DEL CLIENTE"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent"]
+layout_mode = 2
+columns = 2
+theme_override_constants/h_separation = 15
+theme_override_constants/v_separation = 10
+
+[node name="NombreLabel" type="Label" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+text = "Nombre Completo: *"
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="NombreInput" type="LineEdit" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 35)
+placeholder_text = "Ej: Juan Pérez García"
+theme_override_font_sizes/font_size = 14
+
+[node name="TelefonoLabel" type="Label" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+text = "Teléfono: *"
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="TelefonoInput" type="LineEdit" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 35)
+placeholder_text = "Ej: 666-123-456"
+theme_override_font_sizes/font_size = 14
+
+[node name="EmailLabel" type="Label" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+text = "Email:"
+theme_override_font_sizes/font_size = 14
+
+[node name="EmailInput" type="LineEdit" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 35)
+placeholder_text = "Ej: cliente@email.com"
+theme_override_font_sizes/font_size = 14
+
+[node name="NIFLabel" type="Label" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+text = "DNI/NIF:"
+theme_override_font_sizes/font_size = 14
+
+[node name="NIFInput" type="LineEdit" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 35)
+placeholder_text = "Ej: 12345678A"
+theme_override_font_sizes/font_size = 14
+
+[node name="DireccionLabel" type="Label" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent"]
+layout_mode = 2
+text = "Dirección Completa:"
+theme_override_font_sizes/font_size = 14
+
+[node name="DireccionInput" type="TextEdit" parent="MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 90)
+placeholder_text = "Calle, número, ciudad, código postal..."
+theme_override_font_sizes/font_size = 14
+
+[node name="HSeparator2" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="ButtonsPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="ButtonsContent" type="HBoxContainer" parent="MainContainer/ButtonsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 10.0
+offset_right = -15.0
+offset_bottom = -10.0
+
+[node name="ErrorLabel" type="Label" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = ""
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+
+[node name="GuardarButton" type="Button" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 30)
+text = "💾 GUARDAR"
+theme_override_font_sizes/font_size = 14
+
+[node name="CancelarButton" type="Button" parent="MainContainer/ButtonsPanel/ButtonsContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 30)
+text = "❌ CANCELAR"
+theme_override_font_sizes/font_size = 14
+
+[connection signal="pressed" from="MainContainer/ButtonsPanel/ButtonsContent/GuardarButton" to="." method="_on_guardar_pressed"]
+[connection signal="pressed" from="MainContainer/ButtonsPanel/ButtonsContent/CancelarButton" to="." method="_on_cancelar_pressed"]

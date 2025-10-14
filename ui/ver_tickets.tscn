@@ -1,0 +1,183 @@
+[gd_scene load_steps=3 format=3 uid="uid://bjf8k4m2xp1ys"]
+
+[ext_resource type="Script" path="res://ui/ver_tickets.gd" id="1_tickets"]
+
+[sub_resource type="StyleBoxFlat" id="panel_style"]
+bg_color = Color(0.25, 0.25, 0.25, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.6, 0.9, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="VerTickets" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_tickets")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.12, 0.12, 0.12, 1)
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+
+[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="HeaderContent" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+
+[node name="LeftHeader" type="VBoxContainer" parent="MainContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContent/LeftHeader"]
+layout_mode = 2
+text = "🎫 LISTADO DE TICKETS"
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+
+[node name="SubtitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContent/LeftHeader"]
+layout_mode = 2
+text = "Gestión completa de tickets SAT"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+alignment = 2
+
+[node name="NuevoTicketButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContent/ButtonsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(140, 40)
+text = "➕ NUEVO TICKET"
+theme_override_font_sizes/font_size = 14
+
+[node name="ActualizarButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContent/ButtonsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 40)
+text = "🔄 ACTUALIZAR"
+theme_override_font_sizes/font_size = 14
+
+[node name="VolverButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContent/ButtonsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 40)
+text = "🏠 VOLVER"
+theme_override_font_sizes/font_size = 14
+
+[node name="HSeparator1" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="FiltrosPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 60)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="FiltrosContent" type="HBoxContainer" parent="MainContainer/FiltrosPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 10.0
+offset_right = -15.0
+offset_bottom = -10.0
+
+[node name="BuscarLabel" type="Label" parent="MainContainer/FiltrosPanel/FiltrosContent"]
+layout_mode = 2
+text = "🔍 Buscar:"
+theme_override_font_sizes/font_size = 14
+
+[node name="BuscarInput" type="LineEdit" parent="MainContainer/FiltrosPanel/FiltrosContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Buscar por código, cliente, equipo..."
+theme_override_font_sizes/font_size = 14
+
+[node name="EstadoLabel" type="Label" parent="MainContainer/FiltrosPanel/FiltrosContent"]
+layout_mode = 2
+text = "Estado:"
+theme_override_font_sizes/font_size = 14
+
+[node name="EstadoOption" type="OptionButton" parent="MainContainer/FiltrosPanel/FiltrosContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+theme_override_font_sizes/font_size = 14
+
+[node name="HSeparator2" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="ListaContainer" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TicketsScrollContainer" type="ScrollContainer" parent="MainContainer/ListaContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TicketsVBox" type="VBoxContainer" parent="MainContainer/ListaContainer/TicketsScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator3" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="StatusPanel" type="Panel" parent="MainContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
+theme_override_styles/panel = SubResource("panel_style")
+
+[node name="StatusContent" type="HBoxContainer" parent="MainContainer/StatusPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 8.0
+offset_right = -15.0
+offset_bottom = -8.0
+
+[node name="StatusLabel" type="Label" parent="MainContainer/StatusPanel/StatusContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cargando tickets..."
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+
+[node name="ContadorLabel" type="Label" parent="MainContainer/StatusPanel/StatusContent"]
+layout_mode = 2
+text = "0 tickets"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContent/ButtonsContainer/NuevoTicketButton" to="." method="_on_nuevo_ticket_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContent/ButtonsContainer/ActualizarButton" to="." method="_on_actualizar_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContent/ButtonsContainer/VolverButton" to="." method="_on_volver_pressed"]
+[connection signal="text_changed" from="MainContainer/FiltrosPanel/FiltrosContent/BuscarInput" to="." method="_on_buscar_changed"]
+[connection signal="item_selected" from="MainContainer/FiltrosPanel/FiltrosContent/EstadoOption" to="." method="_on_estado_selected"]
