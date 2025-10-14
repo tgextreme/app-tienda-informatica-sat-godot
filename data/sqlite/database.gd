@@ -401,6 +401,27 @@ func handle_update(query: String, params: Array):
 				
 				print("🔧 [DATABASE] - Stock DESPUÉS: ", record.get("stock"))
 				print("✅ [DATABASE] Producto actualizado: ", record.get("nombre"), " (ID: ", record.get("id"), ")")
+			elif table_name == "tickets" and params.size() >= 13:
+				print("🎫 [DATABASE] Actualizando ticket ID ", record.get("id"), ":")
+				print("🎫 [DATABASE] - Estado ANTES: ", record.get("estado"))
+				print("🎫 [DATABASE] - Estado NUEVO: ", params[0])
+				
+				record["estado"] = params[0]
+				record["prioridad"] = params[1] 
+				record["cliente_id"] = params[2]
+				record["tecnico_id"] = params[3]
+				record["equipo_tipo"] = params[4]
+				record["equipo_marca"] = params[5]
+				record["equipo_modelo"] = params[6]
+				record["numero_serie"] = params[7]
+				record["password_bloqueo"] = params[8]
+				record["accesorios"] = params[9]
+				record["averia_cliente"] = params[10]
+				record["notas_cliente"] = params[11]
+				# params[12] es el ID para WHERE
+				
+				print("🎫 [DATABASE] - Estado DESPUÉS: ", record.get("estado"))
+				print("✅ [DATABASE] Ticket actualizado: ", record.get("codigo"), " (ID: ", record.get("id"), ")")
 			else:
 				print("⚠️ [DATABASE] UPDATE no implementado para tabla: ", table_name, " con ", params.size(), " parámetros")
 			break

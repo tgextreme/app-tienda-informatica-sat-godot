@@ -230,31 +230,14 @@ func filtrar_clientes(filtro: String):
 	actualizar_interfaz()
 
 func editar_cliente(cliente: Dictionary):
-	"""Abre el formulario de edición de cliente"""
+	"""Abre el formulario de edición de cliente usando Router"""
 	print("✏️ [GESTIONAR_CLIENTES] Editando cliente: ", cliente.get("nombre", ""))
 	
-	# Cargar escena de nuevo cliente para editar
-	var nuevo_cliente_scene = preload("res://ui/nuevo_cliente.tscn")
-	nuevo_cliente_dialog = nuevo_cliente_scene.instantiate()
-	
-	# Llenar campos con datos existentes
-	await get_tree().process_frame  # Esperar a que se inicialice
-	
-	if nuevo_cliente_dialog.has_method("cargar_datos_cliente"):
-		nuevo_cliente_dialog.cargar_datos_cliente(cliente)
+	var cliente_id = int(cliente.get("id", 0))
+	if cliente_id > 0:
+		Router.ir_a_cliente_detalle(cliente_id)
 	else:
-		# Llenar manualmente si no existe el método
-		nuevo_cliente_dialog.get_node("MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer/NombreInput").text = cliente.get("nombre", "")
-		nuevo_cliente_dialog.get_node("MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer/TelefonoInput").text = cliente.get("telefono", "")
-		nuevo_cliente_dialog.get_node("MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer/EmailInput").text = cliente.get("email", "")
-		nuevo_cliente_dialog.get_node("MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/GridContainer/NIFInput").text = cliente.get("nif", "")
-		nuevo_cliente_dialog.get_node("MainContainer/ScrollContainer/FormContainer/DatosPanel/DatosContent/DireccionInput").text = cliente.get("direccion", "")
-	
-	# Conectar señales
-	nuevo_cliente_dialog.cliente_creado.connect(_on_cliente_modificado)
-	
-	add_child(nuevo_cliente_dialog)
-	nuevo_cliente_dialog.popup_centered(Vector2(800, 600))
+		print("❌ [GESTIONAR_CLIENTES] ID de cliente inválido: ", cliente)
 
 func confirmar_eliminar_cliente(cliente: Dictionary):
 	"""Confirma la eliminación de un cliente"""

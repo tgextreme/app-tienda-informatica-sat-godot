@@ -174,11 +174,15 @@ func buscar_tickets(filtros: Dictionary = {}) -> Array:
 	# Crear mapas para lookups rápidos
 	var clientes_map = {}
 	for cliente in clientes:
-		clientes_map[cliente.id] = cliente
+		var cliente_id = cliente.get("id")
+		if cliente_id != null:
+			clientes_map[cliente_id] = cliente
 		
 	var usuarios_map = {}
 	for usuario in usuarios:
-		usuarios_map[usuario.id] = usuario
+		var usuario_id = usuario.get("id")
+		if usuario_id != null:
+			usuarios_map[usuario_id] = usuario
 	
 	# Combinar datos
 	var result = []
@@ -186,15 +190,17 @@ func buscar_tickets(filtros: Dictionary = {}) -> Array:
 		var ticket_completo = ticket.duplicate()
 		
 		# Agregar datos del cliente
-		if clientes_map.has(ticket.cliente_id):
-			var cliente = clientes_map[ticket.cliente_id]
-			ticket_completo["cliente_nombre"] = cliente.nombre
-			ticket_completo["cliente_telefono"] = cliente.telefono
+		var cliente_id = ticket.get("cliente_id")
+		if cliente_id != null and clientes_map.has(cliente_id):
+			var cliente = clientes_map[cliente_id]
+			ticket_completo["cliente_nombre"] = cliente.get("nombre", "")
+			ticket_completo["cliente_telefono"] = cliente.get("telefono", "")
 		
 		# Agregar datos del técnico
-		if ticket.has("tecnico_id") and usuarios_map.has(ticket.tecnico_id):
-			var tecnico = usuarios_map[ticket.tecnico_id]
-			ticket_completo["tecnico_nombre"] = tecnico.nombre
+		var tecnico_id = ticket.get("tecnico_id")
+		if tecnico_id != null and usuarios_map.has(tecnico_id):
+			var tecnico = usuarios_map[tecnico_id]
+			ticket_completo["tecnico_nombre"] = tecnico.get("nombre", "")
 			
 		# Aplicar filtros
 		var incluir = true
@@ -202,7 +208,7 @@ func buscar_tickets(filtros: Dictionary = {}) -> Array:
 		if filtros.has("estado") and filtros.get("estado") != "" and ticket.get("estado") != filtros.get("estado"):
 			incluir = false
 			
-		if incluir and filtros.has("cliente_id") and filtros.cliente_id > 0 and ticket.cliente_id != filtros.cliente_id:
+		if incluir and filtros.has("cliente_id") and filtros.get("cliente_id", 0) > 0 and ticket.get("cliente_id") != filtros.get("cliente_id"):
 			incluir = false
 			
 		if incluir:
@@ -1347,9 +1353,13 @@ func obtener_empleados() -> Array:
 		var empleado_info = usuario.duplicate()
 		
 		# Obtener nombre del rol
-		var roles = execute_sql("SELECT nombre FROM roles WHERE id = ?", [usuario.rol_id])
-		if roles.size() > 0:
-			empleado_info["rol_nombre"] = roles[0].nombre
+		var rol_id = usuario.get("rol_id")
+		if rol_id != null:
+			var roles = execute_sql("SELECT nombre FROM roles WHERE id = ?", [rol_id])
+			if roles.size() > 0:
+				empleado_info["rol_nombre"] = roles[0].get("nombre", "Sin rol")
+			else:
+				empleado_info["rol_nombre"] = "Sin rol"
 		else:
 			empleado_info["rol_nombre"] = "Sin rol"
 		

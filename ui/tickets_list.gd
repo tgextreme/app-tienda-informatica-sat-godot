@@ -8,6 +8,7 @@ extends Control
 @onready var tickets_tree = $VBoxContainer/TicketsTree
 @onready var count_label = $VBoxContainer/StatusBar/CountLabel
 @onready var new_ticket_button = $VBoxContainer/TopBar/NewTicketButton
+@onready var refresh_button = $VBoxContainer/StatusBar/RefreshButton
 
 var tickets_data: Array = []
 var filtros_actuales: Dictionary = {}
@@ -20,6 +21,13 @@ func _ready():
 	# Conectar señal para menú contextual y botones
 	if tickets_tree.button_clicked.connect(_on_tickets_tree_button_clicked) != OK:
 		print("❌ Error conectando señal button_clicked del TreeItem")
+	
+	# Asegurar conexión del botón refresh (conexión manual de respaldo)
+	if refresh_button and not refresh_button.pressed.is_connected(_on_refresh_button_pressed):
+		if refresh_button.pressed.connect(_on_refresh_button_pressed) != OK:
+			print("❌ Error conectando botón refresh")
+		else:
+			print("✅ Botón refresh conectado manualmente")
 
 func configurar_interfaz():
 	# Configurar permisos
@@ -57,6 +65,7 @@ func configurar_filtros():
 		tecnico_filter.add_item(tecnico.nombre, int(tecnico.id))
 
 func cargar_tickets():
+	print("📋 [TICKETS_LIST] Iniciando carga de tickets...")
 	# Construir filtros de búsqueda
 	var filtros = {}
 	
@@ -81,11 +90,14 @@ func cargar_tickets():
 			filtros[clave] = filtros_actuales[clave]
 	
 	# Cargar datos
+	print("🔍 [TICKETS_LIST] Aplicando filtros: ", filtros)
 	tickets_data = DataService.buscar_tickets(filtros)
+	print("📊 [TICKETS_LIST] Tickets encontrados: ", tickets_data.size())
 	actualizar_tree()
 	actualizar_contador()
 
 func actualizar_tree():
+	print("🌳 [TICKETS_LIST] Actualizando árbol con ", tickets_data.size(), " tickets")
 	tickets_tree.clear()
 	var root = tickets_tree.create_item()
 	
@@ -218,7 +230,21 @@ func _on_tecnico_filter_item_selected(_index: int):
 	cargar_tickets()
 
 func _on_refresh_button_pressed():
+	print("🔄 [TICKETS_LIST] Botón actualizar presionado")
+	
+	# Cambiar texto del botón temporalmente para dar feedback
+	var original_text = refresh_button.text
+	refresh_button.text = "Actualizando..."
+	refresh_button.disabled = true
+	
 	cargar_tickets()
+	
+	# Restaurar botón después de un breve momento
+	await get_tree().create_timer(0.5).timeout
+	refresh_button.text = original_text
+	refresh_button.disabled = false
+	
+	print("✅ [TICKETS_LIST] Actualización completada")
 
 func _on_back_button_pressed():
 	Router.ir_a_dashboard()

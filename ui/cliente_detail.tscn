@@ -1,0 +1,111 @@
+[gd_scene load_steps=2 format=3 uid="uid://cyavh5uqxlcab"]
+
+[ext_resource type="Script" path="res://ui/cliente_detail.gd" id="1_fsc1g"]
+
+[node name="ClienteDetail" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_fsc1g")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TopBar" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="VolverButton" type="Button" parent="VBoxContainer/TopBar"]
+layout_mode = 2
+text = "← Volver"
+
+[node name="TituloLabel" type="Label" parent="VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "📋 INFORMACIÓN DEL CLIENTE"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FormContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="NombreLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/GridContainer"]
+layout_mode = 2
+text = "Nombre Completo: *"
+
+[node name="NombreInput" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 0)
+
+[node name="TelefonoLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/GridContainer"]
+layout_mode = 2
+text = "Teléfono: *"
+
+[node name="TelefonoInput" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 0)
+
+[node name="EmailLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/GridContainer"]
+layout_mode = 2
+text = "Email:"
+
+[node name="EmailInput" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 0)
+
+[node name="NIFLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/GridContainer"]
+layout_mode = 2
+text = "DNI/NIF:"
+
+[node name="NIFInput" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/GridContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 0)
+
+[node name="DireccionLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+text = "Dirección Completa:"
+
+[node name="DireccionInput" type="TextEdit" parent="VBoxContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ErrorLabel" type="Label" parent="VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+autowrap_mode = 2
+
+[node name="CancelarButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+text = "❌ CANCELAR"
+
+[node name="GuardarButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+text = "💾 GUARDAR"
+
+[connection signal="pressed" from="VBoxContainer/TopBar/VolverButton" to="." method="_on_volver_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonsContainer/CancelarButton" to="." method="_on_cancelar_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonsContainer/GuardarButton" to="." method="_on_guardar_pressed"]

@@ -6,7 +6,7 @@ extends Control
 @onready var info_label: Label = $MainContainer/EmployeesPanel/EmployeesContent/InfoLabel
 @onready var employees_list: VBoxContainer = $MainContainer/EmployeesPanel/EmployeesContent/EmployeesScroll/EmployeesList
 @onready var search_input: LineEdit = $MainContainer/ToolsPanel/ToolsContent/SearchContainer/SearchInput
-@onready var nuevo_btn: Button = $MainContainer/ToolsPanel/ToolsContent/ActionContainer/NuevoBtn
+@onready var nuevo_btn: Button = get_node_or_null("MainContainer/ToolsPanel/ToolsContent/ActionContainer/NuevoBtn")
 @onready var refresh_btn: Button = $MainContainer/ToolsPanel/ToolsContent/ActionContainer/RefreshBtn
 @onready var volver_btn: Button = $MainContainer/Header/HeaderContent/VolverBtn
 
@@ -215,7 +215,7 @@ func crear_empleado_card(empleado: Dictionary):
 	
 	# Estado
 	var estado_label = Label.new()
-	var activo = empleado.get("activo", 1) == 1
+	var activo: bool = (empleado.get("activo", 1) == 1)
 	estado_label.text = "🟢 ACTIVO" if activo else "🔴 INACTIVO"
 	estado_label.add_theme_color_override("font_color", Color(0.4, 1, 0.4, 1) if activo else Color(1, 0.4, 0.4, 1))
 	info_container.add_child(estado_label)

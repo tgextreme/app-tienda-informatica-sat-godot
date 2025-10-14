@@ -293,7 +293,7 @@ func mostrar_procesando(mensaje: String):
 		error_label.text = "⏳ " + mensaje
 		error_label.add_theme_color_override("font_color", Color.YELLOW)
 
-func _on_validar_campos(texto: String = ""):
+func _on_validar_campos(_texto: String = ""):
 	"""Valida campos en tiempo real"""
 	# Validación básica en tiempo real
 	if error_label and error_label.text.begins_with("❌"):

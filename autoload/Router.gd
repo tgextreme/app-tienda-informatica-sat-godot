@@ -14,6 +14,7 @@ var pantallas_cargadas: Dictionary = {}
 var rutas_pantallas = {
 	"login": "res://ui/login.tscn",
 	"dashboard": "res://ui/dashboard.tscn", 
+	"dashboard_no_admin": "res://ui/dashboard_no_admin.tscn",
 	"nuevo_ticket": "res://ui/nuevo_ticket.tscn",
 	"tickets_lista": "res://ui/tickets_list.tscn",
 	"ticket_detalle": "res://ui/ticket_detail.tscn",
@@ -189,7 +190,13 @@ func volver_atras():
 		ir_a(pantalla_anterior)
 
 func ir_a_dashboard():
-	ir_a("dashboard")
+	# Decidir qué dashboard cargar según el rol del usuario
+	if AppState.es_admin:
+		print("🔑 [ROUTER] Usuario admin - cargando dashboard completo")
+		ir_a("dashboard")
+	else:
+		print("👤 [ROUTER] Usuario no-admin - cargando dashboard restringido") 
+		ir_a("dashboard_no_admin")
 
 func ir_a_login():
 	ir_a("login")

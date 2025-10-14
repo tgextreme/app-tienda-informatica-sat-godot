@@ -1,6 +1,6 @@
 extends Control
 
-# Pantalla principal del dashboard
+# Dashboard para usuarios NO-ADMIN (sin acceso a empleados)
 
 @onready var user_label = $VBoxContainer/TopBar/UserLabel
 @onready var tickets_hoy_value = $VBoxContainer/MainContainer/LeftPanel/KPIContainer/TicketsHoyPanel/VBox/Value
@@ -14,24 +14,20 @@ extends Control
 var kpis_data: Dictionary = {}
 
 func _ready():
+	print("📊 [DASHBOARD_NO_ADMIN] Iniciando dashboard para usuario no-admin...")
 	configurar_interfaz()
 	cargar_datos()
 
 func configurar_interfaz():
 	# Mostrar nombre del usuario actual
-	user_label.text = "Usuario: " + AppState.get_usuario_nombre() + " (" + AppState.usuario_actual.get("rol_nombre", "") + ") - ADMIN"
+	user_label.text = "Usuario: " + AppState.get_usuario_nombre() + " (" + AppState.usuario_actual.get("rol_nombre", "") + ")"
 	
-	# Configurar permisos de botones
+	# Configurar permisos de botones (sin empleados)
 	inventario_btn.visible = AppState.tiene_permiso("gestionar_inventario")
 	
-	# Este dashboard es solo para admins - verificar por seguridad
-	if not AppState.es_admin:
-		print("⚠️ [DASHBOARD] ADVERTENCIA: Usuario no-admin usando dashboard admin")
-	
-	# Botón empleados siempre disponible en dashboard admin
-	var empleados_btn = $VBoxContainer/MainContainer/LeftPanel/AccesosRapidos/EmpleadosBtn
-	if empleados_btn:
-		empleados_btn.tooltip_text = "Gestionar empleados y usuarios del sistema"
+	# Verificar que realmente no es admin (seguridad adicional)
+	if AppState.es_admin:
+		print("⚠️ [DASHBOARD_NO_ADMIN] ADVERTENCIA: Usuario admin usando dashboard no-admin")
 	
 	# Configurar tree de últimos tickets
 	ultimos_tickets.set_column_title(0, "Código")
@@ -169,11 +165,11 @@ func _on_logout_button_pressed():
 	AppState.logout()
 
 func _on_nuevo_ticket_pressed():
-	print("📋 [DASHBOARD] Abriendo nuevo ticket...")
+	print("📋 [DASHBOARD_NO_ADMIN] Abriendo nuevo ticket...")
 	Router.ir_a_nuevo_ticket()
 
 func _on_ver_tickets_pressed():
-	print("🎫 [DASHBOARD] Abriendo lista de tickets...")
+	print("🎫 [DASHBOARD_NO_ADMIN] Abriendo lista de tickets...")
 	Router.ir_a_tickets()
 
 func _on_inventario_pressed():
@@ -181,10 +177,6 @@ func _on_inventario_pressed():
 
 func _on_clientes_pressed():
 	Router.ir_a_clientes()
-
-func _on_empleados_pressed():
-	print("👨‍💼 [DASHBOARD] Navegando a gestión de empleados...")
-	Router.ir_a_empleados()
 
 func _on_ultimos_tickets_item_activated():
 	var selected = ultimos_tickets.get_selected()
