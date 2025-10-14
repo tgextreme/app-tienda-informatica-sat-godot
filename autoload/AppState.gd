@@ -136,6 +136,8 @@ func tiene_permiso(accion: String) -> bool:
 			return es_admin or es_recepcion or es_tecnico
 		"eliminar_ticket":
 			return es_admin
+		"imprimir_ticket":
+			return es_admin or es_recepcion or es_tecnico
 		"cambiar_estado_ticket":
 			return es_admin or es_tecnico or es_recepcion
 		"ver_configuracion":

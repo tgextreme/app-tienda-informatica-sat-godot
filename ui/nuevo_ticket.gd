@@ -606,6 +606,7 @@ func _on_buscar_cliente_pressed():
 			_on_nuevo_cliente_pressed()
 			dialog.queue_free()
 		)
+		# Fixed: usar canceled sin 'd' para Godot 4
 		dialog.canceled.connect(func():
 			dialog.queue_free()
 		)
@@ -670,9 +671,9 @@ func mostrar_confirmacion_exito(_ticket_id: int, codigo_ticket: String):
 	confirmacion.get_ok_button().text = "🏠 Volver al Menú"
 	confirmacion.get_cancel_button().text = "➕ Crear Otro Ticket"
 	
-	# Conectar señales
+	# Conectar señales - Fixed: usar canceled sin 'd' para Godot 4
 	confirmacion.confirmed.connect(func(): volver_dashboard())
-	confirmacion.cancelled.connect(func(): limpiar_formulario_nuevo_ticket())
+	confirmacion.canceled.connect(func(): limpiar_formulario_nuevo_ticket())
 	
 	# Mostrar diálogo
 	add_child(confirmacion)
