@@ -58,6 +58,9 @@ func verificar_y_crear_datos_iniciales():
 	# Verificar productos independientemente
 	verificar_y_crear_productos()
 	
+	# Corregir referencias rotas de tickets
+	corregir_referencias_tickets()
+	
 	# Asegurar que hay un usuario técnico de prueba
 	crear_usuario_tecnico_prueba()
 
@@ -102,6 +105,37 @@ func crear_usuario_tecnico_prueba():
 			VALUES (?, ?, ?, ?, ?, datetime('now'))
 		""", ["Admin Prueba", email_tecnico, password_hashed, 1, 1])
 		print("✅ [DATASERVICE] Usuario ADMIN creado - Email: %s, Password: %s" % [email_tecnico, password_tecnico])
+
+func corregir_referencias_tickets():
+	"""Corrige referencias rotas de tickets a clientes que no existen"""
+	print("🔧 [DATASERVICE] Corrigiendo referencias de tickets...")
+	
+	# Obtener todos los tickets
+	var tickets = execute_sql("SELECT id, cliente_id FROM tickets")
+	
+	# Obtener IDs de clientes válidos
+	var clientes = execute_sql("SELECT id FROM clientes")
+	var clientes_validos = []
+	for cliente in clientes:
+		clientes_validos.append(int(cliente.id))
+	
+	print("🔍 [DATASERVICE] Clientes válidos: ", clientes_validos)
+	
+	for ticket in tickets:
+		var ticket_id = int(ticket.id)
+		var cliente_id = int(ticket.cliente_id)
+		
+		if not clientes_validos.has(cliente_id):
+			print("🔧 [DATASERVICE] Ticket ID ", ticket_id, " tiene cliente_id inválido: ", cliente_id)
+			# Asignar al primer cliente disponible
+			if clientes_validos.size() > 0:
+				var nuevo_cliente_id = clientes_validos[0]
+				execute_non_query("UPDATE tickets SET cliente_id = ? WHERE id = ?", [nuevo_cliente_id, ticket_id])
+				print("✅ [DATASERVICE] Ticket ID ", ticket_id, " actualizado a cliente_id: ", nuevo_cliente_id)
+			else:
+				print("❌ [DATASERVICE] No hay clientes válidos para asignar")
+	
+	print("✅ [DATASERVICE] Corrección de referencias completada")
 
 # Métodos de conveniencia para ejecutar SQL
 func execute_sql(query: String, params: Array = []) -> Array:
@@ -386,11 +420,11 @@ func actualizar_ticket(ticket_data: Dictionary) -> bool:
 			equipo_tipo = ?,
 			equipo_marca = ?,
 			equipo_modelo = ?,
-			equipo_serie = ?,
-			equipo_password = ?,
-			equipo_accesorios = ?,
-			averia_descripcion = ?,
-			observaciones_cliente = ?,
+			numero_serie = ?,
+			password_bloqueo = ?,
+			accesorios = ?,
+			averia_cliente = ?,
+			notas_cliente = ?,
 			fecha_actualizacion = datetime('now')
 		WHERE id = ?
 	"""
@@ -403,11 +437,11 @@ func actualizar_ticket(ticket_data: Dictionary) -> bool:
 		ticket_data.get("equipo_tipo", "PC"),
 		ticket_data.get("equipo_marca", ""),
 		ticket_data.get("equipo_modelo", ""),
-		ticket_data.get("equipo_serie", ""),
-		ticket_data.get("equipo_password", ""),
-		ticket_data.get("equipo_accesorios", ""),
-		ticket_data.get("averia_descripcion", ""),
-		ticket_data.get("observaciones_cliente", ""),
+		ticket_data.get("numero_serie", ""),
+		ticket_data.get("password_bloqueo", ""),
+		ticket_data.get("accesorios", ""),
+		ticket_data.get("averia_cliente", ""),
+		ticket_data.get("notas_cliente", ""),
 		ticket_id
 	])
 	
@@ -1010,6 +1044,8 @@ func obtener_ticket_por_id(ticket_id: int) -> Dictionary:
 			c.nombre as cliente_nombre,
 			c.telefono as cliente_telefono,
 			c.email as cliente_email,
+			c.nif as cliente_nif,
+			c.direccion as cliente_direccion,
 			u.nombre as tecnico_nombre
 		FROM tickets t
 		LEFT JOIN clientes c ON t.cliente_id = c.id

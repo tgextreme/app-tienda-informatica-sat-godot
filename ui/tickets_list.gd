@@ -162,17 +162,25 @@ func actualizar_tree():
 		# Inicializar columna de acciones
 		item.set_text(6, "")  # Inicializar la columna 6 primero
 		
-		# Agregar botón de eliminar en la columna de acciones
-		if AppState.tiene_permiso("eliminar_ticket"):
-			# Crear una textura simple para el botón (X roja)
-			var texture = ImageTexture.new()
-			var image = Image.create(16, 16, false, Image.FORMAT_RGBA8)
-			image.fill(Color(1, 0.4, 0.4, 1))  # Rojo para eliminar
-			texture.set_image(image)
+		# Agregar botón azul de editar PRIMERO (será ID 0)
+		if AppState.tiene_permiso("editar_ticket"):
+			print("✅ [TICKETS_LIST] Añadiendo botón EDITAR (azul) para ticket ID: ", ticket_id)
+			var texture_edit = ImageTexture.new()
+			var image_edit = Image.create(16, 16, false, Image.FORMAT_RGBA8)
+			image_edit.fill(Color(0.3, 0.6, 1.0, 1))  # Azul para editar
+			texture_edit.set_image(image_edit)
 			
-			item.add_button(6, texture, 0, false, "Eliminar Ticket")
-		else:
-			item.set_text(6, "")
+			item.add_button(6, texture_edit, 0, false, "Editar Ticket")
+		
+		# Agregar botón rojo de eliminar DESPUÉS (será ID 1)
+		if AppState.tiene_permiso("eliminar_ticket"):
+			print("✅ [TICKETS_LIST] Añadiendo botón ELIMINAR (rojo) para ticket ID: ", ticket_id)
+			var texture_delete = ImageTexture.new()
+			var image_delete = Image.create(16, 16, false, Image.FORMAT_RGBA8)
+			image_delete.fill(Color(1, 0.4, 0.4, 1))  # Rojo para eliminar
+			texture_delete.set_image(image_delete)
+			
+			item.add_button(6, texture_delete, 1, false, "Eliminar Ticket")
 
 func actualizar_contador():
 	count_label.text = str(tickets_data.size()) + " ticket(s) encontrado(s)"
@@ -207,12 +215,18 @@ func _on_tickets_tree_item_activated():
 
 # Menú contextual para acciones de ticket
 func _on_tickets_tree_button_clicked(item: TreeItem, column: int, id: int, mouse_button_index: int):
-	# Si es clic en la columna de acciones (columna 6), es el botón de eliminar
-	if column == 6 and id == 0:  # ID 0 es el botón de eliminar
+	# Si es clic en la columna de acciones (columna 6)
+	if column == 6:
 		var ticket_id = item.get_metadata(0)
 		if ticket_id != null and int(ticket_id) > 0:
-			confirmar_eliminar_ticket_directo(int(ticket_id))
-		return
+			if id == 0:  # ID 0 es el botón de editar (azul)
+				print("🔵 [TICKETS_LIST] Clic en botón EDITAR - Ticket ID: ", ticket_id)
+				Router.ir_a_editar_ticket(int(ticket_id))
+				return
+			elif id == 1:  # ID 1 es el botón de eliminar (rojo)
+				print("🔴 [TICKETS_LIST] Clic en botón ELIMINAR - Ticket ID: ", ticket_id)
+				confirmar_eliminar_ticket_directo(int(ticket_id))
+				return
 	
 	# Si es clic derecho, mostrar menú contextual
 	if mouse_button_index == MOUSE_BUTTON_RIGHT:

@@ -2,6 +2,10 @@ extends Control
 
 # Pantalla para crear un nuevo ticket SAT
 
+# Referencias a elementos del header
+@onready var title_label: Label = $"MainContainer/HeaderPanel/HeaderContent/LeftHeader/TitleLabel"
+@onready var subtitle_label: Label = $"MainContainer/HeaderPanel/HeaderContent/LeftHeader/SubtitleLabel"
+
 # Referencias a nodos - Nueva estructura con TabContainer
 @onready var buscar_cliente_input: LineEdit = $"MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/BuscarClientePanel/BuscarClienteContent/BuscarContainer/BuscarClienteInput"
 @onready var cliente_label: Label = $"MainContainer/TabContainer/👤 CLIENTE/ClienteVBox/ClienteSeleccionadoPanel/ClienteContent/ClienteLabel"
@@ -71,7 +75,18 @@ func configurar(parametros: Dictionary = {}):
 			print("✏️ [NUEVO_TICKET] Configurando modo edición para ticket: ", parametros.ticket_id)
 			modo_edicion = true
 			ticket_id_edicion = parametros.ticket_id
+			configurar_modo_edicion()
 			cargar_datos_ticket_para_editar()
+
+func configurar_modo_edicion():
+	"""Configura la interfaz para modo edición"""
+	print("🎨 [NUEVO_TICKET] Configurando interfaz para modo EDICIÓN")
+	
+	# Cambiar título y subtítulo
+	title_label.text = "📝 EDITAR TICKET SAT"
+	subtitle_label.text = "Modifique los campos necesarios para actualizar el ticket"
+	
+	print("✅ [NUEVO_TICKET] Modo edición configurado")
 
 func cargar_datos_ticket_para_editar():
 	"""Carga los datos del ticket para edición"""
@@ -90,11 +105,17 @@ func cargar_datos_ticket_para_editar():
 
 func rellenar_formulario_con_ticket():
 	"""Rellena el formulario con los datos del ticket cargado"""
+	print("🎫 [NUEVO_TICKET] ===== RELLENANDO FORMULARIO =====")
+	print("🎫 [NUEVO_TICKET] ticket_data: ", ticket_data)
+	
 	if ticket_data.is_empty():
+		print("❌ [NUEVO_TICKET] ticket_data está vacío")
 		return
 	
 	# Información del ticket
-	codigo_value.text = ticket_data.get("codigo", "")
+	var codigo = ticket_data.get("codigo")
+	codigo_value.text = "" if codigo == null else str(codigo)
+	print("🎫 [NUEVO_TICKET] Código: ", codigo_value.text)
 	
 	# Buscar y seleccionar prioridad
 	var prioridad_texto = ticket_data.get("prioridad", "Normal")
@@ -104,22 +125,34 @@ func rellenar_formulario_con_ticket():
 			break
 	
 	# Buscar y seleccionar técnico si está asignado
-	if ticket_data.has("tecnico_id") and ticket_data.tecnico_id > 0:
+	print("🎫 [NUEVO_TICKET] Verificando técnico_id...")
+	print("🎫 [NUEVO_TICKET] - tiene tecnico_id: ", ticket_data.has("tecnico_id"))
+	if ticket_data.has("tecnico_id"):
+		print("🎫 [NUEVO_TICKET] - tecnico_id valor: ", ticket_data.tecnico_id, " (tipo: ", typeof(ticket_data.tecnico_id), ")")
+	
+	if ticket_data.has("tecnico_id") and ticket_data.tecnico_id != null and int(ticket_data.tecnico_id) > 0:
+		var tecnico_id = int(ticket_data.tecnico_id)
+		print("🎫 [NUEVO_TICKET] Seleccionando técnico ID: ", tecnico_id)
 		for i in range(tecnico_option.get_item_count()):
-			if tecnico_option.get_item_id(i) == ticket_data.tecnico_id:
+			if tecnico_option.get_item_id(i) == tecnico_id:
 				tecnico_option.selected = i
+				print("✅ [NUEVO_TICKET] Técnico seleccionado en índice: ", i)
 				break
+	else:
+		print("🎫 [NUEVO_TICKET] Sin técnico asignado o tecnico_id inválido")
 	
 	# Datos del cliente
-	if ticket_data.has("cliente_id"):
+	if ticket_data.has("cliente_id") and ticket_data.cliente_id != null:
 		var cliente_data = {
 			"id": ticket_data.cliente_id,
 			"nombre": ticket_data.get("cliente_nombre", ""),
 			"telefono": ticket_data.get("cliente_telefono", ""),
 			"email": ticket_data.get("cliente_email", ""),
+			"nif": ticket_data.get("cliente_nif", ""),
 			"direccion": ticket_data.get("cliente_direccion", "")
 		}
 		cliente_seleccionado = cliente_data
+		print("👤 [NUEVO_TICKET] Cliente seleccionado configurado: ", cliente_seleccionado)
 		actualizar_interfaz_cliente()
 	
 	# Datos del equipo
@@ -129,15 +162,27 @@ func rellenar_formulario_con_ticket():
 			tipo_option.selected = i
 			break
 	
-	marca_input.text = ticket_data.get("equipo_marca", "")
-	modelo_input.text = ticket_data.get("equipo_modelo", "")
-	serie_input.text = ticket_data.get("equipo_serie", "")
-	password_input.text = ticket_data.get("equipo_password", "")
-	accesorios_input.text = ticket_data.get("equipo_accesorios", "")
+	var equipo_marca = ticket_data.get("equipo_marca")
+	marca_input.text = "" if equipo_marca == null else str(equipo_marca)
+	
+	var equipo_modelo = ticket_data.get("equipo_modelo")
+	modelo_input.text = "" if equipo_modelo == null else str(equipo_modelo)
+	
+	var numero_serie = ticket_data.get("numero_serie")
+	serie_input.text = "" if numero_serie == null else str(numero_serie)
+	
+	var password_bloqueo = ticket_data.get("password_bloqueo")
+	password_input.text = "" if password_bloqueo == null else str(password_bloqueo)
+	
+	var accesorios = ticket_data.get("accesorios")
+	accesorios_input.text = "" if accesorios == null else str(accesorios)
 	
 	# Descripción de avería
-	averia_input.text = ticket_data.get("averia_descripcion", "")
-	notas_input.text = ticket_data.get("observaciones_cliente", "")
+	var averia_cliente = ticket_data.get("averia_cliente")
+	averia_input.text = "" if averia_cliente == null else str(averia_cliente)
+	
+	var notas_cliente = ticket_data.get("notas_cliente")
+	notas_input.text = "" if notas_cliente == null else str(notas_cliente)
 	
 	print("✅ [NUEVO_TICKET] Formulario rellenado con datos del ticket")
 
@@ -527,7 +572,7 @@ func mostrar_confirmacion_actualizacion():
 	dialog.dialog_text = "El ticket ha sido actualizado correctamente."
 	
 	dialog.confirmed.connect(func():
-		Router.ir_a("ticket_detail", {"ticket_id": ticket_id_edicion})
+		Router.ir_a_tickets_lista()
 		dialog.queue_free()
 	)
 	
