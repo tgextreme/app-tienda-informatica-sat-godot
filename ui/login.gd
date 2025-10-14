@@ -135,9 +135,9 @@ func ir_a_dashboard_simple():
 		mostrar_error("Error: No se puede instanciar dashboard")
 		return
 	
-	# Cambiar escena
-	get_tree().change_scene_to_packed(dashboard_scene)
-	print("✅ [LOGIN] Cambiado a dashboard")
+	# Navegar usando Router
+	Router.ir_a_dashboard()
+	print("✅ [LOGIN] Navegado a dashboard")
 
 func _input(event):
 	# Atajo para desarrollo: Ctrl+D para login directo como admin

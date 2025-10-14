@@ -133,19 +133,28 @@ func cargar_ultimos_tickets():
 	
 	for ticket_data in tickets:
 		var item = ultimos_tickets.create_item(root)
-		item.set_text(0, ticket_data.get("codigo", ""))
-		item.set_text(1, ticket_data.get("cliente_nombre", ""))
-		item.set_text(2, ticket_data.get("estado", ""))
+		
+		# Usar str() para convertir valores nil a string vacío
+		var codigo = ticket_data.get("codigo", "")
+		var cliente_nombre = ticket_data.get("cliente_nombre", "")
+		var estado = ticket_data.get("estado", "")
+		
+		item.set_text(0, str(codigo) if codigo != null else "Sin código")
+		item.set_text(1, str(cliente_nombre) if cliente_nombre != null else "Sin cliente")
+		item.set_text(2, str(estado) if estado != null else "Sin estado")
 		
 		# Formatear fecha
 		var fecha_entrada = ticket_data.get("fecha_entrada", "")
-		if fecha_entrada != "":
-			var fecha_parts = fecha_entrada.split(" ")
+		if fecha_entrada != null and fecha_entrada != "":
+			var fecha_parts = str(fecha_entrada).split(" ")
 			if fecha_parts.size() > 0:
 				item.set_text(3, fecha_parts[0])
+		else:
+			item.set_text(3, "Sin fecha")
 		
 		# Guardar ID del ticket como metadatos
-		item.set_metadata(0, int(ticket_data.get("id", 0)))
+		var ticket_id = ticket_data.get("id", 0)
+		item.set_metadata(0, int(ticket_id) if ticket_id != null else 0)
 
 func _on_estado_panel_clicked(estado: String, event: InputEvent):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:

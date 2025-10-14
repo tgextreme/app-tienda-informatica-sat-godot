@@ -79,13 +79,12 @@ func ir_a(pantalla: String, parametros: Dictionary = {}):
 				intentar_crear_content_container(main_node)
 		else:
 			print("❌ [ROUTER] Nodo Main no encontrado")
-			# Último recurso: intentar navegar de forma directa
-			intentar_navegacion_directa(pantalla, parametros)
+			push_error("❌ [ROUTER] CRÍTICO: No se puede navegar sin Main scene. Reinicia la aplicación.")
 			return
 		
+		# Verificar nuevamente después del intento de reinicialización
 		if root_control == null or not is_instance_valid(root_control):
-			print("⚠️ [ROUTER] Fallback: navegación directa")
-			intentar_navegacion_directa(pantalla, parametros)
+			push_error("❌ [ROUTER] CRÍTICO: No se pudo reinicializar el Router")
 			return
 	
 	if not rutas_pantallas.has(pantalla):
@@ -198,6 +197,14 @@ func ir_a_ticket_detalle(ticket_id: int):
 func ir_a_nuevo_ticket():
 	ir_a("nuevo_ticket")
 
+func ir_a_editar_ticket(ticket_id: int):
+	print("🎯 [ROUTER] Navegando a editar ticket con ID: ", ticket_id)
+	ir_a("nuevo_ticket", {"ticket_id": ticket_id, "modo": "editar"})
+
+func ir_a_tickets_lista():
+	print("🎯 [ROUTER] Navegando a lista de tickets")
+	ir_a("tickets_lista")
+
 func ir_a_clientes():
 	ir_a("clientes_lista")
 
@@ -235,6 +242,18 @@ func buscar_nodo_main() -> Node:
 	"""Busca el nodo Main en diferentes ubicaciones posibles"""
 	print("🔍 [ROUTER] Iniciando búsqueda del nodo Main...")
 	
+	# Verificar si la escena actual ES la main.tscn
+	var current_scene = get_tree().current_scene
+	print("📊 [ROUTER] Escena actual: ", current_scene.name if current_scene else "null")
+	
+	if current_scene != null and current_scene.scene_file_path == "res://main.tscn":
+		print("🔍 [ROUTER] Main encontrado como escena actual (main.tscn)")
+		# Asegurar que esté en el grupo main
+		if not current_scene.is_in_group("main"):
+			current_scene.add_to_group("main")
+			print("✅ [ROUTER] Main agregado al grupo")
+		return current_scene
+	
 	# Buscar por grupo primero
 	var main_nodes = get_tree().get_nodes_in_group("main")
 	print("📊 [ROUTER] Nodos en grupo 'main': ", main_nodes.size())
@@ -250,13 +269,6 @@ func buscar_nodo_main() -> Node:
 		print("🔍 [ROUTER] Main encontrado en raíz: ", root_main.name)
 		return root_main
 	
-	# Buscar en la escena actual
-	var current_scene = get_tree().current_scene
-	print("📊 [ROUTER] Escena actual: ", current_scene.name if current_scene else "null")
-	if current_scene != null and (current_scene.name == "Main" or current_scene.has_node("ContentContainer")):
-		print("🔍 [ROUTER] Main encontrado como escena actual")
-		return current_scene
-	
 	# Buscar recursivamente por cualquier nodo que tenga ContentContainer
 	var found = buscar_main_recursivo(get_tree().root)
 	if found != null:
@@ -266,9 +278,11 @@ func buscar_nodo_main() -> Node:
 	print("❌ [ROUTER] Main no encontrado en ninguna ubicación")
 	print("📊 [ROUTER] Información de debug:")
 	var scene_name = "null"
+	var scene_path = "null"
 	if get_tree().current_scene:
 		scene_name = get_tree().current_scene.name
-	print("  - Escena actual: ", scene_name)
+		scene_path = get_tree().current_scene.scene_file_path
+	print("  - Escena actual: ", scene_name, " (", scene_path, ")")
 	var children_names = []
 	for child in get_tree().root.get_children():
 		children_names.append(child.name)
@@ -308,24 +322,15 @@ func intentar_crear_content_container(main_node: Node):
 	print("✅ [ROUTER] ContentContainer creado exitosamente")
 
 func intentar_navegacion_directa(pantalla: String, _parametros: Dictionary = {}):
-	"""Navegación de último recurso cambiando directamente la escena"""
-	print("⚠️ [ROUTER] Intentando navegación directa a: ", pantalla)
+	"""Navegación de último recurso - Ya no cambia escena directamente"""
+	print("⚠️ [ROUTER] Navegación directa deshabilitada por seguridad")
+	print("❌ [ROUTER] No se puede navegar a: ", pantalla)
+	print("💡 [ROUTER] Sugerencia: Reiniciar la aplicación para cargar main.tscn")
 	
-	if not rutas_pantallas.has(pantalla):
-		print("❌ [ROUTER] Pantalla no existe: ", pantalla)
-		return
+	# NO cambiar escena directamente - esto rompe la estructura
+	# get_tree().change_scene_to_packed(escena)  # DESHABILITADO
 	
-	var ruta = rutas_pantallas[pantalla]
-	
-	# Cambiar escena directamente
-	var escena = load(ruta)
-	if escena == null:
-		print("❌ [ROUTER] No se pudo cargar: ", ruta)
-		return
-	
-	print("🔄 [ROUTER] Cambiando escena directamente a: ", ruta)
-	get_tree().change_scene_to_packed(escena)
-	pantalla_actual = pantalla
+	push_error("❌ [ROUTER] Navegación fallida - aplicación en estado inconsistente")
 
 func _intentar_reinicializar_inmediato():
 	"""Intenta reinicializar el Router inmediatamente después de perder conexión"""

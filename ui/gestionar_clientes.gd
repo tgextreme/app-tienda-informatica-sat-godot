@@ -155,28 +155,32 @@ func crear_cliente_card(cliente: Dictionary):
 	
 	# Nombre
 	var nombre_label = Label.new()
-	nombre_label.text = "👤 " + cliente.get("nombre", "Sin nombre")
+	var nombre = str(cliente.get("nombre", "Sin nombre")) if cliente.get("nombre") != null else "Sin nombre"
+	nombre_label.text = "👤 " + nombre
 	nombre_label.add_theme_font_size_override("font_size", 18)
 	nombre_label.add_theme_color_override("font_color", Color(0.4, 0.8, 1, 1))
 	info_vbox.add_child(nombre_label)
 	
 	# Contacto
 	var contacto_label = Label.new()
-	contacto_label.text = "📞 " + cliente.get("telefono", "-") + "  ✉️ " + cliente.get("email", "-")
+	var telefono = str(cliente.get("telefono", "-")) if cliente.get("telefono") != null else "-"
+	var email = str(cliente.get("email", "-")) if cliente.get("email") != null else "-"
+	contacto_label.text = "📞 " + telefono + "  ✉️ " + email
 	contacto_label.add_theme_font_size_override("font_size", 14)
 	info_vbox.add_child(contacto_label)
 	
 	# NIF y fecha
 	var extra_label = Label.new()
-	var nif_text = cliente.get("nif", "")
-	var fecha_text = cliente.get("fecha_registro", "")
+	var nif_text = str(cliente.get("nif", "")) if cliente.get("nif") != null else ""
+	var fecha_text = str(cliente.get("fecha_registro", "")) if cliente.get("fecha_registro") != null else ""
 	if nif_text != "":
 		extra_label.text = "🆔 " + nif_text
 	if fecha_text != "":
+		var fecha_solo = fecha_text.split("T")[0] if fecha_text.find("T") != -1 else fecha_text
 		if extra_label.text != "":
-			extra_label.text += "  📅 " + fecha_text.split("T")[0]  # Solo fecha, sin hora
+			extra_label.text += "  📅 " + fecha_solo
 		else:
-			extra_label.text = "📅 " + fecha_text.split("T")[0]
+			extra_label.text = "📅 " + fecha_solo
 	extra_label.add_theme_font_size_override("font_size", 12)
 	extra_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7, 1))
 	info_vbox.add_child(extra_label)

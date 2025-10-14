@@ -16,6 +16,10 @@ func _ready():
 	configurar_interfaz()
 	configurar_filtros()
 	cargar_tickets()
+	
+	# Conectar señal para menú contextual y botones
+	if tickets_tree.button_clicked.connect(_on_tickets_tree_button_clicked) != OK:
+		print("❌ Error conectando señal button_clicked del TreeItem")
 
 func configurar_interfaz():
 	# Configurar permisos
@@ -28,6 +32,7 @@ func configurar_interfaz():
 	tickets_tree.set_column_title(3, "Estado")
 	tickets_tree.set_column_title(4, "Técnico")
 	tickets_tree.set_column_title(5, "Fecha")
+	tickets_tree.set_column_title(6, "Acciones")
 	
 	tickets_tree.set_column_custom_minimum_width(0, 120)
 	tickets_tree.set_column_custom_minimum_width(1, 200)
@@ -35,6 +40,7 @@ func configurar_interfaz():
 	tickets_tree.set_column_custom_minimum_width(3, 120)
 	tickets_tree.set_column_custom_minimum_width(4, 150)
 	tickets_tree.set_column_custom_minimum_width(5, 100)
+	tickets_tree.set_column_custom_minimum_width(6, 80)  # Columna para botones
 
 func configurar_filtros():
 	# Filtro de estados
@@ -89,6 +95,8 @@ func actualizar_tree():
 		"Presupuestado": Color(0.8, 0.4, 1.0),
 		"Aprobado": Color(0.2, 1.0, 0.6),
 		"En reparación": Color(1.0, 0.6, 0.2),
+		"En Reparación": Color(1.0, 0.6, 0.2),  # Alias
+		"Pendiente": Color(0.8, 0.8, 0.2),      # Nuevo estado
 		"En pruebas": Color(0.6, 1.0, 0.8),
 		"Listo para entrega": Color(0.2, 0.8, 0.2),
 		"Entregado": Color(0.7, 0.7, 0.7),
@@ -99,40 +107,68 @@ func actualizar_tree():
 	for ticket_data in tickets_data:
 		var item = tickets_tree.create_item(root)
 		
-		# Código
-		item.set_text(0, ticket_data.get("codigo", ""))
+		# Código - validar nil
+		var codigo = ticket_data.get("codigo", "")
+		item.set_text(0, str(codigo) if codigo != null else "Sin código")
 		
-		# Cliente
-		item.set_text(1, ticket_data.get("cliente_nombre", ""))
+		# Cliente - validar nil
+		var cliente_nombre = ticket_data.get("cliente_nombre", "")
+		item.set_text(1, str(cliente_nombre) if cliente_nombre != null else "Sin cliente")
 		
-		# Equipo (tipo + marca/modelo)
-		var equipo = str(ticket_data.get("equipo_tipo", ""))
-		var marca = str(ticket_data.get("equipo_marca", ""))
-		var modelo = str(ticket_data.get("equipo_modelo", ""))
-		if marca != "" and marca != "null" and marca != "0":
-			equipo += " " + marca
-		if modelo != "" and modelo != "null" and modelo != "0":
-			equipo += " " + modelo
+		# Equipo (tipo + marca/modelo) - validar nil
+		var equipo_tipo = ticket_data.get("equipo_tipo", "")
+		var equipo = str(equipo_tipo) if equipo_tipo != null else "Sin especificar"
+		
+		var marca = ticket_data.get("equipo_marca", "")
+		var modelo = ticket_data.get("equipo_modelo", "")
+		
+		# Convertir a string y validar
+		var marca_str = str(marca) if marca != null else ""
+		var modelo_str = str(modelo) if modelo != null else ""
+		
+		if marca_str != "" and marca_str != "null" and marca_str != "0":
+			equipo += " " + marca_str
+		if modelo_str != "" and modelo_str != "null" and modelo_str != "0":
+			equipo += " " + modelo_str
 		item.set_text(2, equipo)
 		
-		# Estado con color
+		# Estado con color - validar nil
 		var estado = ticket_data.get("estado", "")
-		item.set_text(3, estado)
-		if colores_estados.has(estado):
-			item.set_custom_color(3, colores_estados[estado])
+		var estado_str = str(estado) if estado != null else "Sin estado"
+		item.set_text(3, estado_str)
+		if colores_estados.has(estado_str):
+			item.set_custom_color(3, colores_estados[estado_str])
 		
-		# Técnico
-		item.set_text(4, ticket_data.get("tecnico_nombre", "Sin asignar"))
+		# Técnico - validar nil
+		var tecnico_nombre = ticket_data.get("tecnico_nombre", "Sin asignar")
+		item.set_text(4, str(tecnico_nombre) if tecnico_nombre != null else "Sin asignar")
 		
-		# Fecha (solo la fecha, sin hora)
+		# Fecha (solo la fecha, sin hora) - validar nil
 		var fecha_entrada = ticket_data.get("fecha_entrada", "")
-		if fecha_entrada != "":
-			var fecha_parts = fecha_entrada.split(" ")
+		if fecha_entrada != null and fecha_entrada != "":
+			var fecha_parts = str(fecha_entrada).split(" ")
 			if fecha_parts.size() > 0:
 				item.set_text(5, fecha_parts[0])
+			else:
+				item.set_text(5, "Sin fecha")
+		else:
+			item.set_text(5, "Sin fecha")
 		
-		# Guardar ID del ticket como metadatos
-		item.set_metadata(0, int(ticket_data.get("id", 0)))
+		# Guardar ID del ticket como metadatos - validar nil
+		var ticket_id = ticket_data.get("id", 0)
+		item.set_metadata(0, int(ticket_id) if ticket_id != null else 0)
+		
+		# Agregar botón de eliminar en la columna de acciones
+		if AppState.tiene_permiso("eliminar_ticket"):
+			# Crear una textura simple para el botón (X roja)
+			var texture = ImageTexture.new()
+			var image = Image.create(16, 16, false, Image.FORMAT_RGBA8)
+			image.fill(Color(1, 0.4, 0.4, 1))  # Rojo para eliminar
+			texture.set_image(image)
+			
+			item.add_button(6, texture, 0, false, "Eliminar Ticket")
+		else:
+			item.set_text(6, "")
 
 func actualizar_contador():
 	count_label.text = str(tickets_data.size()) + " ticket(s) encontrado(s)"
@@ -164,6 +200,125 @@ func _on_tickets_tree_item_activated():
 		var ticket_id = selected.get_metadata(0)
 		if ticket_id != null and int(ticket_id) > 0:
 			Router.ir_a_ticket_detalle(int(ticket_id))
+
+# Menú contextual para acciones de ticket
+func _on_tickets_tree_button_clicked(item: TreeItem, column: int, id: int, mouse_button_index: int):
+	# Si es clic en la columna de acciones (columna 6), es el botón de eliminar
+	if column == 6 and id == 0:  # ID 0 es el botón de eliminar
+		var ticket_id = item.get_metadata(0)
+		if ticket_id != null and int(ticket_id) > 0:
+			confirmar_eliminar_ticket_directo(int(ticket_id))
+		return
+	
+	# Si es clic derecho, mostrar menú contextual
+	if mouse_button_index == MOUSE_BUTTON_RIGHT:
+		mostrar_menu_contextual(item)
+
+func mostrar_menu_contextual(item: TreeItem):
+	var ticket_id = item.get_metadata(0)
+	if ticket_id == null or int(ticket_id) <= 0:
+		return
+		
+	var popup = PopupMenu.new()
+	add_child(popup)
+	
+	popup.add_item("🔍 Ver Detalles", 0)
+	popup.add_item("✏️ Editar", 1)  
+	popup.add_separator()
+	popup.add_item("🗑️ Eliminar", 2)
+	
+	# Configurar permisos
+	if not AppState.tiene_permiso("editar_ticket"):
+		popup.set_item_disabled(1, true)
+	if not AppState.tiene_permiso("eliminar_ticket"):
+		popup.set_item_disabled(2, true)
+	
+	# Conectar señal
+	popup.id_pressed.connect(_on_menu_contextual_pressed.bind(ticket_id))
+	
+	# Mostrar en posición del mouse
+	popup.position = get_global_mouse_position()
+	popup.popup()
+
+func _on_menu_contextual_pressed(id: int, ticket_id: int):
+	match id:
+		0: # Ver detalles
+			Router.ir_a_ticket_detalle(ticket_id)
+		1: # Editar  
+			Router.ir_a_editar_ticket(ticket_id)
+		2: # Eliminar
+			confirmar_eliminar_ticket(ticket_id)
+
+func confirmar_eliminar_ticket(ticket_id: int):
+	var dialog = AcceptDialog.new()
+	add_child(dialog)
+	
+	dialog.title = "Confirmar Eliminación"
+	dialog.dialog_text = "¿Está seguro de que desea eliminar este ticket?\n\nEsta acción no se puede deshacer."
+	
+	# Agregar botón de cancelar
+	dialog.add_cancel_button("Cancelar")
+	dialog.get_ok_button().text = "Eliminar"
+	
+	dialog.confirmed.connect(_on_eliminar_confirmado.bind(ticket_id))
+	dialog.popup_centered()
+
+func _on_eliminar_confirmado(ticket_id: int):
+	print("🗑️ [TICKETS_LIST] Eliminando ticket ID: ", ticket_id)
+	
+	var resultado = DataService.eliminar_ticket(ticket_id)
+	if resultado:
+		print("✅ [TICKETS_LIST] Ticket eliminado correctamente")
+		# Mostrar notificación de éxito
+		var notif = AcceptDialog.new()
+		add_child(notif)
+		notif.title = "Éxito"
+		notif.dialog_text = "Ticket eliminado correctamente"
+		notif.popup_centered()
+		
+		# Recargar lista
+		cargar_tickets()
+	else:
+		print("❌ [TICKETS_LIST] Error al eliminar ticket")
+		# Mostrar error
+		var error = AcceptDialog.new()
+		add_child(error)
+		error.title = "Error"
+		error.dialog_text = "No se pudo eliminar el ticket. Inténtelo de nuevo."
+		error.popup_centered()
+
+func confirmar_eliminar_ticket_directo(ticket_id: int):
+	"""Confirma la eliminación directa de un ticket desde el botón de la lista"""
+	print("🗑️ [TICKETS_LIST] Solicitud de eliminación directa del ticket ID: ", ticket_id)
+	
+	# Buscar datos del ticket para mostrar información en el diálogo
+	var ticket_info = {}
+	for ticket in tickets_data:
+		if int(ticket.get("id", 0)) == ticket_id:
+			ticket_info = ticket
+			break
+	
+	var codigo = ticket_info.get("codigo", "Sin código")
+	var cliente_nombre = ticket_info.get("cliente_nombre", "Sin cliente")
+	
+	var dialog = ConfirmationDialog.new()
+	dialog.title = "⚠️ Confirmar Eliminación"
+	dialog.dialog_text = "¿Está seguro de que desea ELIMINAR PERMANENTEMENTE este ticket?\n\n🎫 Código: %s\n👤 Cliente: %s\n\n⚠️ ESTA ACCIÓN NO SE PUEDE DESHACER" % [codigo, cliente_nombre]
+	
+	dialog.get_ok_button().text = "🗑️ ELIMINAR"
+	dialog.get_ok_button().modulate = Color(1, 0.4, 0.4, 1)
+	dialog.get_cancel_button().text = "❌ CANCELAR"
+	
+	dialog.confirmed.connect(func():
+		_on_eliminar_confirmado(ticket_id)
+		dialog.queue_free()
+	)
+	dialog.canceled.connect(func():
+		dialog.queue_free()
+	)
+	
+	add_child(dialog)
+	dialog.popup_centered(Vector2(500, 300))
 
 # Configurar la pantalla con parámetros externos
 func configurar(parametros: Dictionary):

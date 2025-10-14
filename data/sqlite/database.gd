@@ -69,18 +69,45 @@ func execute_non_query(query: String, params: Array = []) -> bool:
 	return true
 
 func handle_select(query: String, _params: Array) -> Array:
-	# Implementación básica de SELECT
+	# Implementación mejorada de SELECT con soporte básico para JOINs
 	var result = []
+	var query_upper = query.to_upper()
 	
-	# Extraer tabla de la consulta (muy básico)
-	var from_pos = query.to_upper().find("FROM")
+	print("🔍 [DATABASE] Ejecutando SELECT: ", query)
+	print("🔍 [DATABASE] Parámetros: ", _params)
+	
+	# Detectar consultas específicas comunes
+	if query_upper.find("COUNT(*)") != -1:
+		# Consulta COUNT
+		var count_from_pos = query_upper.find("FROM")
+		if count_from_pos != -1:
+			var count_table_part = query.substr(count_from_pos + 4).strip_edges()
+			var count_table_name = count_table_part.split(" ")[0].to_lower()
+			
+			if data.has(count_table_name):
+				var count = data[count_table_name].size()
+				result.append({"total": count})
+				print("✅ [DATABASE] COUNT resultado: ", count)
+				return result
+		return [{"total": 0}]
+	
+	# Detectar consultas con JOIN (ticket con cliente/empleado)
+	if query_upper.find("LEFT JOIN") != -1 and query_upper.find("FROM TICKETS") != -1:
+		print("🔗 [DATABASE] Detectada consulta JOIN con tickets - derivando a handle_ticket_join_query")
+		return handle_ticket_join_query(query, _params)
+	
+	# Extraer tabla principal de la consulta
+	var from_pos = query_upper.find("FROM")
 	if from_pos == -1:
 		return result
 	
 	var table_part = query.substr(from_pos + 4).strip_edges()
-	var table_name = table_part.split(" ")[0]
+	var table_name = table_part.split(" ")[0].to_lower()
+	
+	print("🔍 [DATABASE] Tabla objetivo: ", table_name)
 	
 	if not data.has(table_name):
+		print("❌ [DATABASE] Tabla no existe: ", table_name)
 		return result
 	
 	var table_data = data[table_name]
@@ -88,23 +115,125 @@ func handle_select(query: String, _params: Array) -> Array:
 		return result
 	
 	# Manejar WHERE básico
-	if query.to_upper().find("WHERE") != -1:
+	if query_upper.find("WHERE") != -1:
 		# Para consultas específicas comunes
 		if query.find("email = ?") != -1 and _params.size() > 0:
 			# Buscar por email
 			for record in table_data:
 				if record is Dictionary and record.get("email") == _params[0]:
 					result.append(record)
+			print("✅ [DATABASE] Búsqueda por email encontró: ", result.size(), " registros")
 			return result
-		elif query.find("id = ?") != -1 and _params.size() > 0:
+		elif (query.find("id = ?") != -1 or query.find("t.id = ?") != -1) and _params.size() > 0:
 			# Buscar por ID
+			var search_id = _params[0]
 			for record in table_data:
-				if record is Dictionary and str(record.get("id")) == str(_params[0]):
+				if record is Dictionary and int(record.get("id", 0)) == int(search_id):
 					result.append(record)
+			print("✅ [DATABASE] Búsqueda por ID ", search_id, " encontró: ", result.size(), " registros")
 			return result
 	
 	# Por simplicidad, devolvemos todos los datos de la tabla
+	print("✅ [DATABASE] Devolviendo todos los registros: ", table_data.size())
 	return table_data
+
+func handle_ticket_join_query(query: String, params: Array) -> Array:
+	"""Maneja consultas de tickets con JOINs a clientes y empleados"""
+	print("🔗 [DATABASE] Procesando consulta con JOIN de tickets")
+	print("🔍 [DATABASE] Query: ", query)
+	print("🔍 [DATABASE] Params: ", params)
+	
+	if not data.has("tickets"):
+		print("❌ [DATABASE] No hay tabla tickets")
+		return []
+	
+	var tickets = data["tickets"]
+	var clientes = data.get("clientes", [])
+	var usuarios = data.get("usuarios", [])
+	
+	print("📊 [DATABASE] Datos disponibles:")
+	print("   - Tickets: ", tickets.size())
+	print("   - Clientes: ", clientes.size())
+	print("   - Usuarios: ", usuarios.size())
+	
+	# Debug: mostrar algunos tickets y clientes
+	if tickets.size() > 0:
+		print("🔍 [DATABASE] Ejemplo ticket: ", tickets[0])
+	if clientes.size() > 0:
+		print("🔍 [DATABASE] Ejemplo cliente: ", clientes[0])
+	
+	# Crear mapas para lookup rápido
+	var clientes_map = {}
+	for cliente in clientes:
+		if cliente.has("id"):
+			clientes_map[int(cliente.id)] = cliente
+	
+	var usuarios_map = {}
+	for usuario in usuarios:
+		if usuario.has("id"):
+			usuarios_map[int(usuario.id)] = usuario
+	
+	var result = []
+	
+	# Si hay WHERE con ID específico
+	if query.to_upper().find("WHERE T.ID = ?") != -1 and params.size() > 0:
+		var search_id = int(params[0])
+		print("🔍 [DATABASE] Buscando ticket con ID: ", search_id)
+		
+		for ticket in tickets:
+			if int(ticket.get("id", 0)) == search_id:
+				print("🎯 [DATABASE] Ticket encontrado con ID ", search_id, ": ", ticket)
+				var ticket_completo = ticket.duplicate()
+				
+				# Agregar datos del cliente
+				var cliente_id = int(ticket.get("cliente_id", 0))
+				print("🔍 [DATABASE] Buscando cliente con ID: ", cliente_id)
+				print("🔍 [DATABASE] Clientes disponibles en map: ", clientes_map.keys())
+				
+				if clientes_map.has(cliente_id):
+					var cliente = clientes_map[cliente_id]
+					print("✅ [DATABASE] Cliente encontrado: ", cliente)
+					ticket_completo["cliente_nombre"] = cliente.get("nombre", "")
+					ticket_completo["cliente_telefono"] = cliente.get("telefono", "")
+					ticket_completo["cliente_email"] = cliente.get("email", "")
+				else:
+					print("❌ [DATABASE] Cliente con ID ", cliente_id, " no encontrado en map")
+					ticket_completo["cliente_nombre"] = ""
+					ticket_completo["cliente_telefono"] = ""
+					ticket_completo["cliente_email"] = ""
+				
+				# Agregar datos del técnico/empleado
+				var tecnico_id = ticket.get("tecnico_id")
+				if tecnico_id != null and int(tecnico_id) > 0 and usuarios_map.has(int(tecnico_id)):
+					var tecnico = usuarios_map[int(tecnico_id)]
+					ticket_completo["tecnico_nombre"] = tecnico.get("nombre", "")
+				
+				result.append(ticket_completo)
+				print("✅ [DATABASE] Ticket combinado: ", ticket_completo)
+				break
+	else:
+		# Devolver todos los tickets con datos combinados
+		for ticket in tickets:
+			var ticket_completo = ticket.duplicate()
+			
+			# Agregar datos del cliente
+			var cliente_id = int(ticket.get("cliente_id", 0))
+			if clientes_map.has(cliente_id):
+				var cliente = clientes_map[cliente_id]
+				ticket_completo["cliente_nombre"] = cliente.get("nombre", "")
+				ticket_completo["cliente_telefono"] = cliente.get("telefono", "")
+				ticket_completo["cliente_email"] = cliente.get("email", "")
+			
+			# Agregar datos del técnico
+			var tecnico_id = ticket.get("tecnico_id")
+			if tecnico_id != null and int(tecnico_id) > 0 and usuarios_map.has(int(tecnico_id)):
+				var tecnico = usuarios_map[int(tecnico_id)]
+				ticket_completo["tecnico_nombre"] = tecnico.get("nombre", "")
+			
+			result.append(ticket_completo)
+	
+	print("✅ [DATABASE] JOIN query completado - ", result.size(), " registros")
+	return result
 
 func handle_insert(query: String, params: Array):
 	# Extraer tabla y valores
@@ -157,18 +286,31 @@ func handle_insert(query: String, params: Array):
 				new_record["direccion"] = params[5] if params.size() > 5 else ""
 				new_record["notas"] = params[6] if params.size() > 6 else ""
 				new_record["rgpd_consent"] = params[7] if params.size() > 7 else 0
-				new_record["fecha_registro"] = Time.get_datetime_string_from_system()
+				new_record["creado_en"] = Time.get_datetime_string_from_system()
+			else:
+				print("❌ [DATABASE] Parámetros insuficientes para insertar cliente: ", params.size(), " (esperados: 8)")
 		elif table_name == "tickets":
-			if params.size() >= 8:
+			if params.size() >= 16:
+				# Mapeo correcto según las migraciones y DataService.gd
 				new_record["codigo"] = params[0] if params.size() > 0 else ""
-				new_record["cliente_id"] = params[1] if params.size() > 1 else 0
-				new_record["tecnico_id"] = params[2] if params.size() > 2 else 0
-				new_record["equipo_tipo"] = params[3] if params.size() > 3 else ""
-				new_record["equipo_marca"] = params[4] if params.size() > 4 else ""
-				new_record["equipo_modelo"] = params[5] if params.size() > 5 else ""
-				new_record["descripcion_problema"] = params[6] if params.size() > 6 else ""
-				new_record["estado"] = params[7] if params.size() > 7 else "Nuevo"
+				new_record["estado"] = params[1] if params.size() > 1 else "Nuevo"
+				new_record["prioridad"] = params[2] if params.size() > 2 else "NORMAL"
+				new_record["cliente_id"] = params[3] if params.size() > 3 else 0
+				new_record["tecnico_id"] = params[4] if params.size() > 4 else null
+				new_record["equipo_tipo"] = params[5] if params.size() > 5 else ""
+				new_record["equipo_marca"] = params[6] if params.size() > 6 else ""
+				new_record["equipo_modelo"] = params[7] if params.size() > 7 else ""
+				new_record["numero_serie"] = params[8] if params.size() > 8 else ""
+				new_record["imei"] = params[9] if params.size() > 9 else ""
+				new_record["accesorios"] = params[10] if params.size() > 10 else ""
+				new_record["password_bloqueo"] = params[11] if params.size() > 11 else ""
+				new_record["averia_cliente"] = params[12] if params.size() > 12 else ""
+				new_record["diagnostico"] = params[13] if params.size() > 13 else ""
+				new_record["notas_internas"] = params[14] if params.size() > 14 else ""
+				new_record["notas_cliente"] = params[15] if params.size() > 15 else ""
 				new_record["fecha_entrada"] = Time.get_datetime_string_from_system()
+			else:
+				print("❌ [DATABASE] Parámetros insuficientes para insertar ticket: ", params.size(), " (esperados: 16)")
 	
 	data[table_name].append(new_record)
 	save_database()

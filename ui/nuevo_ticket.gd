@@ -681,9 +681,5 @@ func crear_datos_prueba():
 		print("✅ Cliente de prueba creado: ", cliente_prueba.get("nombre", "Sin nombre"))
 
 func volver_dashboard():
-	# Volver al dashboard (navegación simple)
-	var dashboard_scene = load("res://ui/dashboard.tscn")
-	if dashboard_scene:
-		get_tree().change_scene_to_packed(dashboard_scene)
-	else:
-		print("❌ No se puede cargar dashboard.tscn")
+	# Volver al dashboard usando Router
+	Router.ir_a_dashboard()

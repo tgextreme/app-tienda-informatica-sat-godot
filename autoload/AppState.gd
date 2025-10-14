@@ -200,13 +200,13 @@ func verificar_password(password: String, password_hash: String) -> bool:
 	var resultado_directo = password == password_hash
 	
 	# Intentar comparación con hash (para empleados nuevos)
-	var hash_password = str(password.hash())
-	var resultado_hash = hash_password == password_hash
+	var password_hashed = str(password.hash())
+	var resultado_hash = password_hashed == password_hash
 	
 	var resultado_final = resultado_directo or resultado_hash
 	
 	print("  - Comparación directa: ", resultado_directo)
-	print("  - Hash generado: ", hash_password)
+	print("  - Hash generado: ", password_hashed)
 	print("  - Comparación hash: ", resultado_hash)
 	print("  - Resultado final: ", resultado_final)
 	
@@ -249,7 +249,7 @@ func get_usuario_id() -> int:
 func get_usuario_nombre() -> String:
 	return usuario_actual.get("nombre", "")
 
-static func hash_password(password: String) -> String:
+static func generar_hash_password_local(password: String) -> String:
 	"""Genera un hash simple de la contraseña (para demostración)"""
 	# NOTA: En un sistema real se debería usar bcrypt o similar
 	var context = HashingContext.new()

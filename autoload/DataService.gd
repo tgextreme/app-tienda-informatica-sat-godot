@@ -46,14 +46,14 @@ func verificar_y_crear_datos_iniciales():
 	
 	print("📊 [DATASERVICE] Clientes existentes: ", total_clientes)
 	
-	# Funcionalidad de datos automáticos desactivada
-	# if total_clientes == 0:
-	#	print("🔧 [DATASERVICE] No hay clientes, creando datos de prueba...")
-	#	crear_clientes_de_prueba()
-	# else:
-	#	print("✅ [DATASERVICE] Datos de clientes ya existen")
+	# Crear datos de prueba si no hay clientes
+	if total_clientes == 0:
+		print("🔧 [DATASERVICE] No hay clientes, creando datos de prueba...")
+		crear_datos_de_prueba_completos()
+	else:
+		print("✅ [DATASERVICE] Datos de clientes ya existen")
 	
-	print("✅ [DATASERVICE] Inicialización de clientes completada (sin datos automáticos)")
+	print("✅ [DATASERVICE] Inicialización de clientes completada")
 	
 	# Asegurar que hay un usuario técnico de prueba
 	crear_usuario_tecnico_prueba()
@@ -108,9 +108,12 @@ func get_last_insert_id() -> int:
 
 func buscar_tickets(filtros: Dictionary = {}) -> Array:
 	# Simplificado - obtener todos los tickets y filtrar en código
+	print("🔍 [DATASERVICE] Buscando tickets con filtros: ", filtros)
 	var tickets = execute_sql("SELECT * FROM tickets ORDER BY id DESC")
 	var clientes = execute_sql("SELECT * FROM clientes")
 	var usuarios = execute_sql("SELECT * FROM usuarios")
+	
+	print("📊 [DATASERVICE] Datos obtenidos: tickets=", tickets.size(), " clientes=", clientes.size(), " usuarios=", usuarios.size())
 	
 	# Crear mapas para lookups rápidos
 	var clientes_map = {}
@@ -148,6 +151,10 @@ func buscar_tickets(filtros: Dictionary = {}) -> Array:
 			
 		if incluir:
 			result.append(ticket_completo)
+	
+	print("✅ [DATASERVICE] Devolviendo ", result.size(), " tickets")
+	if result.size() > 0:
+		print("🔍 [DATASERVICE] Ejemplo primer ticket: ", result[0])
 	
 	return result
 
@@ -229,23 +236,34 @@ func guardar_ticket(ticket_data: Dictionary) -> int:
 			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		"""
 		
-		execute_non_query(sql, [
+		print("🔍 [DEBUG] Insertando ticket con datos: ", [
 			codigo,
-			ticket_data.get("estado", "Nuevo"),
+			ticket_data.get("estado", "Nuevo"), 
 			ticket_data.get("prioridad", "NORMAL"),
 			ticket_data.get("cliente_id"),
 			ticket_data.get("tecnico_id"),
 			ticket_data.get("equipo_tipo"),
 			ticket_data.get("equipo_marca"),
-			ticket_data.get("equipo_modelo"),
-			ticket_data.get("numero_serie"),
-			ticket_data.get("imei"),
-			ticket_data.get("accesorios"),
-			ticket_data.get("password_bloqueo"),
-			ticket_data.get("averia_cliente"),
-			ticket_data.get("diagnostico"),
-			ticket_data.get("notas_internas"),
-			ticket_data.get("notas_cliente")
+			ticket_data.get("equipo_modelo")
+		])
+		
+		execute_non_query(sql, [
+			codigo,                                    # 1: codigo
+			ticket_data.get("estado", "Nuevo"),       # 2: estado 
+			ticket_data.get("prioridad", "NORMAL"),   # 3: prioridad
+			ticket_data.get("cliente_id"),            # 4: cliente_id
+			ticket_data.get("tecnico_id"),            # 5: tecnico_id
+			ticket_data.get("equipo_tipo"),           # 6: equipo_tipo
+			ticket_data.get("equipo_marca"),          # 7: equipo_marca
+			ticket_data.get("equipo_modelo"),         # 8: equipo_modelo
+			ticket_data.get("numero_serie"),          # 9: numero_serie
+			ticket_data.get("imei"),                  # 10: imei
+			ticket_data.get("accesorios"),            # 11: accesorios
+			ticket_data.get("password_bloqueo"),      # 12: password_bloqueo
+			ticket_data.get("averia_cliente"),        # 13: averia_cliente
+			ticket_data.get("diagnostico"),           # 14: diagnostico
+			ticket_data.get("notas_internas"),        # 15: notas_internas
+			ticket_data.get("notas_cliente")          # 16: notas_cliente
 		])
 		
 		ticket_id = get_last_insert_id()
@@ -307,6 +325,27 @@ func actualizar_campo_ticket(ticket_id: int, campo: String, valor) -> bool:
 		print("❌ [DATASERVICE] Error al actualizar campo ", campo)
 	
 	return resultado
+
+func eliminar_ticket(ticket_id: int) -> bool:
+	"""Elimina un ticket del sistema"""
+	print("🗑️ [DATASERVICE] Eliminando ticket ID: ", ticket_id)
+	
+	# Verificar que el ticket existe
+	var ticket = obtener_ticket(ticket_id)
+	if ticket.is_empty():
+		print("❌ [DATASERVICE] Ticket no encontrado para eliminar")
+		return false
+	
+	# Eliminar ticket
+	var sql = "DELETE FROM tickets WHERE id = ?"
+	var resultado = execute_non_query(sql, [ticket_id])
+	
+	if resultado:
+		print("✅ [DATASERVICE] Ticket eliminado correctamente")
+		return true
+	else:
+		print("❌ [DATASERVICE] Error al eliminar ticket")
+		return false
 
 func actualizar_ticket(ticket_data: Dictionary) -> bool:
 	"""Actualiza todos los campos de un ticket existente"""
@@ -645,6 +684,14 @@ func obtener_todos_los_tickets() -> Array:
 func obtener_ticket_por_id(ticket_id: int) -> Dictionary:
 	"""Obtiene un ticket específico por su ID con toda la información relacionada"""
 	print("📂 [DATASERVICE] Obteniendo ticket ID: ", ticket_id)
+	print("🔍 [DATASERVICE] Estado de la BD: ", db != null)
+	
+	# Primero verificar que hay tickets en general
+	var test_tickets = execute_sql("SELECT COUNT(*) as total FROM tickets")
+	if test_tickets.size() > 0:
+		print("📊 [DATASERVICE] Total tickets en BD: ", test_tickets[0].get("total", 0))
+	else:
+		print("❌ [DATASERVICE] No se pudo contar tickets - posible problema con BD")
 	
 	var tickets = execute_sql("""
 		SELECT 
@@ -652,18 +699,23 @@ func obtener_ticket_por_id(ticket_id: int) -> Dictionary:
 			c.nombre as cliente_nombre,
 			c.telefono as cliente_telefono,
 			c.email as cliente_email,
-			e.nombre as tecnico_nombre
+			u.nombre as tecnico_nombre
 		FROM tickets t
 		LEFT JOIN clientes c ON t.cliente_id = c.id
-		LEFT JOIN empleados e ON t.tecnico_id = e.id
+		LEFT JOIN usuarios u ON t.tecnico_id = u.id
 		WHERE t.id = ?
 	""", [ticket_id])
 	
+	print("🔍 [DATASERVICE] Resultados query: ", tickets.size())
 	if tickets.size() > 0:
 		print("✅ [DATASERVICE] Ticket encontrado: ", tickets[0].get("codigo", ""))
+		print("📋 [DATASERVICE] Datos del ticket: ", tickets[0])
 		return tickets[0]
 	else:
 		print("❌ [DATASERVICE] Ticket no encontrado con ID: ", ticket_id)
+		# Verificar si el ticket existe con query simple
+		var simple_check = execute_sql("SELECT id, codigo FROM tickets WHERE id = ?", [ticket_id])
+		print("🔍 [DATASERVICE] Check simple: ", simple_check)
 		return {}
 
 # --- MANEJO DE ARCHIVOS JSON ---
@@ -1110,3 +1162,111 @@ func eliminar_empleado(empleado_id: int) -> Dictionary:
 	else:
 		print("❌ [DATASERVICE] Error al eliminar empleado: aún existe en la base de datos")
 		return {"success": false, "message": "Error al eliminar empleado de la base de datos"}
+
+# ==========================================
+# DATOS DE PRUEBA
+# ==========================================
+
+func crear_datos_de_prueba_completos():
+	"""Crea un conjunto completo de datos de prueba"""
+	print("🔧 [DATASERVICE] Creando datos de prueba completos...")
+	
+	# 1. Crear clientes
+	print("👥 Creando clientes...")
+	var cliente1_id = guardar_cliente({
+		"nombre": "Juan Pérez",
+		"telefono": "123456789",
+		"email": "juan@email.com",
+		"direccion": "Calle Mayor 123"
+	})
+	
+	var cliente2_id = guardar_cliente({
+		"nombre": "María García",
+		"telefono": "987654321", 
+		"email": "maria@email.com",
+		"direccion": "Av. Libertad 456"
+	})
+	
+	# 2. Crear empleados/técnicos
+	print("👨‍💻 Creando técnicos...")
+	var empleado_data1 = {
+		"nombre": "Carlos Técnico",
+		"email": "carlos@tienda.com",
+		"telefono": "555001122",
+		"password": "tecnico123",
+		"rol_id": 2,  # ID para técnico (1=admin, 2=tecnico)
+		"especialidad": "Hardware"
+	}
+	var tecnico_result = crear_empleado(empleado_data1)
+	var tecnico1_id = tecnico_result.get("id", -1) if tecnico_result.get("success", false) else -1
+	
+	# 3. Crear tickets de prueba
+	print("🎫 Creando tickets...")
+	
+	# Solo crear tickets si el técnico se creó correctamente
+	if tecnico1_id > 0:
+		var ticket1_data = {
+			"cliente_id": cliente1_id,
+			"equipo_tipo": "Ordenador",
+			"equipo_marca": "Dell",
+			"equipo_modelo": "OptiPlex 7090",
+			"numero_serie": "DL001234",
+			"averia_cliente": "El ordenador no enciende. Se escucha un pitido cuando se presiona el botón de encendido.",
+			"diagnostico": "",
+			"estado": "Pendiente",
+			"prioridad": "NORMAL",
+			"tecnico_id": tecnico1_id
+		}
+		var ticket1_id = guardar_ticket(ticket1_data)
+		
+		var ticket2_data = {
+			"cliente_id": cliente2_id, 
+			"equipo_tipo": "Portátil",
+			"equipo_marca": "HP",
+			"equipo_modelo": "Pavilion 15",
+			"numero_serie": "HP987654",
+			"averia_cliente": "La pantalla parpadea y a veces se pone completamente negra. También hay problemas con el teclado.",
+			"diagnostico": "Revisado - posible problema con cable de pantalla",
+			"estado": "En Reparación",
+			"prioridad": "ALTA",
+			"tecnico_id": tecnico1_id
+		}
+		var ticket2_id = guardar_ticket(ticket2_data)
+		
+		print("✅ [DATASERVICE] Datos de prueba creados:")
+		print("  - Clientes: 2 (IDs: ", cliente1_id, ", ", cliente2_id, ")")
+		print("  - Técnicos: 1 (ID: ", tecnico1_id, ")")
+		print("  - Tickets: 2 (IDs: ", ticket1_id, ", ", ticket2_id, ")")
+	else:
+		print("❌ [DATASERVICE] No se pudo crear técnico, creando tickets sin asignar...")
+		
+		var ticket1_data = {
+			"cliente_id": cliente1_id,
+			"equipo_tipo": "Ordenador",
+			"equipo_marca": "Dell",
+			"equipo_modelo": "OptiPlex 7090",
+			"numero_serie": "DL001234",
+			"averia_cliente": "El ordenador no enciende. Se escucha un pitido cuando se presiona el botón de encendido.",
+			"diagnostico": "",
+			"estado": "Pendiente",
+			"prioridad": "NORMAL"
+		}
+		var ticket1_id = guardar_ticket(ticket1_data)
+		
+		var ticket2_data = {
+			"cliente_id": cliente2_id, 
+			"equipo_tipo": "Portátil",
+			"equipo_marca": "HP",
+			"equipo_modelo": "Pavilion 15",
+			"numero_serie": "HP987654",
+			"averia_cliente": "La pantalla parpadea y a veces se pone completamente negra. También hay problemas con el teclado.",
+			"diagnostico": "",
+			"estado": "Pendiente",
+			"prioridad": "NORMAL"
+		}
+		var ticket2_id = guardar_ticket(ticket2_data)
+		
+		print("✅ [DATASERVICE] Datos de prueba creados (sin técnico):")
+		print("  - Clientes: 2 (IDs: ", cliente1_id, ", ", cliente2_id, ")")
+		print("  - Técnicos: 0 (falló la creación)")
+		print("  - Tickets: 2 (IDs: ", ticket1_id, ", ", ticket2_id, ")")

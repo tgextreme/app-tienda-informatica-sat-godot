@@ -260,9 +260,7 @@ func ver_detalle_ticket(ticket: Dictionary):
 
 func _on_nuevo_ticket_pressed():
 	print("➕ [VER_TICKETS] Ir a nuevo ticket...")
-	var nuevo_ticket_scene = load("res://ui/nuevo_ticket.tscn")
-	if nuevo_ticket_scene:
-		get_tree().change_scene_to_packed(nuevo_ticket_scene)
+	Router.ir_a_nuevo_ticket()
 
 func _on_actualizar_pressed():
 	print("🔄 [VER_TICKETS] Actualizando lista...")
@@ -270,9 +268,7 @@ func _on_actualizar_pressed():
 
 func _on_volver_pressed():
 	print("🏠 [VER_TICKETS] Volviendo al dashboard...")
-	var dashboard_scene = load("res://ui/dashboard.tscn")
-	if dashboard_scene:
-		get_tree().change_scene_to_packed(dashboard_scene)
+	Router.ir_a_dashboard()
 
 func _on_buscar_changed(_text: String):
 	timer_busqueda.stop()

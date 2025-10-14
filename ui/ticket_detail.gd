@@ -7,26 +7,27 @@ extends Control
 @onready var fecha_entrada_label = $MainContainer/HeaderPanel/HeaderContent/FechaEntradaLabel
 
 # Cliente info
-@onready var cliente_nombre_label = $MainContainer/ContentContainer/ClientePanel/ClienteContent/NombreLabel
-@onready var cliente_telefono_label = $MainContainer/ContentContainer/ClientePanel/ClienteContent/TelefonoLabel
-@onready var cliente_email_label = $MainContainer/ContentContainer/ClientePanel/ClienteContent/EmailLabel
+@onready var cliente_nombre_label = $MainContainer/ContentContainer/LeftColumn/ClientePanel/ClienteContent/NombreLabel
+@onready var cliente_telefono_label = $MainContainer/ContentContainer/LeftColumn/ClientePanel/ClienteContent/TelefonoLabel
+@onready var cliente_email_label = $MainContainer/ContentContainer/LeftColumn/ClientePanel/ClienteContent/EmailLabel
 
 # Equipo info
-@onready var equipo_tipo_label = $MainContainer/ContentContainer/EquipoPanel/EquipoContent/TipoLabel
-@onready var equipo_marca_label = $MainContainer/ContentContainer/EquipoPanel/EquipoContent/MarcaLabel
-@onready var equipo_modelo_label = $MainContainer/ContentContainer/EquipoPanel/EquipoContent/ModeloLabel
-@onready var equipo_serie_label = $MainContainer/ContentContainer/EquipoPanel/EquipoContent/SerieLabel
+@onready var equipo_tipo_label = $MainContainer/ContentContainer/LeftColumn/EquipoPanel/EquipoContent/TipoLabel
+@onready var equipo_marca_label = $MainContainer/ContentContainer/LeftColumn/EquipoPanel/EquipoContent/MarcaLabel
+@onready var equipo_modelo_label = $MainContainer/ContentContainer/LeftColumn/EquipoPanel/EquipoContent/ModeloLabel
+@onready var equipo_serie_label = $MainContainer/ContentContainer/LeftColumn/EquipoPanel/EquipoContent/SerieLabel
 
 # Avería info
-@onready var averia_cliente_text = $MainContainer/ContentContainer/AveriaPanel/AveriaContent/ClienteText
-@onready var averia_tecnico_text = $MainContainer/ContentContainer/AveriaPanel/AveriaContent/TecnicoText
+@onready var averia_cliente_text = $MainContainer/ContentContainer/RightColumn/AveriaPanel/AveriaContent/ClienteText
+@onready var averia_tecnico_text = $MainContainer/ContentContainer/RightColumn/AveriaPanel/AveriaContent/TecnicoText
 
 # Técnico info
-@onready var tecnico_label = $MainContainer/ContentContainer/TecnicoPanel/TecnicoContent/TecnicoLabel
-@onready var prioridad_label = $MainContainer/ContentContainer/TecnicoPanel/TecnicoContent/PrioridadLabel
+@onready var tecnico_label = $MainContainer/ContentContainer/RightColumn/TecnicoPanel/TecnicoContent/TecnicoLabel
+@onready var prioridad_label = $MainContainer/ContentContainer/RightColumn/TecnicoPanel/TecnicoContent/PrioridadLabel
 
 # Botones
 @onready var editar_button = $MainContainer/ButtonsPanel/ButtonsContent/EditarButton
+@onready var eliminar_button = $MainContainer/ButtonsPanel/ButtonsContent/EliminarButton
 @onready var exportar_html_button = $MainContainer/ButtonsPanel/ButtonsContent/ExportarHTMLButton
 @onready var exportar_pdf_button = $MainContainer/ButtonsPanel/ButtonsContent/ExportarPDFButton
 @onready var cambiar_estado_button = $MainContainer/ButtonsPanel/ButtonsContent/CambiarEstadoButton
@@ -39,12 +40,50 @@ var ticket_id: int = 0
 func _ready():
 	print("🎫 [TICKET_DETAIL] Inicializando detalles del ticket...")
 	
+	# Verificar si existe el botón eliminar, si no, crearlo
+	if not eliminar_button:
+		crear_boton_eliminar()
+	
 	# Configurar permisos
 	configurar_permisos()
+
+func crear_boton_eliminar():
+	"""Crea dinámicamente el botón de eliminar si no existe"""
+	print("🔧 [TICKET_DETAIL] Creando botón eliminar dinámicamente...")
+	
+	# Buscar el contenedor de botones
+	var buttons_container = $MainContainer/ButtonsPanel/ButtonsContent
+	if buttons_container:
+		eliminar_button = Button.new()
+		eliminar_button.name = "EliminarButton"
+		eliminar_button.text = "🗑️ Eliminar"
+		eliminar_button.custom_minimum_size = Vector2(120, 40)
+		
+		# Estilo del botón (rojo)
+		eliminar_button.modulate = Color(1, 0.4, 0.4, 1)
+		
+		# Agregar al contenedor (después del botón editar)
+		var editar_index = -1
+		for i in buttons_container.get_child_count():
+			if buttons_container.get_child(i).name == "EditarButton":
+				editar_index = i + 1
+				break
+		
+		if editar_index >= 0:
+			buttons_container.add_child(eliminar_button)
+			buttons_container.move_child(eliminar_button, editar_index)
+		else:
+			buttons_container.add_child(eliminar_button)
+		
+		print("✅ [TICKET_DETAIL] Botón eliminar creado exitosamente")
+	else:
+		print("❌ [TICKET_DETAIL] No se encontró contenedor de botones")
 
 func configurar_permisos():
 	"""Configura los permisos de la interfaz según el usuario"""
 	editar_button.visible = AppState.tiene_permiso("editar_ticket")
+	if eliminar_button:
+		eliminar_button.visible = AppState.tiene_permiso("eliminar_ticket")
 	
 	# Configurar conexiones de botones
 	_configurar_conexiones_botones()
@@ -54,6 +93,8 @@ func _configurar_conexiones_botones():
 	# Desconectar señales previas si existen
 	if editar_button.pressed.is_connected(_on_editar_button_pressed):
 		editar_button.pressed.disconnect(_on_editar_button_pressed)
+	if eliminar_button and eliminar_button.pressed.is_connected(_on_eliminar_button_pressed):
+		eliminar_button.pressed.disconnect(_on_eliminar_button_pressed)
 	if exportar_html_button.pressed.is_connected(_on_exportar_html_button_pressed):
 		exportar_html_button.pressed.disconnect(_on_exportar_html_button_pressed)
 	if exportar_pdf_button.pressed.is_connected(_on_exportar_pdf_button_pressed):
@@ -67,6 +108,8 @@ func _configurar_conexiones_botones():
 	
 	# Conectar señales
 	editar_button.pressed.connect(_on_editar_button_pressed)
+	if eliminar_button:
+		eliminar_button.pressed.connect(_on_eliminar_button_pressed)
 	exportar_html_button.pressed.connect(_on_exportar_html_button_pressed)
 	exportar_pdf_button.pressed.connect(_on_exportar_pdf_button_pressed)
 	cambiar_estado_button.pressed.connect(_on_cambiar_estado_button_pressed)
@@ -98,38 +141,38 @@ func actualizar_interfaz():
 	if ticket_data.is_empty():
 		return
 	
-	# Header
-	codigo_label.text = ticket_data.get("codigo", "Sin código")
-	estado_label.text = ticket_data.get("estado", "Sin estado")
+	# Header - convertir todo a string para seguridad
+	codigo_label.text = str(ticket_data.get("codigo", "Sin código"))
+	estado_label.text = str(ticket_data.get("estado", "Sin estado"))
 	
 	# Aplicar color al estado
-	var color_estado = get_color_estado(ticket_data.get("estado", ""))
+	var color_estado = get_color_estado(str(ticket_data.get("estado", "")))
 	estado_label.add_theme_color_override("font_color", color_estado)
 	
-	fecha_entrada_label.text = formatear_fecha(ticket_data.get("fecha_entrada", ""))
+	fecha_entrada_label.text = formatear_fecha(str(ticket_data.get("fecha_entrada", "")))
 	
-	# Cliente
-	cliente_nombre_label.text = ticket_data.get("cliente_nombre", "Sin nombre")
-	cliente_telefono_label.text = ticket_data.get("cliente_telefono", "Sin teléfono")
-	cliente_email_label.text = ticket_data.get("cliente_email", "Sin email")
+	# Cliente - convertir todo a string
+	cliente_nombre_label.text = str(ticket_data.get("cliente_nombre", "Sin nombre"))
+	cliente_telefono_label.text = str(ticket_data.get("cliente_telefono", "Sin teléfono"))
+	cliente_email_label.text = str(ticket_data.get("cliente_email", "Sin email"))
 	
-	# Equipo
-	equipo_tipo_label.text = ticket_data.get("equipo_tipo", "Sin tipo")
-	equipo_marca_label.text = ticket_data.get("equipo_marca", "Sin marca")
-	equipo_modelo_label.text = ticket_data.get("equipo_modelo", "Sin modelo")
-	equipo_serie_label.text = ticket_data.get("equipo_serie", "Sin serie")
+	# Equipo - convertir todo a string
+	equipo_tipo_label.text = str(ticket_data.get("equipo_tipo", "Sin tipo"))
+	equipo_marca_label.text = str(ticket_data.get("equipo_marca", "Sin marca") if ticket_data.get("equipo_marca") != null else "Sin marca")
+	equipo_modelo_label.text = str(ticket_data.get("equipo_modelo", "Sin modelo"))
+	equipo_serie_label.text = str(ticket_data.get("numero_serie", "Sin serie"))  # Corregir nombre de campo
 	
-	# Avería
-	averia_cliente_text.text = ticket_data.get("averia_cliente", "Sin descripción")
-	averia_tecnico_text.text = ticket_data.get("diagnostico_tecnico", "Sin diagnóstico")
+	# Avería - convertir todo a string
+	averia_cliente_text.text = str(ticket_data.get("averia_cliente", "Sin descripción"))
+	averia_tecnico_text.text = str(ticket_data.get("diagnostico", "Sin diagnóstico"))  # Corregir nombre de campo
 	
-	# Técnico
-	var tecnico_nombre = ticket_data.get("tecnico_nombre", "Sin asignar")
-	if tecnico_nombre == "":
+	# Técnico - convertir todo a string
+	var tecnico_nombre = str(ticket_data.get("tecnico_nombre", "Sin asignar"))
+	if tecnico_nombre == "" or tecnico_nombre == "null":
 		tecnico_nombre = "Sin asignar"
 	tecnico_label.text = tecnico_nombre
 	
-	prioridad_label.text = ticket_data.get("prioridad", "Normal")
+	prioridad_label.text = str(ticket_data.get("prioridad", "Normal"))
 	var color_prioridad = get_color_prioridad(ticket_data.get("prioridad", "Normal"))
 	prioridad_label.add_theme_color_override("font_color", color_prioridad)
 
@@ -184,6 +227,11 @@ func _on_editar_button_pressed():
 	print("✏️ [TICKET_DETAIL] Editando ticket: ", ticket_id)
 	Router.ir_a("nuevo_ticket", {"ticket_id": ticket_id, "modo": "editar"})
 
+func _on_eliminar_button_pressed():
+	"""Confirma y elimina el ticket"""
+	print("🗑️ [TICKET_DETAIL] Solicitando eliminación del ticket: ", ticket_id)
+	confirmar_eliminar_ticket()
+
 func _on_exportar_html_button_pressed():
 	"""Exporta el ticket a HTML"""
 	print("🌐 [TICKET_DETAIL] Exportando ticket a HTML: ", ticket_id)
@@ -217,8 +265,9 @@ func exportar_ticket_html():
 	var file_path = "user://reportes/" + filename
 	
 	# Crear directorio si no existe
-	if not DirAccess.dir_exists_absolute("user://reportes/"):
-		DirAccess.create_dir_recursive_absolute("user://reportes/")
+	var dir = DirAccess.open("user://")
+	if dir:
+		dir.make_dir_recursive("reportes/")
 	
 	# Guardar archivo
 	var file = FileAccess.open(file_path, FileAccess.WRITE)
@@ -240,8 +289,9 @@ func exportar_ticket_pdf():
 	var file_path = "user://reportes/" + filename
 	
 	# Crear directorio si no existe
-	if not DirAccess.dir_exists_absolute("user://reportes/"):
-		DirAccess.create_dir_recursive_absolute("user://reportes/")
+	var dir = DirAccess.open("user://")
+	if dir:
+		dir.make_dir_recursive("reportes/")
 	
 	# Guardar archivo HTML (más adelante se puede convertir a PDF)
 	var file = FileAccess.open(file_path, FileAccess.WRITE)
@@ -451,7 +501,11 @@ func mostrar_dialogo_asignar_tecnico():
 	var asignar_button = Button.new()
 	asignar_button.text = "Asignar Técnico"
 	asignar_button.pressed.connect(func(): 
-		var tecnico_id = option_button.get_item_id(option_button.selected) if option_button.selected > 0 else null
+		var tecnico_id = -1
+		if option_button.selected > 0:
+			tecnico_id = option_button.get_item_id(option_button.selected)
+		else:
+			tecnico_id = -1
 		asignar_tecnico_ticket(tecnico_id)
 		dialog.queue_free()
 	)
@@ -482,6 +536,46 @@ func asignar_tecnico_ticket(tecnico_id):
 		mostrar_mensaje("Técnico asignado correctamente")
 	else:
 		mostrar_error("Error al asignar el técnico")
+
+func confirmar_eliminar_ticket():
+	"""Muestra diálogo de confirmación para eliminar el ticket"""
+	var dialog = ConfirmationDialog.new()
+	dialog.title = "⚠️ Confirmar Eliminación"
+	dialog.dialog_text = "¿Está seguro de que desea ELIMINAR PERMANENTEMENTE este ticket?\n\n🎫 Código: %s\n👤 Cliente: %s\n\n⚠️ ESTA ACCIÓN NO SE PUEDE DESHACER" % [
+		ticket_data.get("codigo", "Sin código"),
+		ticket_data.get("cliente_nombre", "Sin cliente")
+	]
+	
+	dialog.get_ok_button().text = "🗑️ ELIMINAR"
+	dialog.get_ok_button().modulate = Color(1, 0.4, 0.4, 1)
+	dialog.get_cancel_button().text = "❌ CANCELAR"
+	
+	dialog.confirmed.connect(func():
+		eliminar_ticket()
+		dialog.queue_free()
+	)
+	dialog.canceled.connect(func():
+		dialog.queue_free()
+	)
+	
+	add_child(dialog)
+	dialog.popup_centered(Vector2(500, 300))
+
+func eliminar_ticket():
+	"""Elimina el ticket de la base de datos"""
+	print("🗑️ [TICKET_DETAIL] Eliminando ticket ID: ", ticket_id)
+	
+	var resultado = DataService.eliminar_ticket(ticket_id)
+	if resultado:
+		print("✅ [TICKET_DETAIL] Ticket eliminado correctamente")
+		mostrar_mensaje("Ticket eliminado correctamente")
+		
+		# Esperar un momento y volver a la lista
+		await get_tree().create_timer(1.0).timeout
+		Router.ir_a_tickets_lista()
+	else:
+		print("❌ [TICKET_DETAIL] Error al eliminar ticket")
+		mostrar_error("No se pudo eliminar el ticket. Inténtelo de nuevo.")
 
 func mostrar_mensaje(texto: String):
 	"""Muestra un mensaje informativo temporal"""
