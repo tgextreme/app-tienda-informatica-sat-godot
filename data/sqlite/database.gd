@@ -7,6 +7,7 @@ class_name Database
 var db_path: String
 var tables: Dictionary = {}
 var data: Dictionary = {}
+var last_insert_id: int = 0  # ✅ Almacena el último ID insertado
 
 func _init(database_path: String = "user://tienda_sat.db"):
 	db_path = database_path
@@ -65,8 +66,16 @@ func execute_sql(query: String, params: Array = []) -> Array:
 		return []
 
 func execute_non_query(query: String, params: Array = []) -> bool:
-	execute_sql(query, params)
+	var result = execute_sql(query, params)
+	# Verificar si fue un INSERT exitoso buscando un indicador específico
+	var clean_query = query.strip_edges().to_upper()
+	if clean_query.begins_with("INSERT"):
+		# Para INSERT, verificar si el último ID cambió (indicando éxito)
+		return insert_success
 	return true
+
+# Variable para tracking del éxito de INSERT
+var insert_success: bool = false
 
 func handle_select(query: String, _params: Array) -> Array:
 	# Implementación mejorada de SELECT con soporte básico para JOINs
@@ -236,6 +245,9 @@ func handle_ticket_join_query(query: String, params: Array) -> Array:
 	return result
 
 func handle_insert(query: String, params: Array):
+	# Reset del estado de éxito
+	insert_success = false
+	
 	# Extraer tabla y valores
 	var into_pos = query.to_upper().find("INTO")
 	if into_pos == -1:
@@ -257,7 +269,9 @@ func handle_insert(query: String, params: Array):
 	
 	# Si hay parámetros, los usamos como valores
 	if params.size() > 0:
-		new_record["id"] = get_next_id(table_name)
+		var new_id = get_next_id(table_name)
+		new_record["id"] = new_id
+		last_insert_id = new_id  # ✅ Actualizar último ID insertado
 		# Agregar otros campos según los parámetros
 		# Esto es muy básico, en una implementación real necesitaríamos parsear la consulta
 		if table_name == "usuarios":
@@ -295,8 +309,17 @@ func handle_insert(query: String, params: Array):
 				new_record["codigo"] = params[0] if params.size() > 0 else ""
 				new_record["estado"] = params[1] if params.size() > 1 else "Nuevo"
 				new_record["prioridad"] = params[2] if params.size() > 2 else "NORMAL"
-				new_record["cliente_id"] = params[3] if params.size() > 3 else 0
-				new_record["tecnico_id"] = params[4] if params.size() > 4 else null
+				# Manejar cliente_id con conversión de tipo segura
+				if params.size() > 3 and params[3] != null:
+					new_record["cliente_id"] = int(params[3])
+				else:
+					new_record["cliente_id"] = null
+				
+				# Manejar tecnico_id con conversión de tipo segura
+				if params.size() > 4 and params[4] != null and str(params[4]) != "":
+					new_record["tecnico_id"] = int(params[4])
+				else:
+					new_record["tecnico_id"] = null
 				new_record["equipo_tipo"] = params[5] if params.size() > 5 else ""
 				new_record["equipo_marca"] = params[6] if params.size() > 6 else ""
 				new_record["equipo_modelo"] = params[7] if params.size() > 7 else ""
@@ -331,8 +354,27 @@ func handle_insert(query: String, params: Array):
 	else:
 		print("⚠️ [DATABASE] INSERT sin parámetros para tabla: ", table_name)
 	
-	data[table_name].append(new_record)
-	save_database()
+	# Validar foreign keys antes de insertar
+	var validation_passed = true
+	if table_relations.has(table_name):
+		for field_name in table_relations[table_name]:
+			if new_record.has(field_name):
+				var fk_value = new_record[field_name]
+				# Saltar validación si es null o vacío (FK opcional)
+				if fk_value != null and str(fk_value) != "" and str(fk_value) != "0":
+					if not validate_foreign_key(table_name, field_name, fk_value):
+						print("❌ [DATABASE] INSERT fallido - FK inválida: ", field_name, "=", fk_value)
+						validation_passed = false
+						break
+	
+	if validation_passed:
+		data[table_name].append(new_record)
+		save_database()
+		insert_success = true
+		print("✅ [DATABASE] INSERT exitoso en ", table_name, " con ID: ", new_record.get("id", "N/A"))
+	else:
+		insert_success = false
+		print("❌ [DATABASE] INSERT cancelado por FK inválidas")
 
 func handle_update(query: String, params: Array):
 	# Implementación básica de UPDATE
@@ -496,20 +538,9 @@ func get_next_id(table_name: String) -> int:
 	return max_id + 1
 
 func get_last_insert_id() -> int:
-	# Retorna el último ID insertado (busca en todas las tablas el ID más alto recién insertado)
-	var max_id = 0
-	
-	# Buscar en todas las tablas el ID más alto
-	for table_name in data:
-		if data[table_name] is Array and data[table_name].size() > 0:
-			var last_record = data[table_name][data[table_name].size() - 1]
-			if last_record.has("id"):
-				var record_id = int(last_record.id)
-				if record_id > max_id:
-					max_id = record_id
-	
-	print("📊 [DATABASE] Último ID insertado: ", max_id)
-	return max_id
+	# Retorna el último ID insertado usando la variable last_insert_id
+	print("📊 [DATABASE] Último ID insertado: ", last_insert_id)
+	return last_insert_id
 
 # Métodos auxiliares para inicialización
 func initialize_default_data():
@@ -562,3 +593,168 @@ func initialize_default_data():
 	
 	save_database()
 	print("Datos iniciales creados")
+
+# =====================================================
+# SISTEMA DE RELACIONES TIPO FOREIGN KEY
+# =====================================================
+
+# Definir las relaciones entre tablas (similar a foreign keys)
+var table_relations = {
+	"tickets": {
+		"cliente_id": {"table": "clientes", "field": "id", "cascade_delete": false},
+		"tecnico_id": {"table": "usuarios", "field": "id", "cascade_delete": false}
+	},
+	"ticket_lineas": {
+		"ticket_id": {"table": "tickets", "field": "id", "cascade_delete": true},
+		"producto_id": {"table": "productos", "field": "id", "cascade_delete": false}
+	},
+	"ticket_tiempos": {
+		"ticket_id": {"table": "tickets", "field": "id", "cascade_delete": true},
+		"tecnico_id": {"table": "usuarios", "field": "id", "cascade_delete": false}
+	},
+	"ticket_historial": {
+		"ticket_id": {"table": "tickets", "field": "id", "cascade_delete": true},
+		"usuario_id": {"table": "usuarios", "field": "id", "cascade_delete": false}
+	},
+	"adjuntos": {
+		"ticket_id": {"table": "tickets", "field": "id", "cascade_delete": true}
+	},
+	"usuarios": {
+		"rol_id": {"table": "roles", "field": "id", "cascade_delete": false}
+	}
+}
+
+func validate_foreign_key(table_name: String, field_name: String, value) -> bool:
+	"""Valida que un valor de foreign key exista en la tabla referenciada"""
+	if not table_relations.has(table_name):
+		return true  # No hay relaciones definidas para esta tabla
+		
+	if not table_relations[table_name].has(field_name):
+		return true  # Este campo no tiene relación definida
+		
+	# Si el valor es null, considerarlo válido (foreign key opcional)
+	if value == null:
+		return true
+		
+	var relation = table_relations[table_name][field_name]
+	var referenced_table = relation["table"]
+	var referenced_field = relation["field"]
+	
+	# Verificar que la tabla referenciada existe
+	if not data.has(referenced_table):
+		print("❌ [DATABASE] Tabla referenciada no existe: ", referenced_table)
+		return false
+	
+	# Buscar el valor en la tabla referenciada
+	for record in data[referenced_table]:
+		if record is Dictionary and record.has(referenced_field):
+			var record_value = record[referenced_field]
+			
+			# Convertir ambos valores a número para comparación numérica
+			var record_num = float(str(record_value))
+			var search_num = float(str(value))
+			
+			if record_num == search_num:
+				return true
+				
+	print("❌ [DATABASE] FK inválida: ", field_name, "=", value, " no encontrado en ", referenced_table)
+	return false
+
+func get_related_records(table_name: String, record_id, relation_field: String) -> Array:
+	"""Obtiene registros relacionados (similar a SELECT con JOIN)"""
+	var result = []
+	
+	# Buscar tablas que tengan foreign keys hacia esta tabla
+	for related_table in table_relations:
+		var relations = table_relations[related_table]
+		for field_name in relations:
+			var relation = relations[field_name]
+			if relation["table"] == table_name and relation["field"] == relation_field:
+				# Esta tabla tiene una FK hacia la tabla actual
+				if data.has(related_table):
+					for record in data[related_table]:
+						if record is Dictionary and record.has(field_name):
+							if str(record[field_name]) == str(record_id):
+								result.append(record)
+								
+	return result
+
+func delete_with_cascade(table_name: String, record_id) -> bool:
+	"""Elimina un registro y maneja cascade delete de relaciones"""
+	print("🗑️ [DATABASE] Eliminando registro ID ", record_id, " de ", table_name)
+	
+	# Primero, manejar cascade deletes
+	for related_table in table_relations:
+		var relations = table_relations[related_table]
+		for field_name in relations:
+			var relation = relations[field_name]
+			if relation["table"] == table_name and relation.get("cascade_delete", false):
+				print("🔗 [DATABASE] Cascade delete en ", related_table, ".", field_name)
+				# Eliminar registros relacionados
+				if data.has(related_table):
+					var records_to_delete = []
+					for i in range(data[related_table].size()):
+						var record = data[related_table][i]
+						if record is Dictionary and record.has(field_name):
+							if str(record[field_name]) == str(record_id):
+								records_to_delete.append(i)
+								
+					# Eliminar en orden inverso para no afectar índices
+					for i in range(records_to_delete.size() - 1, -1, -1):
+						data[related_table].remove_at(records_to_delete[i])
+						print("✅ [DATABASE] Eliminado registro relacionado en ", related_table)
+	
+	# Finalmente, eliminar el registro principal
+	if data.has(table_name):
+		for i in range(data[table_name].size()):
+			var record = data[table_name][i]
+			if record is Dictionary and record.has("id"):
+				if str(record["id"]) == str(record_id):
+					data[table_name].remove_at(i)
+					save_database()
+					print("✅ [DATABASE] Registro eliminado de ", table_name)
+					return true
+					
+	print("❌ [DATABASE] No se encontró el registro a eliminar")
+	return false
+
+func get_record_with_relations(table_name: String, record_id) -> Dictionary:
+	"""Obtiene un registro con sus datos relacionados incluidos"""
+	var main_record = {}
+	
+	# Obtener el registro principal
+	if data.has(table_name):
+		for record in data[table_name]:
+			if record is Dictionary and record.has("id"):
+				if str(record["id"]) == str(record_id):
+					main_record = record.duplicate()
+					break
+					
+	if main_record.is_empty():
+		return {}
+		
+	# Agregar datos de foreign keys
+	if table_relations.has(table_name):
+		var relations = table_relations[table_name]
+		for field_name in relations:
+			if main_record.has(field_name):
+				var relation = relations[field_name]
+				var fk_value = main_record[field_name]
+				
+				if fk_value != null and fk_value != "":
+					# Buscar el registro relacionado
+					var related_table = relation["table"]
+					var related_field = relation["field"]
+					
+					if data.has(related_table):
+						for related_record in data[related_table]:
+							if related_record is Dictionary and related_record.has(related_field):
+								if str(related_record[related_field]) == str(fk_value):
+									# Agregar campos del registro relacionado con prefijo
+									var table_prefix = related_table.rstrip("s") + "_"  # "clientes" -> "cliente_"
+									for key in related_record:
+										if key != related_field:  # No duplicar el ID
+											main_record[table_prefix + key] = related_record[key]
+									break
+	
+	return main_record

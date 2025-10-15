@@ -171,36 +171,44 @@ func buscar_tickets(filtros: Dictionary = {}) -> Array:
 	
 	print("📊 [DATASERVICE] Datos obtenidos: tickets=", tickets.size(), " clientes=", clientes.size(), " usuarios=", usuarios.size())
 	
-	# Crear mapas para lookups rápidos
+	# Crear mapas para lookups rápidos con conversión numérica
 	var clientes_map = {}
 	for cliente in clientes:
 		var cliente_id = cliente.get("id")
 		if cliente_id != null:
-			clientes_map[cliente_id] = cliente
+			# Usar valor numérico como clave para evitar problemas de tipos
+			var clave_numerica = float(str(cliente_id))
+			clientes_map[clave_numerica] = cliente
 		
 	var usuarios_map = {}
 	for usuario in usuarios:
 		var usuario_id = usuario.get("id")
 		if usuario_id != null:
-			usuarios_map[usuario_id] = usuario
+			# Usar valor numérico como clave para evitar problemas de tipos
+			var clave_numerica = float(str(usuario_id))
+			usuarios_map[clave_numerica] = usuario
 	
 	# Combinar datos
 	var result = []
 	for ticket in tickets:
 		var ticket_completo = ticket.duplicate()
 		
-		# Agregar datos del cliente
+		# Agregar datos del cliente con búsqueda numérica
 		var cliente_id = ticket.get("cliente_id")
-		if cliente_id != null and clientes_map.has(cliente_id):
-			var cliente = clientes_map[cliente_id]
-			ticket_completo["cliente_nombre"] = cliente.get("nombre", "")
-			ticket_completo["cliente_telefono"] = cliente.get("telefono", "")
+		if cliente_id != null:
+			var cliente_id_num = float(str(cliente_id))
+			if clientes_map.has(cliente_id_num):
+				var cliente = clientes_map[cliente_id_num]
+				ticket_completo["cliente_nombre"] = cliente.get("nombre", "")
+				ticket_completo["cliente_telefono"] = cliente.get("telefono", "")
 		
-		# Agregar datos del técnico
+		# Agregar datos del técnico con búsqueda numérica
 		var tecnico_id = ticket.get("tecnico_id")
-		if tecnico_id != null and usuarios_map.has(tecnico_id):
-			var tecnico = usuarios_map[tecnico_id]
-			ticket_completo["tecnico_nombre"] = tecnico.get("nombre", "")
+		if tecnico_id != null:
+			var tecnico_id_num = float(str(tecnico_id))
+			if usuarios_map.has(tecnico_id_num):
+				var tecnico = usuarios_map[tecnico_id_num]
+				ticket_completo["tecnico_nombre"] = tecnico.get("nombre", "")
 			
 		# Aplicar filtros
 		var incluir = true
@@ -309,7 +317,7 @@ func guardar_ticket(ticket_data: Dictionary) -> int:
 			ticket_data.get("equipo_modelo")
 		])
 		
-		execute_non_query(sql, [
+		var insert_exitoso = execute_non_query(sql, [
 			codigo,                                    # 1: codigo
 			ticket_data.get("estado", "Nuevo"),       # 2: estado 
 			ticket_data.get("prioridad", "NORMAL"),   # 3: prioridad
@@ -328,7 +336,12 @@ func guardar_ticket(ticket_data: Dictionary) -> int:
 			ticket_data.get("notas_cliente")          # 16: notas_cliente
 		])
 		
-		ticket_id = get_last_insert_id()
+		if insert_exitoso:
+			ticket_id = get_last_insert_id()
+			print("✅ [DATASERVICE] Ticket insertado correctamente con ID: ", ticket_id)
+		else:
+			ticket_id = -1
+			print("❌ [DATASERVICE] Error al insertar ticket - validación FK falló")
 	
 	if ticket_id > 0:
 		ticket_guardado.emit(ticket_id)
@@ -1767,3 +1780,158 @@ func crear_productos_de_prueba():
 	print("  - Repuestos: 3 (IDs: ", producto1_id, ", ", producto2_id, ", ", producto3_id, ")")
 	print("  - Accesorios: 3 (IDs: ", producto4_id, ", ", producto5_id, ", ", producto6_id, ")")
 	print("  - Servicios: 3 (IDs: ", producto7_id, ", ", producto8_id, ", ", producto9_id, ")")
+
+# =====================================================
+# FUNCIONES PARA RELACIONES TIPO FOREIGN KEY
+# =====================================================
+
+func obtener_ticket_con_relaciones(ticket_id: int) -> Dictionary:
+	"""Obtiene un ticket con datos de cliente y técnico incluidos"""
+	print("🔗 [DATASERVICE] Obteniendo ticket con relaciones ID: ", ticket_id)
+	
+	if db == null:
+		print("❌ [DATASERVICE] Base de datos no inicializada")
+		return {}
+	
+	return db.get_record_with_relations("tickets", ticket_id)
+
+func obtener_cliente_con_tickets(cliente_id: int) -> Dictionary:
+	"""Obtiene un cliente con la lista de sus tickets"""
+	print("🔗 [DATASERVICE] Obteniendo cliente con tickets ID: ", cliente_id)
+	
+	var cliente = obtener_cliente(cliente_id)
+	if cliente.is_empty():
+		return {}
+		
+	# Agregar lista de tickets del cliente
+	if db != null:
+		var tickets_cliente = db.get_related_records("clientes", cliente_id, "id")
+		cliente["tickets"] = tickets_cliente
+		print("✅ [DATASERVICE] Cliente con ", tickets_cliente.size(), " tickets")
+	
+	return cliente
+
+func validar_referencias_ticket(datos_ticket: Dictionary) -> Dictionary:
+	"""Valida que las referencias de un ticket sean correctas antes de guardarlo"""
+	var resultado = {"valido": true, "errores": []}
+	
+	# Validar cliente_id
+	if datos_ticket.has("cliente_id") and datos_ticket["cliente_id"] != null:
+		var cliente = obtener_cliente(int(datos_ticket["cliente_id"]))
+		if cliente.is_empty():
+			resultado["valido"] = false
+			resultado["errores"].append("El cliente especificado no existe")
+	
+	# Validar tecnico_id si está presente
+	var tecnico_id = datos_ticket.get("tecnico_id", null)
+	if tecnico_id != null and str(tecnico_id) != "" and str(tecnico_id) != "0":
+		var tecnicos = execute_sql("SELECT * FROM usuarios WHERE id = ? AND rol_id IN (1, 2)", [int(tecnico_id)])
+		if tecnicos.size() == 0:
+			resultado["valido"] = false
+			resultado["errores"].append("El técnico especificado no existe")
+	
+	return resultado
+
+func eliminar_cliente_con_validacion(cliente_id: int) -> Dictionary:
+	"""Elimina un cliente validando que no tenga tickets asociados"""
+	var resultado = {"exito": false, "mensaje": ""}
+	
+	# Verificar si tiene tickets asociados
+	if db != null:
+		var tickets_asociados = db.get_related_records("clientes", cliente_id, "id")
+		if tickets_asociados.size() > 0:
+			resultado["mensaje"] = "No se puede eliminar el cliente porque tiene " + str(tickets_asociados.size()) + " ticket(s) asociado(s)"
+			return resultado
+	
+	# Si no tiene tickets, proceder con la eliminación
+	var exito = execute_sql("DELETE FROM clientes WHERE id = ?", [cliente_id])
+	if exito != null:
+		resultado["exito"] = true
+		resultado["mensaje"] = "Cliente eliminado correctamente"
+	else:
+		resultado["mensaje"] = "Error al eliminar el cliente"
+	
+	return resultado
+
+func obtener_tickets_con_cliente_y_tecnico() -> Array:
+	"""Obtiene todos los tickets con información de cliente y técnico"""
+	print("🔗 [DATASERVICE] Obteniendo tickets con relaciones completas")
+	
+	var tickets = execute_sql("""
+		SELECT 
+			t.*,
+			c.nombre as cliente_nombre,
+			c.telefono as cliente_telefono,
+			c.email as cliente_email,
+			u.nombre as tecnico_nombre
+		FROM tickets t
+		LEFT JOIN clientes c ON t.cliente_id = c.id
+		LEFT JOIN usuarios u ON t.tecnico_id = u.id
+		ORDER BY t.id DESC
+	""")
+	
+	print("✅ [DATASERVICE] Tickets con relaciones: ", tickets.size())
+	return tickets
+
+func obtener_estadisticas_relacionales() -> Dictionary:
+	"""Obtiene estadísticas que requieren relaciones entre tablas"""
+	var stats = {}
+	
+	# Tickets por cliente
+	var tickets_por_cliente = execute_sql("""
+		SELECT 
+			c.nombre as cliente,
+			COUNT(t.id) as total_tickets
+		FROM clientes c
+		LEFT JOIN tickets t ON c.id = t.cliente_id
+		GROUP BY c.id, c.nombre
+		ORDER BY total_tickets DESC
+	""")
+	stats["tickets_por_cliente"] = tickets_por_cliente
+	
+	# Tickets por técnico
+	var tickets_por_tecnico = execute_sql("""
+		SELECT 
+			u.nombre as tecnico,
+			COUNT(t.id) as total_tickets
+		FROM usuarios u
+		LEFT JOIN tickets t ON u.id = t.tecnico_id
+		WHERE u.rol_id IN (1, 2)
+		GROUP BY u.id, u.nombre
+		ORDER BY total_tickets DESC
+	""")
+	stats["tickets_por_tecnico"] = tickets_por_tecnico
+	
+	print("📊 [DATASERVICE] Estadísticas relacionales generadas")
+	return stats
+
+func test_foreign_keys():
+	"""Test del sistema de relaciones Foreign Key"""
+	print("\n🧪 [DATASERVICE] === TEST DE RELACIONES FOREIGN KEY ===")
+	
+	# Test 1: Validación de FK en tickets
+	print("\n1. Test validación Foreign Keys:")
+	var validacion = validar_referencias_ticket({
+		"cliente_id": 1,
+		"tecnico_id": 1
+	})
+	print("   ✅ Ticket válido: ", validacion)
+	
+	var validacion_invalida = validar_referencias_ticket({
+		"cliente_id": 999,  # Cliente inexistente
+		"tecnico_id": 1
+	})
+	print("   ❌ Ticket inválido: ", validacion_invalida)
+	
+	# Test 2: Obtener registros con relaciones
+	print("\n2. Test registros con relaciones:")
+	var cliente_con_tickets = obtener_cliente_con_tickets(1)
+	print("   🔗 Cliente con tickets: ", cliente_con_tickets.has("tickets"))
+	
+	# Test 3: Estadísticas relacionales
+	print("\n3. Test estadísticas relacionales:")
+	var stats = obtener_estadisticas_relacionales()
+	print("   📊 Tickets por cliente: ", stats.get("tickets_por_cliente", []).size())
+	print("   📊 Tickets por técnico: ", stats.get("tickets_por_tecnico", []).size())
+	
+	print("🧪 [DATASERVICE] === FIN TEST RELACIONES ===\n")

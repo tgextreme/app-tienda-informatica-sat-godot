@@ -483,8 +483,11 @@ func validar_formulario() -> bool:
 	return true
 
 func crear_ticket() -> Dictionary:
+	print("🆔 [NUEVO_TICKET] Creando ticket con cliente_id: ", cliente_seleccionado.get("id", "SIN ID"))
+	print("🔍 [NUEVO_TICKET] Cliente seleccionado completo: ", cliente_seleccionado)
+	
 	var nuevo_ticket_data = {
-		"cliente_id": cliente_seleccionado.id,
+		"cliente_id": cliente_seleccionado.get("id", null),  # ✅ USAR ID REAL DEL CLIENTE SELECCIONADO
 		"estado": "Nuevo",
 		"prioridad": AppState.prioridades[prioridad_option.selected],
 		"equipo_tipo": AppState.tipos_equipo[tipo_option.selected],
@@ -500,7 +503,7 @@ func crear_ticket() -> Dictionary:
 	
 	# Técnico asignado (opcional)
 	if tecnico_option.selected > 0:
-		nuevo_ticket_data["tecnico_id"] = tecnico_option.get_item_id(tecnico_option.selected)
+		nuevo_ticket_data["tecnico_id"] = int(tecnico_option.get_item_id(tecnico_option.selected))  # Convertir a int
 	
 	return nuevo_ticket_data
 
@@ -633,6 +636,7 @@ func _on_nuevo_cliente_pressed():
 
 func _on_cliente_creado(cliente_data: Dictionary):
 	print("✅ [NUEVO_TICKET] Cliente creado y recibido: ", cliente_data.get("nombre", "Sin nombre"))
+	print("🆔 [NUEVO_TICKET] ID del cliente recibido: ", cliente_data.get("id", "SIN ID"))
 	
 	# Seleccionar automáticamente el cliente recién creado
 	seleccionar_cliente(cliente_data)

@@ -1,12 +1,14 @@
 [gd_scene load_steps=2 format=3 uid="uid://dtbfr6fovpyds"]
 
-[ext_resource type="Script" path="res://ui/login.gd" id="1_0ykjr"]
+[ext_resource type="Script" uid="uid://duvthbvg0hpcg" path="res://ui/login.gd" id="1_0ykjr"]
 
 [node name="Login" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_0ykjr")
 
 [node name="Background" type="ColorRect" parent="."]
@@ -14,6 +16,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.15, 0.15, 0.15, 1)
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
@@ -21,10 +25,12 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="LoginPanel" type="Panel" parent="CenterContainer"]
-layout_mode = 2
 custom_minimum_size = Vector2(400, 300)
+layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/LoginPanel"]
 layout_mode = 1
@@ -35,6 +41,8 @@ offset_left = 20.0
 offset_top = 20.0
 offset_right = -20.0
 offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Title" type="Label" parent="CenterContainer/LoginPanel/VBoxContainer"]
 layout_mode = 2
@@ -78,9 +86,8 @@ layout_mode = 2
 text = "INICIAR SESIÓN"
 
 [node name="ErrorLabel" type="Label" parent="CenterContainer/LoginPanel/VBoxContainer"]
-layout_mode = 2
-text = ""
-horizontal_alignment = 1
 modulate = Color(1, 0.4, 0.4, 1)
+layout_mode = 2
+horizontal_alignment = 1
 
 [connection signal="pressed" from="CenterContainer/LoginPanel/VBoxContainer/LoginButton" to="." method="_on_login_button_pressed"]
