@@ -81,19 +81,38 @@
         
         .firma-section {
             margin-top: 40px;
-            display: flex;
-            justify-content: space-between;
+            display: block;
+            width: 100%;
+            clear: both;
+            page-break-inside: avoid;
         }
         
         .firma-box {
-            width: 200px;
+            width: 45%;
             text-align: center;
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 2.5%;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #fafafa;
         }
         
         .firma-linea {
-            border-bottom: 1px solid #333;
-            height: 50px;
-            margin-bottom: 10px;
+            border-bottom: 2px solid #333;
+            height: 80px;
+            margin-bottom: 15px;
+            background-color: white;
+        }
+        
+        .empleado-info {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 20px 0;
+            font-size: 11px;
         }
     </style>
 </head>
@@ -143,12 +162,14 @@
     </div>
 
     <div class="importante">
-        <h3>⚠️ INFORMACIÓN IMPORTANTE</h3>
+        <h3>⚠️ CONDICIONES GENERALES DE SERVICIO</h3>
         <ul>
-            <li><strong>NO NOS HACEMOS RESPONSABLES DE LA PÉRDIDA DE DATOS</strong></li>
-            <li>Se recomienda hacer copia de seguridad antes de la reparación</li>
-            <li>El cliente declara que el equipo es de su propiedad legítima</li>
-            <li>Cualquier contraseña o bloqueo debe ser comunicado al técnico</li>
+            <li><strong>RESPONSABILIDAD DE DATOS:</strong> NO NOS HACEMOS RESPONSABLES DE LA PÉRDIDA, CORRUPCIÓN O ELIMINACIÓN DE DATOS almacenados en el dispositivo. Se recomienda realizar copia de seguridad antes de la reparación.</li>
+            <li><strong>TARIFAS POR DEMORA:</strong> Si el equipo no es retirado en un plazo de 30 días después de notificar su finalización, se cobrará una tarifa de custodia de 10€ por día adicional.</li>
+            <li><strong>CUSTODIA PROLONGADA:</strong> Transcurridos 90 días desde la notificación de finalización sin ser retirado, el dispositivo pasará a ser propiedad del taller para cubrir costes de almacenaje.</li>
+            <li><strong>PROPIEDAD:</strong> El cliente declara que el equipo es de su propiedad legítima o tiene autorización para su reparación.</li>
+            <li><strong>CONTRASEÑAS:</strong> Cualquier contraseña, PIN o bloqueo debe ser comunicado al técnico. No nos responsabilizamos por dispositivos bloqueados.</li>
+            <li><strong>GARANTÍA:</strong> La reparación tiene garantía de 30 días únicamente sobre el trabajo realizado, no sobre averías diferentes o componentes no reparados.</li>
         </ul>
     </div>
 
@@ -169,21 +190,45 @@
         <div style="border: 1px solid #ddd; height: 100px; margin: 10px 0;"></div>
     </div>
 
-    <div class="firma-section">
-        <div class="firma-box">
-            <div class="firma-linea"></div>
-            <p><strong>FIRMA DEL CLIENTE</strong></p>
-            <p>{{cliente.nombre}}</p>
+    <!-- Información del empleado que imprime -->
+    <div style="margin: 20px 0; padding: 10px; background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px;">
+        <p style="margin: 5px 0; font-size: 11px;">
+            <strong>Documento impreso por:</strong> {{usuario_actual.nombre}} ({{usuario_actual.email}}) - {{fecha_actual}}
+        </p>
+        <p style="margin: 5px 0; font-size: 11px;">
+            <strong>Empleado responsable:</strong> {{empleado_responsable}} | <strong>ID Orden:</strong> {{ticket.codigo}}
+        </p>
+    </div>
+
+    <!-- Sección de Firmas -->
+    <div class="firma-section" style="margin-top: 40px; page-break-inside: avoid;">
+        <div class="firma-box" style="width: 45%; display: inline-block; vertical-align: top; margin-right: 5%;">
+            <div class="firma-linea" style="border-bottom: 2px solid #333; height: 80px; margin-bottom: 15px;"></div>
+            <p style="text-align: center; margin: 5px 0;"><strong>FIRMA DEL CLIENTE</strong></p>
+            <p style="text-align: center; margin: 5px 0; font-size: 12px;">{{cliente.nombre}}</p>
+            <p style="text-align: center; font-size: 10px; margin-top: 10px; color: #666;">
+                Acepto las condiciones de servicio<br>
+                y autorizo la reparación del equipo<br>
+                <strong>Fecha:</strong> _______________
+            </p>
         </div>
-        <div class="firma-box">
-            <div class="firma-linea"></div>
-            <p><strong>TÉCNICO RESPONSABLE</strong></p>
-            <p>Fecha: {{fecha_actual}}</p>
+        <div class="firma-box" style="width: 45%; display: inline-block; vertical-align: top;">
+            <div class="firma-linea" style="border-bottom: 2px solid #333; height: 80px; margin-bottom: 15px;"></div>
+            <p style="text-align: center; margin: 5px 0;"><strong>FIRMA DE LA EMPRESA</strong></p>
+            <p style="text-align: center; margin: 5px 0; font-size: 12px;">{{empresa.nombre}}</p>
+            <p style="text-align: center; font-size: 10px; margin-top: 10px; color: #666;">
+                Equipo recibido en fecha: {{fecha_actual}}<br>
+                <strong>Técnico responsable:</strong><br>
+                ______________________________
+            </p>
         </div>
     </div>
 
-    <div style="margin-top: 30px; font-size: 10px; text-align: center; color: #666;">
-        {{pie_legal}} - Orden generada el {{fecha_actual}}
+    <!-- Pie de página -->
+    <div style="margin-top: 40px; padding-top: 15px; border-top: 1px solid #ccc; font-size: 10px; text-align: center; color: #666; page-break-inside: avoid;">
+        <p style="margin: 2px 0;">{{pie_legal}}</p>
+        <p style="margin: 2px 0;"><strong>Orden generada el {{fecha_actual}} | ID: {{ticket.codigo}}</strong></p>
+        <p style="margin: 2px 0; font-size: 9px;">CONSERVAR ESTE DOCUMENTO - NECESARIO PARA RETIRADA DEL EQUIPO</p>
     </div>
 </body>
 </html>

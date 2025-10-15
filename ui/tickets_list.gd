@@ -511,40 +511,55 @@ func imprimir_ticket_pdf(ticket_id: int):
 
 func generar_html_ticket(ticket_data: Dictionary) -> String:
 	"""Genera el contenido HTML del ticket"""
-	var codigo = ticket_data.get("codigo", "Sin código")
-	var fecha_entrada = ticket_data.get("fecha_entrada", "")
-	var estado = ticket_data.get("estado", "")
-	var prioridad = ticket_data.get("prioridad", "")
+	
+	# Helper function para manejar valores nulos
+	var safe_get = func(dict: Dictionary, key: String, default: String = "") -> String:
+		var value = dict.get(key, default)
+		return str(value) if value != null else default
+	
+	var codigo = safe_get.call(ticket_data, "codigo", "Sin código")
+	var fecha_entrada = safe_get.call(ticket_data, "fecha_entrada", "N/A")
+	var estado = safe_get.call(ticket_data, "estado", "Nuevo")
+	var prioridad = safe_get.call(ticket_data, "prioridad", "Normal")
+	
+	# Información del empleado actual
+	var empleado_nombre = "Usuario del sistema"
+	var empleado_email = "N/A"
+	var fecha_impresion = Time.get_datetime_string_from_system()
+	
+	if AppState.usuario_actual:
+		empleado_nombre = safe_get.call(AppState.usuario_actual, "nombre", "Usuario del sistema")
+		empleado_email = safe_get.call(AppState.usuario_actual, "email", "N/A")
 	
 	# Datos del cliente
-	var cliente_nombre = ticket_data.get("cliente_nombre", "Sin nombre")
-	var cliente_telefono = ticket_data.get("cliente_telefono", "")
-	var cliente_email = ticket_data.get("cliente_email", "")
-	var cliente_nif = ticket_data.get("cliente_nif", "")
-	var cliente_direccion = ticket_data.get("cliente_direccion", "")
+	var cliente_nombre = safe_get.call(ticket_data, "cliente_nombre", "Sin nombre")
+	var cliente_telefono = safe_get.call(ticket_data, "cliente_telefono", "N/A")
+	var cliente_email = safe_get.call(ticket_data, "cliente_email", "N/A")
+	var cliente_nif = safe_get.call(ticket_data, "cliente_nif", "N/A")
+	var cliente_direccion = safe_get.call(ticket_data, "cliente_direccion", "N/A")
 	
 	# Datos del equipo
-	var equipo_tipo = ticket_data.get("equipo_tipo", "")
-	var equipo_marca = ticket_data.get("equipo_marca", "")
-	var equipo_modelo = ticket_data.get("equipo_modelo", "")
-	var numero_serie = ticket_data.get("numero_serie", "")
-	var password_bloqueo = ticket_data.get("password_bloqueo", "")
-	var accesorios = ticket_data.get("accesorios", "")
+	var equipo_tipo = safe_get.call(ticket_data, "equipo_tipo", "N/A")
+	var equipo_marca = safe_get.call(ticket_data, "equipo_marca", "N/A")
+	var equipo_modelo = safe_get.call(ticket_data, "equipo_modelo", "N/A")
+	var numero_serie = safe_get.call(ticket_data, "numero_serie", "N/A")
+	var password_bloqueo = safe_get.call(ticket_data, "password_bloqueo", "N/A")
+	var accesorios = safe_get.call(ticket_data, "accesorios", "Ninguno")
 	
 	# Descripciones
-	var averia_cliente = ticket_data.get("averia_cliente", "")
-	var notas_cliente = ticket_data.get("notas_cliente", "")
-	var diagnostico = ticket_data.get("diagnostico", "")
+	var averia_cliente = safe_get.call(ticket_data, "averia_cliente", "No especificada")
+	var notas_cliente = safe_get.call(ticket_data, "notas_cliente", "Sin notas adicionales")
+	var diagnostico = safe_get.call(ticket_data, "diagnostico", "Pendiente de diagnóstico")
 	
 	# Técnico asignado
-	var tecnico_nombre = ticket_data.get("tecnico_nombre", "Sin asignar")
+	var tecnico_nombre = safe_get.call(ticket_data, "tecnico_nombre", "Sin asignar")
 	
 	var html = """<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket SAT - %s</title>
+    <title>Ticket SAT - {CODIGO_TITULO}</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
         .ticket { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto; }
@@ -585,23 +600,23 @@ func generar_html_ticket(ticket_data: Dictionary) -> String:
             <div class="info-grid">
                 <div class="info-item">
                     <span class="info-label">Código:</span>
-                    <span class="info-value"><strong>%s</strong></span>
+                    <span class="info-value"><strong>{CODIGO}</strong></span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Fecha Entrada:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">{FECHA_ENTRADA}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Estado:</span>
-                    <span class="info-value"><span class="status-badge status-%s">%s</span></span>
+                    <span class="info-value"><span class="status-badge status-{ESTADO_LOWER}">{ESTADO}</span></span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Prioridad:</span>
-                    <span class="info-value priority-%s">%s</span>
+                    <span class="info-value priority-{PRIORIDAD_LOWER}">{PRIORIDAD}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Técnico:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">{TECNICO_NOMBRE}</span>
                 </div>
             </div>
         </div>
@@ -611,23 +626,23 @@ func generar_html_ticket(ticket_data: Dictionary) -> String:
             <div class="info-grid">
                 <div class="info-item">
                     <span class="info-label">Nombre:</span>
-                    <span class="info-value"><strong>%s</strong></span>
+                    <span class="info-value"><strong>{CLIENTE_NOMBRE}</strong></span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Teléfono:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">{CLIENTE_TELEFONO}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Email:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">{CLIENTE_EMAIL}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">NIF:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">{CLIENTE_NIF}</span>
                 </div>
                 <div class="info-item full-width">
                     <span class="info-label">Dirección:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">{CLIENTE_DIRECCION}</span>
                 </div>
             </div>
         </div>
@@ -637,27 +652,27 @@ func generar_html_ticket(ticket_data: Dictionary) -> String:
             <div class="info-grid">
                 <div class="info-item">
                     <span class="info-label">Tipo:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">{EQUIPO_TIPO}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Marca:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">{EQUIPO_MARCA}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Modelo:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">{EQUIPO_MODELO}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Nº Serie:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">{NUMERO_SERIE}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Password:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">{PASSWORD_BLOQUEO}</span>
                 </div>
                 <div class="info-item full-width">
                     <span class="info-label">Accesorios:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">{ACCESORIOS}</span>
                 </div>
             </div>
         </div>
@@ -667,32 +682,118 @@ func generar_html_ticket(ticket_data: Dictionary) -> String:
             <div class="info-item full-width">
                 <span class="info-label">Avería reportada:</span>
             </div>
-            <div class="textarea-field">%s</div>
+            <div class="textarea-field">{AVERIA_CLIENTE}</div>
             
             <div class="info-item full-width" style="margin-top: 15px;">
                 <span class="info-label">Notas del cliente:</span>
             </div>
-            <div class="textarea-field">%s</div>
+            <div class="textarea-field">{NOTAS_CLIENTE}</div>
             
             <div class="info-item full-width" style="margin-top: 15px;">
                 <span class="info-label">Diagnóstico técnico:</span>
             </div>
-            <div class="textarea-field">%s</div>
+            <div class="textarea-field">{DIAGNOSTICO}</div>
         </div>
 
-        <div class="footer">
+        <div class="section" style="background-color: #fff3cd; border: 2px solid #ffeaa7; border-radius: 8px; padding: 20px;">
+            <h3 style="background-color: #ff6b35; margin: -20px -20px 15px -20px;">⚠️ CONDICIONES GENERALES DE SERVICIO</h3>
+            <ul style="line-height: 1.6; font-size: 12px;">
+                <li><strong>RESPONSABILIDAD DE DATOS:</strong> NO NOS HACEMOS RESPONSABLES DE LA PÉRDIDA, CORRUPCIÓN O ELIMINACIÓN DE DATOS almacenados en el dispositivo.</li>
+                <li><strong>TARIFAS POR DEMORA:</strong> Si el equipo no es retirado en un plazo de 30 días después de notificar su finalización, se cobrará una tarifa de custodia de 10€ por día adicional.</li>
+                <li><strong>CUSTODIA PROLONGADA:</strong> Transcurridos 90 días desde la notificación de finalización sin ser retirado, el dispositivo pasará a ser propiedad del taller para cubrir costes de almacenaje.</li>
+                <li><strong>GARANTÍA:</strong> La reparación tiene garantía de 30 días únicamente sobre el trabajo realizado, no sobre averías diferentes o componentes no reparados.</li>
+                <li><strong>PROPIEDAD:</strong> El cliente declara que el equipo es de su propiedad legítima o tiene autorización para su reparación.</li>
+            </ul>
+        </div>
+
+        <div class="section" style="background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px;">
+            <h3 style="background-color: #17a2b8; margin: -15px -15px 15px -15px;">👤 INFORMACIÓN DEL EMPLEADO</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Documento impreso por:</span>
+                    <span class="info-value"><strong>{EMPLEADO_NOMBRE}</strong></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email empleado:</span>
+                    <span class="info-value">{EMPLEADO_EMAIL}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Fecha impresión:</span>
+                    <span class="info-value">{FECHA_IMPRESION}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Técnico responsable:</span>
+                    <span class="info-value">{TECNICO_RESPONSABLE}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" style="margin-top: 40px;">
+            <h3 style="background-color: #28a745;">✍️ FIRMAS</h3>
+            <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                <div style="width: 45%; text-align: center; border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: #fafafa;">
+                    <div style="border-bottom: 2px solid #333; height: 100px; margin-bottom: 15px; background-color: white;"></div>
+                    <p style="margin: 5px 0; font-weight: bold; font-size: 14px;">FIRMA DEL CLIENTE</p>
+                    <p style="margin: 5px 0; font-size: 12px;">{CLIENTE_FIRMA}</p>
+                    <p style="font-size: 10px; color: #666; margin-top: 10px;">
+                        Acepto las condiciones de servicio<br>
+                        y autorizo la reparación del equipo<br>
+                        <strong>Fecha:</strong> _______________
+                    </p>
+                </div>
+                <div style="width: 45%; text-align: center; border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: #fafafa;">
+                    <div style="border-bottom: 2px solid #333; height: 100px; margin-bottom: 15px; background-color: white;"></div>
+                    <p style="margin: 5px 0; font-weight: bold; font-size: 14px;">FIRMA DE LA EMPRESA</p>
+                    <p style="margin: 5px 0; font-size: 12px;">Mi Tienda SAT</p>
+                    <p style="font-size: 10px; color: #666; margin-top: 10px;">
+                        Equipo recibido en fecha: {FECHA_RECEPCION}<br>
+                        <strong>Técnico responsable:</strong><br>
+                        ______________________________
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer" style="border-top: 2px solid #2196F3; margin-top: 40px; padding-top: 15px;">
             <p><strong>Mi Tienda SAT</strong> | Servicio Técnico Especializado</p>
-            <p>Documento generado automáticamente el %s</p>
+            <p>Documento generado automáticamente el {FECHA_GENERACION} | ID: {TICKET_ID}</p>
+            <p style="font-size: 10px; margin-top: 10px; font-weight: bold;">CONSERVAR ESTE DOCUMENTO - NECESARIO PARA RETIRADA DEL EQUIPO</p>
         </div>
     </div>
 </body>
-</html>""" % [
-		codigo, codigo, fecha_entrada, estado.to_lower(), estado, prioridad.to_lower(), prioridad, tecnico_nombre,
-		cliente_nombre, cliente_telefono, cliente_email, cliente_nif, cliente_direccion,
-		equipo_tipo, equipo_marca, equipo_modelo, numero_serie, password_bloqueo, accesorios,
-		averia_cliente, notas_cliente, diagnostico,
-		Time.get_datetime_string_from_system()
-	]
+</html>"""
+	
+	# Reemplazar los placeholders con los valores
+	html = html.replace("{CODIGO_TITULO}", codigo)
+	html = html.replace("{CODIGO}", codigo)
+	html = html.replace("{FECHA_ENTRADA}", fecha_entrada)
+	html = html.replace("{ESTADO_LOWER}", estado.to_lower())
+	html = html.replace("{ESTADO}", estado)
+	html = html.replace("{PRIORIDAD_LOWER}", prioridad.to_lower())
+	html = html.replace("{PRIORIDAD}", prioridad)
+	html = html.replace("{TECNICO_NOMBRE}", tecnico_nombre)
+	html = html.replace("{CLIENTE_NOMBRE}", cliente_nombre)
+	html = html.replace("{CLIENTE_TELEFONO}", cliente_telefono)
+	html = html.replace("{CLIENTE_EMAIL}", cliente_email)
+	html = html.replace("{CLIENTE_NIF}", cliente_nif)
+	html = html.replace("{CLIENTE_DIRECCION}", cliente_direccion)
+	html = html.replace("{EQUIPO_TIPO}", equipo_tipo)
+	html = html.replace("{EQUIPO_MARCA}", equipo_marca)
+	html = html.replace("{EQUIPO_MODELO}", equipo_modelo)
+	html = html.replace("{NUMERO_SERIE}", numero_serie)
+	html = html.replace("{PASSWORD_BLOQUEO}", password_bloqueo)
+	html = html.replace("{ACCESORIOS}", accesorios)
+	html = html.replace("{AVERIA_CLIENTE}", averia_cliente)
+	html = html.replace("{NOTAS_CLIENTE}", notas_cliente)
+	html = html.replace("{DIAGNOSTICO}", diagnostico)
+	html = html.replace("{EMPLEADO_NOMBRE}", empleado_nombre)
+	html = html.replace("{EMPLEADO_EMAIL}", empleado_email)
+	html = html.replace("{FECHA_IMPRESION}", fecha_impresion)
+	html = html.replace("{TECNICO_RESPONSABLE}", tecnico_nombre)
+	html = html.replace("{CLIENTE_FIRMA}", cliente_nombre)
+	html = html.replace("{FECHA_RECEPCION}", fecha_entrada)
+	html = html.replace("{FECHA_GENERACION}", fecha_impresion)
+	html = html.replace("{TICKET_ID}", codigo)
 	
 	return html
 

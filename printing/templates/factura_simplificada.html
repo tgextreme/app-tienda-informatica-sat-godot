@@ -220,8 +220,28 @@
         <h4>INFORMACIÓN LEGAL:</h4>
         <p>• Factura simplificada emitida según art. 7.2 del RD 1619/2012</p>
         <p>• IVA incluido según régimen general</p>
-        <p>• Garantía del servicio: 90 días sobre el trabajo realizado</p>
+        <p>• <strong>NO NOS HACEMOS RESPONSABLES DE LA PÉRDIDA DE DATOS</strong> almacenados en el dispositivo</p>
+        <p>• <strong>TARIFAS POR DEMORA:</strong> 10€ por día tras 30 días sin retirar el equipo</p>
+        <p>• <strong>CUSTODIA:</strong> A los 90 días sin retirar, el dispositivo pasa a propiedad del taller</p>
+        <p>• Garantía del servicio: 30 días sobre el trabajo realizado únicamente</p>
         <p>• Para reclamaciones, contacte en {{empresa.telefono}} o {{empresa.email}}</p>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <div style="display: flex; justify-content: space-between;">
+            <div style="width: 200px; text-align: center;">
+                <div style="border-bottom: 1px solid #333; height: 50px; margin-bottom: 10px;"></div>
+                <p><strong>FIRMA DEL CLIENTE</strong></p>
+                <p>{{cliente.nombre}}</p>
+                <p style="font-size: 10px;">Conforme con el servicio prestado</p>
+            </div>
+            <div style="width: 200px; text-align: center;">
+                <div style="border-bottom: 1px solid #333; height: 50px; margin-bottom: 10px;"></div>
+                <p><strong>FIRMA DE LA EMPRESA</strong></p>
+                <p>{{empresa.nombre}}</p>
+                <p style="font-size: 10px;">Servicio entregado: {{fecha_actual}}</p>
+            </div>
+        </div>
     </div>
 
     <div class="footer">

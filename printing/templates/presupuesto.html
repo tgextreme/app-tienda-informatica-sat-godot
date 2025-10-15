@@ -220,13 +220,31 @@
     <div class="condiciones">
         <h4>CONDICIONES GENERALES</h4>
         <ul>
-            <li>Presupuesto válido durante 15 días desde la fecha de emisión.</li>
-            <li>Los precios incluyen IVA cuando se especifica.</li>
-            <li>Para proceder con la reparación es necesaria la aprobación expresa del cliente.</li>
-            <li>Los equipos no retirados en 3 meses podrán ser desechados sin previo aviso.</li>
-            <li>La garantía de reparación es de 90 días por defectos en el trabajo realizado.</li>
-            <li>No nos hacemos responsables de la pérdida de datos.</li>
+            <li><strong>VALIDEZ:</strong> Presupuesto válido durante 15 días desde la fecha de emisión.</li>
+            <li><strong>PRECIOS:</strong> Los precios incluyen IVA cuando se especifica.</li>
+            <li><strong>AUTORIZACIÓN:</strong> Para proceder con la reparación es necesaria la aprobación expresa del cliente.</li>
+            <li><strong>RESPONSABILIDAD DE DATOS:</strong> NO NOS HACEMOS RESPONSABLES DE LA PÉRDIDA, CORRUPCIÓN O ELIMINACIÓN DE DATOS almacenados en el dispositivo.</li>
+            <li><strong>TARIFAS POR DEMORA:</strong> Si el equipo no es retirado en un plazo de 30 días después de notificar su finalización, se cobrará una tarifa de custodia de 10€ por día adicional.</li>
+            <li><strong>CUSTODIA PROLONGADA:</strong> Transcurridos 90 días desde la notificación de finalización sin ser retirado, el dispositivo pasará a ser propiedad del taller para cubrir costes de almacenaje.</li>
+            <li><strong>GARANTÍA:</strong> La reparación tiene garantía de 30 días únicamente sobre el trabajo realizado, no sobre averías diferentes o componentes no reparados.</li>
         </ul>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <div style="display: flex; justify-content: space-between;">
+            <div style="width: 200px; text-align: center;">
+                <div style="border-bottom: 1px solid #333; height: 50px; margin-bottom: 10px;"></div>
+                <p><strong>FIRMA DEL CLIENTE</strong></p>
+                <p>{{cliente.nombre}}</p>
+                <p style="font-size: 10px;">Acepto el presupuesto y las condiciones</p>
+            </div>
+            <div style="width: 200px; text-align: center;">
+                <div style="border-bottom: 1px solid #333; height: 50px; margin-bottom: 10px;"></div>
+                <p><strong>FIRMA DE LA EMPRESA</strong></p>
+                <p>{{empresa.nombre}}</p>
+                <p style="font-size: 10px;">Fecha: {{fecha_actual}}</p>
+            </div>
+        </div>
     </div>
 
     <div class="footer">
