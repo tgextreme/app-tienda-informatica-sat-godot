@@ -112,8 +112,20 @@ func cargar_datos_empleado(empleado_data: Dictionary):
 	empleado_id_editar = int(empleado_data.get("id", 0))
 	nombre_input.text = empleado_data.get("nombre", "")
 	email_input.text = empleado_data.get("email", "")
-	activo_check.button_pressed = int(empleado_data.get("activo", 1)) == 1
-	notificaciones_check.button_pressed = int(empleado_data.get("notificaciones", 1)) == 1
+	
+	# Manejar campo activo (compatibilidad bool/int)
+	var activo_value = empleado_data.get("activo", true)
+	if activo_value is bool:
+		activo_check.button_pressed = activo_value
+	else:
+		activo_check.button_pressed = (int(activo_value) == 1)
+		
+	# Manejar campo notificaciones (compatibilidad bool/int)
+	var notif_value = empleado_data.get("notificaciones", true)
+	if notif_value is bool:
+		notificaciones_check.button_pressed = notif_value
+	else:
+		notificaciones_check.button_pressed = (int(notif_value) == 1)
 	
 	# Seleccionar el rol correcto
 	var rol_id = int(empleado_data.get("rol_id", 0))
@@ -180,8 +192,8 @@ func crear_empleado_data() -> Dictionary:
 		"nombre": nombre_input.text.strip_edges(),
 		"email": email_input.text.strip_edges(),
 		"rol_id": rol_option.get_item_id(rol_option.selected),
-		"activo": 1 if activo_check.button_pressed else 0,
-		"notificaciones": 1 if notificaciones_check.button_pressed else 0
+		"activo": activo_check.button_pressed,
+		"notificaciones": notificaciones_check.button_pressed
 	}
 	
 	# Agregar ID si estamos editando

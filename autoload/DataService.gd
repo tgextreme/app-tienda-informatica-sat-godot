@@ -28,6 +28,7 @@ func inicializar_base_datos():
 	print("Base de datos creada, ejecutando migraciones...")
 	# Ejecutar migraciones - Comentado temporalmente para resolver errores de compilación
 	# MigrationsClass.run_migrations(db)
+	migrar_campo_activo_usuarios()
 	print("Migraciones completadas - sistema simplificado listo")
 	
 	print("Base de datos inicializada correctamente")
@@ -96,15 +97,15 @@ func crear_usuario_tecnico_prueba():
 	
 	if usuarios_existentes.size() > 0:
 		print("🔧 [DATASERVICE] Actualizando usuario a ADMIN...")
-		execute_sql("UPDATE usuarios SET password_hash = ?, activo = 1, rol_id = 1, nombre = ? WHERE email = ?", 
+		execute_sql("UPDATE usuarios SET password_hash = ?, rol_id = 1, nombre = ? WHERE email = ?", 
 			[password_hashed, "Admin Prueba", email_tecnico])
 		print("✅ [DATASERVICE] Usuario ADMIN actualizado - Email: %s, Password: %s" % [email_tecnico, password_tecnico])
 	else:
 		print("🔧 [DATASERVICE] Creando nuevo usuario ADMIN...")
 		execute_sql("""
-			INSERT INTO usuarios (nombre, email, password_hash, rol_id, activo, created_at) 
-			VALUES (?, ?, ?, ?, ?, datetime('now'))
-		""", ["Admin Prueba", email_tecnico, password_hashed, 1, 1])
+			INSERT INTO usuarios (nombre, email, password_hash, rol_id, created_at) 
+			VALUES (?, ?, ?, ?, datetime('now'))
+		""", ["Admin Prueba", email_tecnico, password_hashed, 1])
 		print("✅ [DATASERVICE] Usuario ADMIN creado - Email: %s, Password: %s" % [email_tecnico, password_tecnico])
 
 func corregir_referencias_tickets():
@@ -979,7 +980,7 @@ func obtener_tecnicos() -> Array:
 	return execute_sql("""
 		SELECT u.* FROM usuarios u 
 		JOIN roles r ON u.rol_id = r.id 
-		WHERE r.nombre IN ('ADMIN', 'TECNICO') AND u.activo = 1
+		WHERE r.nombre IN ('ADMIN', 'TECNICO')
 		ORDER BY u.nombre
 	""")
 
@@ -1381,6 +1382,27 @@ func obtener_empleados() -> Array:
 	print("✅ [DATASERVICE] ", empleados_con_roles.size(), " empleados obtenidos")
 	return empleados_con_roles
 
+func obtener_empleados_activos() -> Array:
+	"""Obtiene solo los empleados que están activos"""
+	var todos_empleados = obtener_empleados()
+	var empleados_activos = []
+	
+	for empleado in todos_empleados:
+		var activo_value = empleado.get("activo", true)
+		var esta_activo: bool = false
+		
+		# Manejar compatibilidad bool/int
+		if activo_value is bool:
+			esta_activo = activo_value
+		else:
+			esta_activo = (int(activo_value) == 1)
+		
+		if esta_activo:
+			empleados_activos.append(empleado)
+	
+	print("👥 [DATASERVICE] Empleados activos: ", empleados_activos.size(), " de ", todos_empleados.size())
+	return empleados_activos
+
 func crear_empleado(empleado_data: Dictionary) -> Dictionary:
 	"""Crea un nuevo empleado en el sistema"""
 	print("➕ [DATASERVICE] Creando empleado: ", empleado_data.get("nombre", ""))
@@ -1412,12 +1434,20 @@ func crear_empleado(empleado_data: Dictionary) -> Dictionary:
 	VALUES (?, ?, ?, ?, ?, datetime('now'))
 	"""
 	
+	# Normalizar valor activo a booleano
+	var activo_value = empleado_data.get("activo", true)
+	var activo_normalizado: bool = false
+	if activo_value is bool:
+		activo_normalizado = activo_value
+	else:
+		activo_normalizado = (int(activo_value) == 1)
+	
 	var params = [
 		empleado_data.nombre,
 		empleado_data.email, 
 		password_encrypted,
 		empleado_data.rol_id,
-		empleado_data.get("activo", 1)
+		activo_normalizado
 	]
 	
 	# Ejecutar inserción
@@ -1473,7 +1503,14 @@ func actualizar_empleado(empleado_data: Dictionary) -> Dictionary:
 	
 	if empleado_data.has("activo"):
 		campos_update.append("activo = ?")
-		params.append(empleado_data.activo)
+		# Normalizar valor activo a booleano
+		var activo_value = empleado_data.activo
+		var activo_normalizado: bool = false
+		if activo_value is bool:
+			activo_normalizado = activo_value
+		else:
+			activo_normalizado = (int(activo_value) == 1)
+		params.append(activo_normalizado)
 	
 	if empleado_data.has("password"):
 		campos_update.append("password_hash = ?")
@@ -1533,6 +1570,42 @@ func eliminar_empleado(empleado_id: int) -> Dictionary:
 	else:
 		print("❌ [DATASERVICE] Error al eliminar empleado: aún existe en la base de datos")
 		return {"success": false, "message": "Error al eliminar empleado de la base de datos"}
+
+func activar_empleado(empleado_id: int) -> Dictionary:
+	"""Activa un empleado (soft reactivation)"""
+	print("✅ [DATASERVICE] Activando empleado con ID: ", empleado_id)
+	
+	# Verificar que el empleado existe
+	var empleados = execute_sql("SELECT nombre FROM usuarios WHERE id = ?", [empleado_id])
+	if empleados.size() == 0:
+		return {"success": false, "message": "Empleado no encontrado"}
+	
+	# Activar empleado
+	var resultado = actualizar_empleado({"id": empleado_id, "activo": true})
+	
+	if resultado.success:
+		print("✅ [DATASERVICE] Empleado activado exitosamente")
+		return {"success": true, "message": "Empleado activado exitosamente"}
+	else:
+		return {"success": false, "message": "Error al activar empleado"}
+
+func desactivar_empleado(empleado_id: int) -> Dictionary:
+	"""Desactiva un empleado (soft delete)"""
+	print("❌ [DATASERVICE] Desactivando empleado con ID: ", empleado_id)
+	
+	# Verificar que el empleado existe
+	var empleados = execute_sql("SELECT nombre FROM usuarios WHERE id = ?", [empleado_id])
+	if empleados.size() == 0:
+		return {"success": false, "message": "Empleado no encontrado"}
+	
+	# Desactivar empleado
+	var resultado = actualizar_empleado({"id": empleado_id, "activo": false})
+	
+	if resultado.success:
+		print("✅ [DATASERVICE] Empleado desactivado exitosamente")
+		return {"success": true, "message": "Empleado desactivado exitosamente (soft delete)"}
+	else:
+		return {"success": false, "message": "Error al desactivar empleado"}
 
 # ==========================================
 # DATOS DE PRUEBA
@@ -1935,3 +2008,23 @@ func test_foreign_keys():
 	print("   📊 Tickets por técnico: ", stats.get("tickets_por_tecnico", []).size())
 	
 	print("🧪 [DATASERVICE] === FIN TEST RELACIONES ===\n")
+
+func migrar_campo_activo_usuarios():
+	"""Migración para agregar campo 'activo' a usuarios existentes"""
+	print("🔄 [DATASERVICE] Ejecutando migración: campo 'activo' en usuarios...")
+	
+	var usuarios = db.execute_sql("SELECT * FROM usuarios")
+	var usuarios_actualizados = 0
+	
+	for usuario in usuarios:
+		# Si no tiene el campo 'activo', agregarlo con valor true por defecto
+		if not usuario.has("activo"):
+			var sql = "UPDATE usuarios SET activo = ? WHERE id = ?"
+			var params = [true, usuario.get("id")]
+			db.execute_sql(sql, params)
+			usuarios_actualizados += 1
+	
+	if usuarios_actualizados > 0:
+		print("✅ [DATASERVICE] Migración completada: ", usuarios_actualizados, " usuarios actualizados con campo 'activo'")
+	else:
+		print("ℹ️ [DATASERVICE] Migración no necesaria: usuarios ya tienen campo 'activo'")

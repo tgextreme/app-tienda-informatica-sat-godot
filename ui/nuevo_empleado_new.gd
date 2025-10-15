@@ -93,7 +93,10 @@ func cargar_datos_empleado(empleado: Dictionary):
 			email_input.modulate = Color(0.7, 0.7, 0.7, 1)
 	
 	if activo_check:
-		activo_check.button_pressed = empleado.get("activo", 1) == 1
+		# Compatibilidad de tipos para el campo activo
+		var activo_value = empleado.get("activo", 1)
+		var esta_activo = (typeof(activo_value) == TYPE_BOOL and activo_value) or (typeof(activo_value) == TYPE_INT and activo_value == 1)
+		activo_check.button_pressed = esta_activo
 		# Si es admin principal, deshabilitar cambio de estado
 		activo_check.disabled = es_admin_principal
 		if es_admin_principal:

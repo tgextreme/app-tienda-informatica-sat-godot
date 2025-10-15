@@ -183,8 +183,8 @@ func _on_clientes_pressed():
 	Router.ir_a_clientes()
 
 func _on_empleados_pressed():
-	print("👨‍💼 [DASHBOARD] Navegando a gestión de empleados...")
-	Router.ir_a_empleados()
+	print("👨‍💼 [DASHBOARD] Solicitando verificación de contraseña para empleados...")
+	mostrar_dialogo_password_empleados()
 
 func _on_ultimos_tickets_item_activated():
 	var selected = ultimos_tickets.get_selected()
@@ -201,3 +201,89 @@ func configurar(parametros: Dictionary):
 	# Configuración de la pantalla con parámetros
 	if parametros.has("actualizar"):
 		cargar_datos()
+
+func mostrar_dialogo_password_empleados():
+	"""Muestra diálogo para verificar contraseña de admin antes de acceder a empleados"""
+	print("🔐 [DASHBOARD] Creando diálogo de verificación de contraseña...")
+	
+	# Crear diálogo de aceptación/cancelación
+	var dialogo = AcceptDialog.new()
+	dialogo.title = "🔐 ACCESO RESTRINGIDO - EMPLEADOS"
+	dialogo.size = Vector2(400, 200)
+	
+	# Crear contenedor principal
+	var contenedor = VBoxContainer.new()
+	
+	# Crear label explicativo
+	var label_info = Label.new()
+	label_info.text = "Esta sección requiere contraseña de administrador.\nIngrese la contraseña para continuar:"
+	label_info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label_info.add_theme_color_override("font_color", Color.WHITE)
+	contenedor.add_child(label_info)
+	
+	# Crear campo de contraseña
+	var password_input = LineEdit.new()
+	password_input.placeholder_text = "Contraseña de administrador"
+	password_input.secret = true
+	password_input.size = Vector2(300, 30)
+	contenedor.add_child(password_input)
+	
+	# Crear espacio
+	var spacer = Control.new()
+	spacer.size = Vector2(0, 10)
+	contenedor.add_child(spacer)
+	
+	# Agregar contenedor al diálogo
+	dialogo.add_child(contenedor)
+	
+	# Conectar señales
+	dialogo.confirmed.connect(_on_password_confirmado.bind(password_input))
+	dialogo.canceled.connect(_on_password_cancelado)
+	
+	# Agregar a la escena y mostrar
+	add_child(dialogo)
+	dialogo.popup_centered()
+	
+	# Enfocar el campo de contraseña
+	password_input.grab_focus()
+	
+	print("✅ [DASHBOARD] Diálogo de contraseña mostrado")
+
+func _on_password_confirmado(password_input: LineEdit):
+	"""Verifica la contraseña ingresada"""
+	var password = password_input.text.strip_edges()
+	print("🔍 [DASHBOARD] Verificando contraseña para acceso a empleados...")
+	
+	if password.is_empty():
+		print("❌ [DASHBOARD] Contraseña vacía")
+		mostrar_error_password("La contraseña no puede estar vacía")
+		return
+	
+	# Verificar contraseña contra el administrador del sistema
+	if AppState.verificar_password_admin(password):
+		print("✅ [DASHBOARD] Contraseña correcta - acceso concedido")
+		Router.ir_a_empleados()
+	else:
+		print("❌ [DASHBOARD] Contraseña incorrecta")
+		mostrar_error_password("Contraseña incorrecta")
+
+func _on_password_cancelado():
+	"""Maneja la cancelación del diálogo de contraseña"""
+	print("❌ [DASHBOARD] Acceso a empleados cancelado por el usuario")
+
+func mostrar_error_password(mensaje: String):
+	"""Muestra un error relacionado con la contraseña"""
+	print("⚠️ [DASHBOARD] Error de contraseña: " + mensaje)
+	
+	# Crear diálogo de error
+	var error_dialog = AcceptDialog.new()
+	error_dialog.title = "❌ ERROR DE ACCESO"
+	error_dialog.dialog_text = mensaje
+	error_dialog.size = Vector2(300, 120)
+	
+	# Agregar y mostrar
+	add_child(error_dialog)
+	error_dialog.popup_centered()
+	
+	# Auto-eliminar cuando se cierre
+	error_dialog.confirmed.connect(error_dialog.queue_free)

@@ -15,6 +15,12 @@ var todos_los_empleados: Array = []
 var empleados_filtrados: Array = []
 var nuevo_empleado_dialog: Window
 
+# Filtros de estado
+var filtro_estado: String = "todos"  # "todos", "activos", "inactivos"
+var btn_todos: Button
+var btn_activos: Button
+var btn_inactivos: Button
+
 func _ready():
 	print("👨‍💼 [GESTIONAR_EMPLEADOS] Inicializando gestión de empleados...")
 	
@@ -37,6 +43,7 @@ func _ready():
 	await get_tree().process_frame
 	
 	configurar_estilo()
+	crear_filtros_estado()
 	conectar_señales()
 	verificar_permisos_admin()
 	cargar_empleados()
@@ -213,9 +220,17 @@ func crear_empleado_card(empleado: Dictionary):
 	rol_label.add_theme_color_override("font_color", Color(1, 0.8, 0.4, 1))
 	detalles_container.add_child(rol_label)
 	
-	# Estado
+	# Estado - Manejo compatible de bool/int
 	var estado_label = Label.new()
-	var activo: bool = (empleado.get("activo", 1) == 1)
+	var activo_value = empleado.get("activo", true)
+	var activo: bool = false
+	
+	# Manejar tanto bool como int para compatibilidad
+	if activo_value is bool:
+		activo = activo_value
+	else:
+		activo = (int(activo_value) == 1)
+	
 	estado_label.text = "🟢 ACTIVO" if activo else "🔴 INACTIVO"
 	estado_label.add_theme_color_override("font_color", Color(0.4, 1, 0.4, 1) if activo else Color(1, 0.4, 0.4, 1))
 	info_container.add_child(estado_label)
@@ -232,11 +247,29 @@ func crear_empleado_card(empleado: Dictionary):
 	edit_btn.pressed.connect(_on_editar_empleado.bind(empleado))
 	buttons_container.add_child(edit_btn)
 	
-	# Botón eliminar (solo si no es el admin principal)
+	# Botón activar/desactivar (solo si no es el admin principal)
 	var empleado_id = int(empleado.get("id", 0))
 	var es_admin_principal = empleado_id == 1
 	
 	if not es_admin_principal:
+		# Determinar si está activo (compatibilidad bool/int)
+		var activo_btn_value = empleado.get("activo", true)
+		var esta_activo = (typeof(activo_btn_value) == TYPE_BOOL and activo_btn_value) or (typeof(activo_btn_value) == TYPE_INT and activo_btn_value == 1)
+		
+		# Botón activar/desactivar
+		var toggle_btn = Button.new()
+		if esta_activo:
+			toggle_btn.text = "🔴 DESACTIVAR"
+			toggle_btn.modulate = Color(1, 0.8, 0.6, 1)  # Color naranja suave
+		else:
+			toggle_btn.text = "🟢 ACTIVAR"
+			toggle_btn.modulate = Color(0.6, 1, 0.6, 1)  # Color verde suave
+		
+		toggle_btn.custom_minimum_size = Vector2(110, 30)
+		toggle_btn.pressed.connect(_on_toggle_empleado.bind(empleado))
+		buttons_container.add_child(toggle_btn)
+		
+		# Botón eliminar
 		var delete_btn = Button.new()
 		delete_btn.text = "🗑️ ELIMINAR"
 		delete_btn.custom_minimum_size = Vector2(100, 30)
@@ -256,14 +289,33 @@ func crear_empleado_card(empleado: Dictionary):
 		employees_list.add_child(card)
 
 func filtrar_empleados(texto_busqueda: String):
-	"""Filtra empleados por texto de búsqueda"""
-	if texto_busqueda.is_empty():
-		empleados_filtrados = todos_los_empleados.duplicate()
-	else:
-		empleados_filtrados = []
-		texto_busqueda = texto_busqueda.to_lower()
+	"""Filtra empleados por texto de búsqueda - mantener por compatibilidad"""
+	filtrar_empleados_completo(texto_busqueda, filtro_estado)
+
+func filtrar_empleados_completo(texto_busqueda: String, estado: String):
+	"""Filtra empleados por texto de búsqueda y estado"""
+	empleados_filtrados = []
+	
+	for empleado in todos_los_empleados:
+		# Filtro por estado
+		var cumple_estado = true
+		if estado != "todos":
+			var activo_value = empleado.get("activo", true)
+			var esta_activo = (typeof(activo_value) == TYPE_BOOL and activo_value) or (typeof(activo_value) == TYPE_INT and activo_value == 1)
+			
+			if estado == "activos" and not esta_activo:
+				cumple_estado = false
+			elif estado == "inactivos" and esta_activo:
+				cumple_estado = false
 		
-		for empleado in todos_los_empleados:
+		if not cumple_estado:
+			continue
+		
+		# Filtro por texto de búsqueda
+		if texto_busqueda.is_empty():
+			empleados_filtrados.append(empleado)
+		else:
+			texto_busqueda = texto_busqueda.to_lower()
 			var nombre = empleado.get("nombre", "").to_lower()
 			var email = empleado.get("email", "").to_lower()
 			var rol = empleado.get("rol_nombre", "").to_lower()
@@ -316,6 +368,46 @@ func _on_eliminar_empleado(empleado: Dictionary):
 	else:
 		print("❌ [GESTIONAR_EMPLEADOS] Error al eliminar empleado: ", resultado.message)
 		mostrar_error("Error al eliminar empleado: " + resultado.message)
+
+func _on_toggle_empleado(empleado: Dictionary):
+	"""Alterna el estado activo/inactivo del empleado"""
+	var empleado_id = int(empleado.get("id", 0))
+	
+	# Proteger admin principal
+	if empleado_id == 1:
+		print("🔒 [GESTIONAR_EMPLEADOS] Intento de desactivar admin principal - BLOQUEADO")
+		mostrar_error("No se puede desactivar al administrador principal del sistema")
+		return
+	
+	if not DataService:
+		print("❌ [GESTIONAR_EMPLEADOS] DataService no disponible")
+		return
+	
+	# Determinar estado actual (compatibilidad bool/int)
+	var activo_value = empleado.get("activo", true)
+	var esta_activo = (typeof(activo_value) == TYPE_BOOL and activo_value) or (typeof(activo_value) == TYPE_INT and activo_value == 1)
+	
+	var resultado
+	if esta_activo:
+		# Desactivar empleado
+		resultado = DataService.desactivar_empleado(empleado_id)
+		if resultado.success:
+			print("✅ [GESTIONAR_EMPLEADOS] Empleado desactivado: ", empleado.get("nombre", ""))
+		else:
+			print("❌ [GESTIONAR_EMPLEADOS] Error al desactivar empleado: ", resultado.message)
+			mostrar_error("Error al desactivar empleado: " + resultado.message)
+	else:
+		# Activar empleado
+		resultado = DataService.activar_empleado(empleado_id)
+		if resultado.success:
+			print("✅ [GESTIONAR_EMPLEADOS] Empleado activado: ", empleado.get("nombre", ""))
+		else:
+			print("❌ [GESTIONAR_EMPLEADOS] Error al activar empleado: ", resultado.message)
+			mostrar_error("Error al activar empleado: " + resultado.message)
+	
+	# Recargar lista si la operación fue exitosa
+	if resultado.success:
+		cargar_empleados()
 
 func mostrar_error(mensaje: String):
 	"""Muestra un mensaje de error al usuario"""
@@ -425,6 +517,90 @@ func _on_emergency_nuevo_pressed():
 	"""Función de emergencia para crear nuevo empleado"""
 	print("🚨 [GESTIONAR_EMPLEADOS] ¡Botón de emergencia activado!")
 	_on_nuevo_empleado_pressed()
+
+func crear_filtros_estado():
+	"""Crea botones de filtro por estado del empleado"""
+	var tools_content = get_node_or_null("MainContainer/ToolsPanel/ToolsContent")
+	if not tools_content:
+		print("❌ [GESTIONAR_EMPLEADOS] No se encontró ToolsContent")
+		return
+	
+	# Crear contenedor de filtros
+	var filter_container = HBoxContainer.new()
+	filter_container.name = "FilterContainer"
+	
+	# Crear label
+	var filter_label = Label.new()
+	filter_label.text = "Estado:"
+	filter_label.add_theme_color_override("font_color", Color.WHITE)
+	filter_container.add_child(filter_label)
+	
+	# Botón "Todos"
+	btn_todos = Button.new()
+	btn_todos.text = "👥 TODOS"
+	btn_todos.custom_minimum_size = Vector2(80, 30)
+	btn_todos.modulate = Color(0.8, 0.8, 1, 1)  # Azul suave - activo por defecto
+	btn_todos.pressed.connect(_on_filtro_todos)
+	filter_container.add_child(btn_todos)
+	
+	# Botón "Activos"
+	btn_activos = Button.new()
+	btn_activos.text = "🟢 ACTIVOS"
+	btn_activos.custom_minimum_size = Vector2(80, 30)
+	btn_activos.modulate = Color(0.6, 0.6, 0.6, 1)  # Gris - inactivo
+	btn_activos.pressed.connect(_on_filtro_activos)
+	filter_container.add_child(btn_activos)
+	
+	# Botón "Inactivos"
+	btn_inactivos = Button.new()
+	btn_inactivos.text = "🔴 INACTIVOS"
+	btn_inactivos.custom_minimum_size = Vector2(80, 30)
+	btn_inactivos.modulate = Color(0.6, 0.6, 0.6, 1)  # Gris - inactivo
+	btn_inactivos.pressed.connect(_on_filtro_inactivos)
+	filter_container.add_child(btn_inactivos)
+	
+	# Agregar contenedor después del SearchContainer
+	var search_container = tools_content.get_node_or_null("SearchContainer")
+	if search_container:
+		var index = search_container.get_index()
+		tools_content.add_child(filter_container)
+		tools_content.move_child(filter_container, index + 1)
+	else:
+		tools_content.add_child(filter_container)
+	
+	print("✅ [GESTIONAR_EMPLEADOS] Filtros de estado creados")
+
+func _on_filtro_todos():
+	"""Muestra todos los empleados"""
+	filtro_estado = "todos"
+	actualizar_botones_filtro()
+	aplicar_filtros()
+
+func _on_filtro_activos():
+	"""Muestra solo empleados activos"""
+	filtro_estado = "activos"
+	actualizar_botones_filtro()
+	aplicar_filtros()
+
+func _on_filtro_inactivos():
+	"""Muestra solo empleados inactivos"""
+	filtro_estado = "inactivos"
+	actualizar_botones_filtro()
+	aplicar_filtros()
+
+func actualizar_botones_filtro():
+	"""Actualiza el estilo visual de los botones de filtro"""
+	if btn_todos:
+		btn_todos.modulate = Color(0.8, 0.8, 1, 1) if filtro_estado == "todos" else Color(0.6, 0.6, 0.6, 1)
+	if btn_activos:
+		btn_activos.modulate = Color(0.6, 1, 0.6, 1) if filtro_estado == "activos" else Color(0.6, 0.6, 0.6, 1)
+	if btn_inactivos:
+		btn_inactivos.modulate = Color(1, 0.6, 0.6, 1) if filtro_estado == "inactivos" else Color(0.6, 0.6, 0.6, 1)
+
+func aplicar_filtros():
+	"""Aplica todos los filtros (búsqueda y estado)"""
+	var texto_busqueda = search_input.text if search_input else ""
+	filtrar_empleados_completo(texto_busqueda, filtro_estado)
 
 func abrir_formulario_empleado(empleado_data: Dictionary = {}):
 	"""Abre el formulario de empleado (crear o editar)"""

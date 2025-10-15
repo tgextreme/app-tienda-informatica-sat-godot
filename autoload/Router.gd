@@ -257,10 +257,18 @@ func ir_a_ajustes():
 	ir_a("ajustes")
 
 func _on_usuario_deslogueado():
-	# Limpiar historial y volver al login
+	print("🚪 [ROUTER] Procesando logout - reiniciando aplicación completa...")
+	
+	# Limpiar historial y estado
 	historial_navegacion.clear()
 	pantalla_actual = ""
-	ir_a("login")
+	
+	# Limpiar caché de pantallas para forzar recarga
+	pantallas_cargadas.clear()
+	
+	# Reiniciar la aplicación completa recargando la escena principal
+	print("🔄 [ROUTER] Recargando escena principal para reinicio completo...")
+	get_tree().change_scene_to_file("res://main.tscn")
 
 func buscar_nodo_main() -> Node:
 	"""Busca el nodo Main en diferentes ubicaciones posibles"""

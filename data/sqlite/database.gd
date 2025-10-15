@@ -115,6 +115,10 @@ func handle_select(query: String, _params: Array) -> Array:
 	
 	print("🔍 [DATABASE] Tabla objetivo: ", table_name)
 	
+	# 🔍 LOG ESPECIAL PARA USUARIOS (DEBUG REDUCIDO)
+	if table_name == "usuarios":
+		print("👥 [DEBUG] Consultando usuarios: ", data.get("usuarios", []).size(), " encontrados")
+	
 	if not data.has(table_name):
 		print("❌ [DATABASE] Tabla no existe: ", table_name)
 		return result
@@ -278,9 +282,10 @@ func handle_insert(query: String, params: Array):
 			if params.size() >= 4:
 				new_record["nombre"] = params[0] if params.size() > 0 else ""
 				new_record["email"] = params[1] if params.size() > 1 else ""
-				new_record["pass_hash"] = params[2] if params.size() > 2 else ""
+				new_record["password_hash"] = params[2] if params.size() > 2 else ""
 				new_record["rol_id"] = params[3] if params.size() > 3 else 1
-				new_record["activo"] = 1
+				new_record["activo"] = params[4] if params.size() > 4 else true
+				new_record["created_at"] = Time.get_datetime_string_from_system()
 		elif table_name == "roles":
 			if params.size() >= 2:
 				new_record["id"] = params[0]
@@ -381,6 +386,10 @@ func handle_update(query: String, params: Array):
 	print("🔄 [DATABASE] UPDATE ejecutado: ", query)
 	print("🔄 [DATABASE] Parámetros: ", params)
 	
+	# 🔍 DEBUGGING ESPECIAL PARA USUARIOS (REDUCIDO)
+	if query.to_upper().contains("UPDATE USUARIOS"):
+		print("⚠️ [DEBUG] Actualizando usuarios: ", data.get("usuarios", []).size(), " registros")
+	
 	# Extraer tabla de forma más robusta
 	var query_clean = query.strip_edges().replace("\n", " ").replace("\t", " ")
 	var query_upper = query_clean.to_upper()
@@ -424,6 +433,32 @@ func handle_update(query: String, params: Array):
 				record["rgpd_consent"] = params[7]
 				# ID es params[8]
 				print("✅ [DATABASE] Cliente actualizado: ", record.get("nombre"))
+			elif table_name == "usuarios" and params.size() >= 2:
+				# Actualización genérica de usuarios - maneja campos dinámicos
+				# El último parámetro es siempre el ID
+				var user_id = params[params.size() - 1]
+				
+				# Determinar qué campos actualizar basado en el número de parámetros
+				if params.size() == 2:  # Solo activo
+					record["activo"] = params[0]
+				elif params.size() == 4:  # password_hash, rol_id, nombre
+					record["password_hash"] = params[0]
+					record["rol_id"] = params[1]
+					record["nombre"] = params[2]
+				elif params.size() == 5:  # nombre, email, rol_id, activo
+					record["nombre"] = params[0]
+					record["email"] = params[1]
+					record["rol_id"] = params[2]
+					record["activo"] = params[3]
+				elif params.size() == 6:  # nombre, email, password_hash, rol_id, activo
+					record["nombre"] = params[0]
+					record["email"] = params[1]
+					record["password_hash"] = params[2]
+					record["rol_id"] = params[3]
+					record["activo"] = params[4]
+				
+				record["updated_at"] = Time.get_datetime_string_from_system()
+				print("✅ [DATABASE] Usuario actualizado: ", record.get("nombre"))
 			elif table_name == "productos" and params.size() >= 11:
 				print("🔧 [DATABASE] Actualizando producto ID ", record.get("id"), ":")
 				print("🔧 [DATABASE] - Stock ANTES: ", record.get("stock"))
@@ -467,6 +502,10 @@ func handle_update(query: String, params: Array):
 			else:
 				print("⚠️ [DATABASE] UPDATE no implementado para tabla: ", table_name, " con ", params.size(), " parámetros")
 			break
+	
+	# 🔍 DEBUGGING ESPECIAL PARA USUARIOS - DESPUÉS (REDUCIDO)
+	if query.to_upper().contains("UPDATE USUARIOS"):
+		print("✅ [DEBUG] Actualización usuarios completada")
 	
 	save_database()
 
@@ -553,26 +592,20 @@ func initialize_default_data():
 			{"id": 4, "nombre": "READONLY"}
 		]
 	
-	# Crear usuario admin por defecto
-	if not data.has("usuarios"):
+	# Crear usuario admin por defecto SOLO si no hay usuarios
+	if not data.has("usuarios") or data["usuarios"].size() == 0:
+		print("🔧 [DATABASE] Creando usuarios por defecto...")
 		data["usuarios"] = []
-	
-	# Verificar si ya existe el admin
-	var admin_exists = false
-	for user in data["usuarios"]:
-		if user is Dictionary and user.get("email") == "admin@tienda-sat.com":
-			admin_exists = true
-			break
-	
-	if not admin_exists:
 		data["usuarios"].append({
 			"id": 1,
 			"nombre": "Administrador",
 			"email": "admin@tienda-sat.com",
 			"pass_hash": "admin123",  # En producción debería ser un hash real
 			"rol_id": 1,
-			"activo": 1
+			"activo": true
 		})
+	else:
+		print("✅ [DATABASE] Usuarios ya existen, no se sobreescriben")
 	
 	# Crear configuración por defecto
 	if not data.has("configuracion"):

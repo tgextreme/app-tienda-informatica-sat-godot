@@ -74,24 +74,12 @@ func login(email: String, password: String) -> bool:
 	print("🔐 [APPSTATE] Intentando login con: ", email)
 	
 	# Verificar credenciales contra la base de datos SQLite
-	var usuarios = DataService.execute_sql("SELECT * FROM usuarios WHERE email = ? AND activo = 1", [email])
+	var usuarios = DataService.execute_sql("SELECT * FROM usuarios WHERE email = ?", [email])
 	print("👤 [APPSTATE] Usuarios encontrados: ", usuarios.size())
 	
-	# Si no se encuentra con activo=1, buscar sin filtro para debug
 	if usuarios.size() == 0:
-		print("🔍 [APPSTATE] Buscando usuario sin filtro activo...")
-		var usuarios_debug = DataService.execute_sql("SELECT * FROM usuarios WHERE email = ?", [email])
-		print("👤 [APPSTATE] Usuarios sin filtro: ", usuarios_debug.size())
-		if usuarios_debug.size() > 0:
-			var user_debug = usuarios_debug[0]
-			print("🔍 [DEBUG] Usuario encontrado pero inactivo:")
-			print("  - Nombre: ", user_debug.get("nombre", ""))
-			print("  - Activo: ", user_debug.get("activo", ""))
-			print("  - Email: ", user_debug.get("email", ""))
-		
-		print("❌ [APPSTATE] No se encontró usuario activo con email: ", email)
+		print("❌ [APPSTATE] No se encontró usuario con email: ", email)
 		return false
-	
 	var usuario = usuarios[0]
 	print("👤 [APPSTATE] Usuario encontrado: ", usuario.get("nombre", ""))
 	print("🔑 [APPSTATE] Hash almacenado (password_hash): ", usuario.get("password_hash", ""))
@@ -106,27 +94,36 @@ func login(email: String, password: String) -> bool:
 		print("🔍 [DEBUG] Usuario completo para debug: ", usuario)
 		return false
 	
+	# Crear una copia del usuario para no modificar el original en la BD
+	var usuario_copia = usuario.duplicate(true)
+	
 	# Obtener información del rol
-	var roles = DataService.execute_sql("SELECT * FROM roles WHERE id = ?", [usuario.rol_id])
+	var roles = DataService.execute_sql("SELECT * FROM roles WHERE id = ?", [usuario_copia.rol_id])
 	if roles.size() > 0:
-		usuario["rol_nombre"] = roles[0].nombre
+		usuario_copia["rol_nombre"] = roles[0].nombre
 		print("🎭 [APPSTATE] Rol asignado: ", roles[0].nombre)
 	
 	# Establecer usuario actual
-	usuario_actual = usuario
+	usuario_actual = usuario_copia
 	actualizar_permisos()
 	
-	print("✅ [APPSTATE] Login exitoso para: ", usuario.get("nombre", ""))
-	usuario_logueado.emit(usuario)
+	print("✅ [APPSTATE] Login exitoso para: ", usuario_copia.get("nombre", ""))
+	usuario_logueado.emit(usuario_copia)
 	return true
 
 func logout():
+	print("🚪 [APPSTATE] Iniciando logout...")
+	print("👤 [APPSTATE] Usuario antes del logout: ", usuario_actual.get("nombre", "N/A"))
+	
 	usuario_actual.clear()
 	es_admin = false
 	es_tecnico = false  
 	es_recepcion = false
 	es_readonly = false
+	
+	print("✅ [APPSTATE] Estado limpiado, emitiendo señal de logout...")
 	usuario_deslogueado.emit()
+	print("🔄 [APPSTATE] Logout completado")
 
 func tiene_permiso(accion: String) -> bool:
 	match accion:
@@ -221,6 +218,38 @@ func verificar_password(password: String, password_hash: String) -> bool:
 	print("  - Resultado final: ", resultado_final)
 	
 	return resultado_final
+
+func verificar_password_admin(password: String) -> bool:
+	"""Verifica si la contraseña coincide con la del administrador del sistema"""
+	print("🔍 [APPSTATE] Verificando contraseña contra admin del sistema...")
+	
+	# Buscar al usuario administrador en la base de datos (rol_id = 1)
+	var usuarios_admin = DataService.execute_sql("SELECT * FROM usuarios WHERE rol_id = 1 LIMIT 1", [])
+	
+	if usuarios_admin.size() == 0:
+		print("❌ [APPSTATE] No se encontró usuario administrador en el sistema")
+		return false
+	
+	var admin_usuario = usuarios_admin[0]
+	
+	# Obtener contraseña almacenada del admin
+	var password_almacenada = admin_usuario.get("password_hash", admin_usuario.get("pass_hash", ""))
+	
+	print("🔍 [APPSTATE] Verificando contraseña admin:")
+	print("  - Admin encontrado: ", admin_usuario.get("nombre", ""))
+	print("  - Email admin: ", admin_usuario.get("email", ""))
+	print("  - Password ingresado: ", password)
+	print("  - Password almacenado: ", password_almacenada)
+	
+	# Usar la función estándar de verificación
+	var resultado = verificar_password(password, password_almacenada)
+	
+	if resultado:
+		print("✅ [APPSTATE] Contraseña de admin verificada correctamente")
+	else:
+		print("❌ [APPSTATE] Contraseña de admin incorrecta")
+	
+	return resultado
 
 func cargar_configuracion():
 	# Esperar a que DataService esté listo
